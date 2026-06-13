@@ -1,0 +1,1157 @@
+---
+alwaysApply: true
+---
+
+
+# Crave Bakery — Cursor AI Project Rules & Reference
+
+> **Purpose:** This file is the single source of truth for the Crave Bakery project.
+> Load it into Cursor AI as a rule file. Every decision — naming, structure, design, logic — must follow what is defined here.
+
+---
+
+## 1. Project Overview
+
+**Crave Bakery** is a full-featured bakery e-commerce platform. Customers can browse products, add to cart, place orders, write reviews, and save favourites. Admins manage the entire store — products, categories, orders, reviews, users, and site configuration — through a dedicated admin panel.
+
+**Brand personality:** Warm, artisan, premium. Modern and clean — not rustic or vintage.  
+**Brand name:** Crave Bakery  
+**Tagline:** Baking Smiles, One Pastry At A Time
+
+---
+
+## 2. Tech Stack
+
+| Layer | Technology | Notes |
+|---|---|---|
+| Backend framework | Laravel 11 | PHP 8.2+ |
+| Frontend bridge | Inertia.js v2 | SSR optional |
+| Frontend framework | Vue 3 | Composition API + `<script setup>` only |
+| Styling | Tailwind CSS v3 | Utility-first, no inline styles |
+| Auth scaffolding | Laravel Breeze | Inertia + Vue preset |
+| Image management | Spatie Laravel MediaLibrary | All product/category images |
+| SEO-friendly URLs | Spatie Laravel Sluggable | Products and categories |
+| Payments | Laravel Cashier (Stripe) | Optional phase 2 |
+| Frontend UI | @headlessui/vue | Accessible modals, dropdowns |
+| Frontend utilities | @vueuse/core | Composables |
+| Carousel / slider | Swiper | Homepage and product galleries |
+| Icons | Tabler Icons (@tabler/icons-vue) | All icons throughout the app |
+| HTTP client | Axios | Already included via Laravel |
+
+### Setup Commands
+```bash
+composer require laravel/breeze spatie/laravel-medialibrary spatie/laravel-sluggable
+php artisan breeze:install vue
+npm install @headlessui/vue @vueuse/core swiper @tabler/icons-vue
+```
+
+---
+
+## 3. Coding Standards
+
+### General Rules
+- Always use **Vue 3 Composition API** with `<script setup>` — never Options API
+- Always use **Tailwind CSS** utility classes — never write custom CSS unless absolutely required
+- All backend logic lives in **Services** — controllers must be thin (receive request, call service, return Inertia response)
+- All form validation lives in **FormRequest** classes — never validate in controllers directly
+- Use **API Resources** (`php artisan make:resource`) for all data passed to Inertia pages
+- Never pass raw Eloquent models to Inertia — always pass through a Resource
+- Use **route model binding** everywhere (`{product:slug}` not `{id}`)
+- All routes use **named routes** — never hardcode URLs in Vue components, always use Inertia `route()` helper
+- Use `ziggy-js` for route generation in Vue components
+
+### Vue Component Rules
+- One component per file
+- Component file names: **PascalCase** (e.g. `ProductCard.vue`)
+- Page file names: **PascalCase** matching the route (e.g. `Products/Index.vue`)
+- Props must always be typed using `defineProps<{}>()` TypeScript syntax
+- Emits must always be typed using `defineEmits<{}>()` TypeScript syntax
+- Use `useForm()` from `@inertiajs/vue3` for ALL form submissions — never use raw `axios.post`
+- Use `<Link>` from `@inertiajs/vue3` for ALL internal navigation — never use `<a href>`
+
+### Laravel Rules
+- Controllers return `Inertia::render()` or `redirect()->route()`— nothing else
+- Use `$request->validated()` always — never `$request->all()`
+- All models use `$fillable` — never `$guarded = []`
+- Soft deletes on: Products, Categories, Orders, Users
+- All migrations include `timestamps()` and where relevant `softDeletes()`
+- Use Laravel Policies for all authorization — never check roles inline in controllers
+- Use `php artisan make:policy` for each model
+
+---
+
+## 4. User Roles & Permissions
+
+| Role | Description |
+|---|---|
+| `super_admin` | Full unrestricted access. Can manage all admins, site settings, and every feature. |
+| `admin` | Scoped access based on assigned permissions. Cannot manage other admins or site settings unless explicitly granted. |
+| `user` | Public customer. Can browse, order, review, and manage their own account. |
+
+### Permission Scopes (for admin role)
+Each permission is a boolean column or JSON field on the admin user record:
+
+| Scope | Actions |
+|---|---|
+| Products | view, create, edit, delete, manage_stock |
+| Categories | view, create, edit, delete |
+| Attributes | view, create, edit, delete |
+| Orders | view, update_status, refund |
+| Reviews | view, approve, delete, respond |
+| Customers | view, edit, export |
+| Promo Codes | view, create, delete |
+| Site Settings | view, edit |
+| Admin Users | super_admin only — not grantable to admin role |
+
+### Role Enforcement
+- `App\Http\Middleware\AdminMiddleware` — checks `auth()->user()->role` is `admin` or `super_admin`
+- `App\Http\Middleware\SuperAdminMiddleware` — checks role is `super_admin` only
+- Use Laravel Policies for model-level authorization
+- In Vue: use shared Inertia prop `$page.props.auth.user.role` to show/hide UI elements
+
+---
+
+## 5. Database Schema
+
+### `users`
+```
+id, name, email, email_verified_at, password, role (enum: super_admin|admin|user),
+avatar, phone, date_of_birth, gender, 
+permissions (json — for admin scoped permissions),
+remember_token, timestamps
+```
+
+### `categories`
+```
+id, name, slug, description, parent_id (FK nullable — self-referencing),
+image, banner_image, image_alt,
+layout_style (enum: grid|list|masonry), products_per_page, default_sort,
+show_in_navigation, show_in_homepage, custom_color,
+meta_title, meta_description, meta_keywords, og_image, canonical_url,
+sort_order, status (enum: active|draft|archived),
+timestamps, softDeletes
+```
+
+### `products`
+```
+id, name, slug, short_description, description,
+regular_price, sale_price, cost_price,
+sku, barcode,
+stock_quantity, low_stock_threshold, allow_backorders,
+stock_status (enum: in_stock|out_of_stock|on_backorder),
+is_featured, is_active, show_in_search,
+status (enum: active|draft|archived),
+meta_title, meta_description, meta_keywords, og_image, canonical_url,
+published_at,
+timestamps, softDeletes
+```
+
+### `category_product` (pivot — many-to-many)
+```
+id, category_id (FK), product_id (FK)
+```
+
+### `attributes`
+```
+id, name, type (enum: text|number|color|boolean),
+display_type (enum: pills|dropdown|swatches|checkboxes),
+sort_order, timestamps
+```
+
+### `attribute_values`
+```
+id, attribute_id (FK), value, color_swatch, sort_order, timestamps
+```
+
+### `product_attribute_values` (pivot)
+```
+id, product_id (FK), attribute_value_id (FK)
+```
+
+### `orders`
+```
+id, user_id (FK), order_number (unique string e.g. CB-00482),
+status (enum: pending|processing|shipped|delivered|cancelled),
+payment_status (enum: pending|paid|refunded),
+payment_method, transaction_id,
+subtotal, discount_amount, promo_code, delivery_fee, tax_amount, total,
+first_name, last_name, email, phone,
+address_line1, address_line2, city, state, postal_code, country,
+delivery_method (enum: standard|express),
+delivery_notes,
+estimated_delivery_at, delivered_at, paid_at,
+notes (internal admin notes, json array),
+timestamps, softDeletes
+```
+
+### `order_items`
+```
+id, order_id (FK), product_id (FK),
+product_name (snapshot), product_sku (snapshot),
+selected_attributes (json — snapshot of chosen attribute values),
+quantity, unit_price, line_total,
+timestamps
+```
+
+### `carts`
+```
+id, user_id (FK nullable), session_id (for guest carts),
+timestamps
+```
+
+### `cart_items`
+```
+id, cart_id (FK), product_id (FK),
+selected_attributes (json),
+quantity, timestamps
+```
+
+### `favourites`
+```
+id, user_id (FK), product_id (FK), timestamps
+```
+
+### `collections` (user-curated favourite groups)
+```
+id, user_id (FK), name, description,
+privacy (enum: private|public),
+timestamps
+```
+
+### `collection_product` (pivot)
+```
+id, collection_id (FK), product_id (FK)
+```
+
+### `reviews`
+```
+id, user_id (FK), product_id (FK), order_id (FK nullable — verify purchase),
+rating (tinyint 1–5), title, body,
+status (enum: pending|approved|flagged|rejected),
+flag_reason, flagged_at,
+helpful_yes, helpful_no,
+admin_response, admin_response_at,
+is_verified_purchase,
+timestamps, softDeletes
+```
+
+### `review_photos`
+```
+id, review_id (FK), path, timestamps
+```
+
+### `promo_codes`
+```
+id, code (unique), type (enum: percentage|fixed),
+value, min_order_amount, max_uses, used_count,
+starts_at, expires_at, is_active, timestamps
+```
+
+### `addresses`
+```
+id, user_id (FK), label (Home|Office|Other),
+first_name, last_name, phone,
+address_line1, address_line2, city, state, postal_code, country,
+is_default, timestamps
+```
+
+### `site_settings`
+```
+id, key (unique string), value (text), timestamps
+```
+> Site settings are accessed via `SiteSetting::get('key')` helper — never query directly in controllers.
+
+### `activity_log`
+> Use **Spatie Laravel Activity Log** package — do not build custom.
+```bash
+composer require spatie/laravel-activitylog
+```
+
+### `admin_invitations`
+```
+id, email, role, permissions (json), token (unique),
+invited_by (FK users.id), accepted_at, expires_at, timestamps
+```
+
+---
+
+## 6. Full File Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/
+│   │   ├── HomeController.php
+│   │   ├── ProductController.php
+│   │   ├── CategoryController.php
+│   │   ├── CartController.php
+│   │   ├── OrderController.php
+│   │   ├── FavouriteController.php
+│   │   ├── CollectionController.php
+│   │   ├── ReviewController.php
+│   │   ├── AddressController.php
+│   │   ├── ProfileController.php
+│   │   └── Admin/
+│   │       ├── DashboardController.php
+│   │       ├── ProductController.php
+│   │       ├── CategoryController.php
+│   │       ├── AttributeController.php
+│   │       ├── OrderController.php
+│   │       ├── ReviewController.php
+│   │       ├── PromoCodeController.php
+│   │       ├── CustomerController.php
+│   │       ├── UserController.php
+│   │       └── SettingController.php
+│   ├── Middleware/
+│   │   ├── AdminMiddleware.php
+│   │   └── SuperAdminMiddleware.php
+│   ├── Requests/
+│   │   ├── StoreProductRequest.php
+│   │   ├── UpdateProductRequest.php
+│   │   ├── StoreCategoryRequest.php
+│   │   ├── StoreOrderRequest.php
+│   │   ├── StoreReviewRequest.php
+│   │   ├── UpdateProfileRequest.php
+│   │   └── Admin/
+│   │       ├── InviteAdminRequest.php
+│   │       └── UpdateSettingsRequest.php
+│   └── Resources/
+│       ├── ProductResource.php
+│       ├── ProductCollection.php
+│       ├── CategoryResource.php
+│       ├── OrderResource.php
+│       ├── ReviewResource.php
+│       └── UserResource.php
+├── Models/
+│   ├── User.php
+│   ├── Product.php
+│   ├── Category.php
+│   ├── Attribute.php
+│   ├── AttributeValue.php
+│   ├── Order.php
+│   ├── OrderItem.php
+│   ├── Cart.php
+│   ├── CartItem.php
+│   ├── Favourite.php
+│   ├── Collection.php
+│   ├── Review.php
+│   ├── ReviewPhoto.php
+│   ├── PromoCode.php
+│   ├── Address.php
+│   ├── SiteSetting.php
+│   └── AdminInvitation.php
+├── Services/
+│   ├── CartService.php
+│   ├── OrderService.php
+│   ├── PromoCodeService.php
+│   ├── SiteSettingService.php
+│   └── AdminInvitationService.php
+├── Policies/
+│   ├── ProductPolicy.php
+│   ├── CategoryPolicy.php
+│   ├── OrderPolicy.php
+│   ├── ReviewPolicy.php
+│   └── UserPolicy.php
+└── Mail/
+    ├── OrderConfirmed.php
+    ├── OrderStatusUpdated.php
+    ├── AdminInvitation.php
+    └── ReviewRequest.php
+
+resources/
+├── js/
+│   ├── app.js
+│   ├── Pages/
+│   │   ├── Home.vue
+│   │   ├── Products/
+│   │   │   ├── Index.vue
+│   │   │   └── Show.vue
+│   │   ├── Categories/
+│   │   │   └── Show.vue
+│   │   ├── Cart/
+│   │   │   └── Index.vue
+│   │   ├── Checkout/
+│   │   │   ├── Index.vue
+│   │   │   └── Confirmation.vue
+│   │   ├── Orders/
+│   │   │   ├── Index.vue
+│   │   │   └── Show.vue
+│   │   ├── Favourites/
+│   │   │   └── Index.vue
+│   │   ├── Profile/
+│   │   │   ├── Index.vue
+│   │   │   ├── Orders.vue
+│   │   │   ├── Addresses.vue
+│   │   │   ├── PaymentMethods.vue
+│   │   │   └── Settings.vue
+│   │   ├── Auth/
+│   │   │   ├── Login.vue
+│   │   │   ├── Register.vue
+│   │   │   ├── ForgotPassword.vue
+│   │   │   └── ResetPassword.vue
+│   │   └── Admin/
+│   │       ├── Dashboard.vue
+│   │       ├── Products/
+│   │       │   ├── Index.vue
+│   │       │   └── Form.vue
+│   │       ├── Categories/
+│   │       │   ├── Index.vue
+│   │       │   └── Form.vue
+│   │       ├── Attributes/
+│   │       │   └── Index.vue
+│   │       ├── Orders/
+│   │       │   ├── Index.vue
+│   │       │   └── Show.vue
+│   │       ├── Reviews/
+│   │       │   └── Index.vue
+│   │       ├── Customers/
+│   │       │   └── Index.vue
+│   │       ├── Users/
+│   │       │   ├── Index.vue
+│   │       │   └── Permissions.vue
+│   │       └── Settings/
+│   │           └── Index.vue
+│   ├── Components/
+│   │   ├── Public/
+│   │   │   ├── Navbar.vue
+│   │   │   ├── Footer.vue
+│   │   │   ├── ProductCard.vue
+│   │   │   ├── CategoryCard.vue
+│   │   │   ├── CategoryFilter.vue
+│   │   │   ├── CartDrawer.vue
+│   │   │   ├── ReviewStars.vue
+│   │   │   ├── ReviewCard.vue
+│   │   │   ├── PromoCodeInput.vue
+│   │   │   ├── AddressForm.vue
+│   │   │   └── PromoBanner.vue
+│   │   ├── Admin/
+│   │   │   ├── Sidebar.vue
+│   │   │   ├── TopBar.vue
+│   │   │   ├── StatsCard.vue
+│   │   │   ├── DataTable.vue
+│   │   │   ├── AttributeBuilder.vue
+│   │   │   ├── ImageUploader.vue
+│   │   │   ├── SeoFields.vue
+│   │   │   ├── PermissionsMatrix.vue
+│   │   │   ├── OrderStatusStepper.vue
+│   │   │   ├── ActivityFeed.vue
+│   │   │   └── NotificationPanel.vue
+│   │   └── Shared/
+│   │       ├── AppModal.vue
+│   │       ├── ConfirmModal.vue
+│   │       ├── AppButton.vue
+│   │       ├── AppInput.vue
+│   │       ├── AppSelect.vue
+│   │       ├── AppTextarea.vue
+│   │       ├── AppToggle.vue
+│   │       ├── AppBadge.vue
+│   │       ├── AppPagination.vue
+│   │       ├── AppAlert.vue
+│   │       ├── EmptyState.vue
+│   │       └── LoadingSpinner.vue
+│   ├── Layouts/
+│   │   ├── AppLayout.vue
+│   │   ├── AuthLayout.vue
+│   │   ├── ProfileLayout.vue
+│   │   └── AdminLayout.vue
+│   └── Composables/
+│       ├── useCart.js
+│       ├── useFavourite.js
+│       ├── useToast.js
+│       └── useConfirm.js
+
+routes/
+├── web.php
+├── auth.php
+└── admin.php
+```
+
+---
+
+## 7. Routes
+
+### `routes/web.php`
+```php
+// Public
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])->name('categories.show');
+
+// Cart (guest + auth)
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/promo', [CartController::class, 'applyPromo'])->name('cart.promo');
+
+// Authenticated users
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [OrderController::class, 'create'])->name('checkout');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+
+    Route::get('/favourites', [FavouriteController::class, 'index'])->name('favourites.index');
+    Route::post('/favourites/{product}', [FavouriteController::class, 'toggle'])->name('favourites.toggle');
+
+    Route::apiResource('collections', CollectionController::class);
+
+    Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::apiResource('addresses', AddressController::class);
+    Route::patch('/addresses/{address}/default', [AddressController::class, 'setDefault'])->name('addresses.default');
+});
+```
+
+### `routes/admin.php`
+```php
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('products', Admin\ProductController::class);
+    Route::resource('categories', Admin\CategoryController::class);
+    Route::resource('attributes', Admin\AttributeController::class);
+    Route::resource('orders', Admin\OrderController::class)->only(['index', 'show', 'update']);
+    Route::post('/orders/{order}/refund', [Admin\OrderController::class, 'refund'])->name('orders.refund');
+    Route::resource('reviews', Admin\ReviewController::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::post('/reviews/{review}/respond', [Admin\ReviewController::class, 'respond'])->name('reviews.respond');
+    Route::resource('customers', Admin\CustomerController::class)->only(['index', 'show']);
+    Route::resource('promo-codes', Admin\PromoCodeController::class);
+
+    // Admin user management — super_admin only
+    Route::middleware('super_admin')->group(function () {
+        Route::get('/users', [Admin\UserController::class, 'index'])->name('users.index');
+        Route::post('/users/invite', [Admin\UserController::class, 'invite'])->name('users.invite');
+        Route::get('/users/{user}/permissions', [Admin\UserController::class, 'permissions'])->name('users.permissions');
+        Route::patch('/users/{user}/permissions', [Admin\UserController::class, 'updatePermissions'])->name('users.permissions.update');
+        Route::patch('/users/{user}/deactivate', [Admin\UserController::class, 'deactivate'])->name('users.deactivate');
+        Route::delete('/users/{user}', [Admin\UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    Route::get('/settings', [Admin\SettingController::class, 'index'])->name('settings.index');
+    Route::patch('/settings', [Admin\SettingController::class, 'update'])->name('settings.update');
+});
+```
+
+---
+
+## 8. Inertia Shared Data
+
+In `App\Http\Middleware\HandleInertiaRequests`:
+
+```php
+public function share(Request $request): array
+{
+    return [
+        ...parent::share($request),
+        'auth' => [
+            'user' => $request->user() ? [
+                'id'          => $request->user()->id,
+                'name'        => $request->user()->name,
+                'email'       => $request->user()->email,
+                'role'        => $request->user()->role,
+                'avatar'      => $request->user()->avatar,
+                'permissions' => $request->user()->permissions,
+            ] : null,
+        ],
+        'cart' => [
+            'count' => CartService::getCount($request),
+        ],
+        'flash' => [
+            'success' => $request->session()->get('success'),
+            'error'   => $request->session()->get('error'),
+        ],
+        'site' => [
+            'name'    => SiteSettingService::get('site_name', 'Crave Bakery'),
+            'logo'    => SiteSettingService::get('site_logo'),
+            'tagline' => SiteSettingService::get('site_tagline'),
+        ],
+    ];
+}
+```
+
+Access in any Vue component: `$page.props.auth.user`, `$page.props.cart.count`, `$page.props.flash`
+
+---
+
+## 9. Design System
+
+### 9.1 Brand Identity
+- **Name:** Crave Bakery
+- **Personality:** Warm, artisan, premium — modern and clean, never rustic or vintage
+- **Tone:** Friendly, trustworthy, appetising
+
+### 9.2 Color Palette
+
+| Token name | Hex value | Tailwind config key | Usage |
+|---|---|---|---|
+| Primary (espresso) | `#3D1A0E` | `primary` | Navbar bg, hero bg, strong headings, sidebar |
+| Accent (orange-red) | `#E8572A` | `accent` | All CTA buttons, active states, highlights, links |
+| Surface | `#FDF6EE` | `surface` | All page backgrounds |
+| Card | `#FFFFFF` | `card` | Product cards, modals, panels |
+| Text primary | `#1A1A1A` | `text-primary` | All body text |
+| Text muted | `#6B6B6B` | `text-muted` | Subtitles, helpers, secondary info |
+| Border | `#E5DDD4` | `border-base` | Input borders, dividers, card borders |
+| Success | `#2E7D32` | `success` | Order delivered, in stock, approved |
+| Error | `#C62828` | `error` | Validation errors, delete actions |
+| Warning | `#EF9F27` | `warning` | Pending status, low stock, unsaved changes |
+| Info | `#185FA5` | `info` | Processing status, informational badges |
+
+Add to `tailwind.config.js`:
+```js
+theme: {
+  extend: {
+    colors: {
+      primary:   '#3D1A0E',
+      accent:    '#E8572A',
+      surface:   '#FDF6EE',
+      success:   '#2E7D32',
+      error:     '#C62828',
+      warning:   '#EF9F27',
+      info:      '#185FA5',
+    }
+  }
+}
+```
+
+### 9.3 Typography
+
+| Role | Font family | Weights | Sizes |
+|---|---|---|---|
+| Display / Headings | Playfair Display (serif) | 400, 700 | 48px / 36px / 28px / 22px / 18px |
+| Body / UI | Inter (sans-serif) | 400, 500, 600 | 16px base / 14px small / 13px xs / 12px xxs / 11px micro |
+
+Load in `resources/css/app.css`:
+```css
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap');
+```
+
+Tailwind font config:
+```js
+fontFamily: {
+  serif: ['Playfair Display', 'Georgia', 'serif'],
+  sans:  ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+}
+```
+
+### 9.4 Component Design Tokens
+
+#### Buttons
+```
+Primary:   bg-accent text-white rounded-full h-12 px-6 font-sans font-500 hover:bg-[#cf4d25]
+Secondary: bg-transparent border border-primary text-primary rounded-full h-12 px-6 hover:bg-primary/5
+Danger:    bg-error text-white rounded-full h-12 px-6
+Small:     h-8 px-4 text-sm (same radius rules apply)
+Disabled:  opacity-50 cursor-not-allowed
+```
+
+#### Cards
+```
+bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] (all cards)
+Admin cards: same + optional border border-border-base
+```
+
+#### Inputs
+```
+bg-white border border-[#E5DDD4] rounded-[10px] h-12 px-4 text-sm
+Focus: border-accent ring-1 ring-accent/20 outline-none
+Error: border-error ring-1 ring-error/20
+Valid: border-success
+Disabled: bg-surface opacity-60
+```
+
+#### Badges / Pills
+```
+border-radius: 6px (status badges)
+border-radius: 999px (filter pills, category tags)
+Font: 12px Inter weight-500
+
+Status colours:
+  Pending:   bg-warning/10 text-warning
+  Processing: bg-info/10 text-info
+  Shipped:   bg-purple-100 text-purple-700
+  Delivered: bg-success/10 text-success
+  Cancelled: bg-error/10 text-error
+  Active:    bg-success/10 text-success
+  Draft:     bg-gray-100 text-gray-500
+  Featured:  bg-accent/10 text-accent
+```
+
+#### Shadows
+```
+Card:   0 2px 12px rgba(0,0,0,0.07)
+Modal:  0 8px 40px rgba(0,0,0,0.15)
+Navbar: 0 1px 3px rgba(0,0,0,0.08)
+```
+
+#### Spacing
+```
+Page padding:     px-6 py-8 (public)  /  px-6 py-6 (admin)
+Section gap:      space-y-6
+Card padding:     p-6 (standard)  /  p-5 (compact)
+Form field gap:   space-y-4
+Table row height: h-14 (standard)  /  h-16 (with thumbnails)
+```
+
+### 9.5 Icon System
+Use **Tabler Icons** exclusively (`@tabler/icons-vue`).
+
+```vue
+<script setup>
+import { IconShoppingCart, IconHeart, IconSearch } from '@tabler/icons-vue'
+</script>
+
+<template>
+  <IconShoppingCart :size="20" stroke-width="1.5" />
+</template>
+```
+
+Icon sizes: 16px (micro), 18px (small), 20px (default), 24px (large), 32px (display).  
+Stroke width: always `1.5` for consistency.
+
+---
+
+## 10. Page Inventory
+
+### 10.1 Public Pages
+
+#### Homepage (`/`)
+- Espresso navbar with logo, navigation links, cart count, Sign Up button
+- Full-width hero: espresso bg, product photo, headline in Playfair Display, accent CTA button, star rating widget, decorative bread line-art icons
+- "Our Premium Product" section: category filter pills + 3-col product card grid
+- Featured categories section
+- About / story section
+- Testimonials / reviews strip
+- Instagram-style photo gallery
+- Promo banner (dismissible, driven by site settings)
+- Footer with links, social icons, contact info
+
+#### Product Listing (`/products`)
+- Breadcrumb
+- Left filter sidebar (260px sticky): search, categories checkboxes, price range slider, rating filter, availability
+- Right: results count + sort dropdown + 3-col product card grid
+- Product card: image, heart icon, badge (New/Best Seller/% Off), category tag, name, stars, price, Add to Cart button
+- Out-of-stock card state: desaturated image, "Notify Me" button
+- Pagination
+- Empty state
+
+#### Product Detail (`/products/{slug}`)
+- Breadcrumb
+- Left (55%): image gallery with thumbnails
+- Right (45%): category tag, name (Playfair), stars, price (with strike-through if on sale), description, dynamic attribute selectors (pills/dropdown/swatches based on attribute display_type), quantity stepper, stock indicator, Add to Cart + Add to Favourites buttons, delivery info strip, share buttons
+- Tabs: Description, Ingredients, Nutrition, Reviews
+- Reviews tab: rating summary with breakdown bars, Write a Review button, review cards with helpful voting
+- Admin-only SEO panel (collapsed accordion)
+- Related products horizontal scroll
+
+#### Category Listing (`/categories/{slug}`)
+- Category banner with image
+- Same filter + grid layout as product listing filtered to category
+
+#### Cart (`/cart`)
+- Cart items list: thumbnail, name, attributes, quantity stepper, line total, remove button
+- Promo code input with success/error state
+- Order summary sidebar: subtotal, discount, delivery, tax, total, Proceed to Checkout button, trust icons, Apple/Google Pay buttons
+- Empty cart state
+
+#### Checkout (`/checkout`)
+- Distraction-free layout (simplified navbar — logo + "Secure Checkout" only)
+- 3-step progress: Delivery → Payment → Confirmation
+- Step 1: contact form, address form, delivery method selector cards
+- Step 2: payment method tabs (Card/PayPal/Apple Pay/Google Pay), card form with strength indicator
+- Step 3: Order confirmed page — checkmark animation, order number, estimated delivery, reorder / continue shopping buttons
+- Order summary sidebar (condensed, sticky)
+
+#### Order Confirmation (`/checkout/confirmation`)
+- Standalone confirmation page after successful order
+
+#### Order History (`/orders`)
+- Order cards: order ID, date, product thumbnails, status badge, total, View Details + Reorder buttons
+- Filter by status
+
+#### Order Detail (`/orders/{order}`)
+- Progress stepper (Order Placed → Payment → Processing → Delivery → Delivered)
+- Order items + pricing breakdown
+- Delivery address + payment method cards
+- Review prompt banner (delivered orders only)
+
+#### Favourites (`/favourites`)
+- Toolbar: search, category filter, sort, grid/list view toggle, Clear All
+- Grid view: 4-col product cards with filled heart, "Added X days ago", Add to Cart + Remove buttons
+- List view: condensed rows
+- My Collections section: mosaic thumbnail cards, Create Collection button
+- Create Collection modal
+- Empty states
+
+#### Profile (`/profile`)
+- Left sidebar: avatar, name, email, navigation menu
+- My Profile tab: personal info form, password change, danger zone (delete account)
+- My Orders tab: order cards with status filters
+- Addresses tab: address cards grid, Add address modal
+- Payment Methods tab
+- Account Settings tab
+
+#### Auth Pages
+- Login: split layout (brand panel left, form right), social login, email/password form
+- Register: same layout, full registration form with password strength bar
+- Forgot Password: email input, success confirmation state
+- Reset Password: new password form with strength bar, success state
+
+### 10.2 Admin Pages
+
+#### Dashboard (`/admin`)
+- Welcome banner (espresso bg with admin name and date)
+- 4 KPI cards: Revenue, Orders, New Customers, Avg Order Value (each with sparkline)
+- Revenue area chart (period toggle: 7D / 1M / 3M / 1Y)
+- Orders by Category donut chart
+- Recent orders table
+- Top products list
+- Low stock alerts
+- Recent reviews (with approve/reject actions)
+- Activity feed timeline
+- Slide-in notification panel (bell icon)
+
+#### Products List (`/admin/products`)
+- Stats strip (Total, Active, Out of Stock, Featured)
+- Search + filters toolbar (category, status, stock, price range, featured toggle, date range)
+- Data table: checkbox, thumbnail+name+SKU, categories, price, stock bar, status badge, featured toggle star, created date, actions
+- Bulk actions bar
+- Delete confirmation modal
+
+#### Product Form (`/admin/products/create` & `/admin/products/{id}/edit`)
+- 5-step form indicator: Basic Info → Media → Pricing & Stock → Attributes → SEO
+- Left (65%): form sections as stacked white cards
+  - Basic Info: name, slug auto-preview, short description, full description (rich text), multi-category selector, tags
+  - Media: primary image drop zone, additional images row, alt text
+  - Pricing & Stock: regular/sale/cost price, discount preview badge, SKU, barcode, stock management toggle, backorder option
+  - Attributes: select existing attribute to add, per-attribute value builder (drag-to-reorder values, display type toggle: pills/dropdown/swatches), required toggle
+  - SEO: meta title/description/keywords, OG image, canonical URL, live Google search preview
+- Right (35%) sticky sidebar: publish settings card, product summary card, quick actions
+
+#### Attributes (`/admin/attributes`)
+- Attributes list table with drag-to-reorder, name, type, display type, values count, products used count
+- Add/Edit attribute panel: name, type, display type, values builder with drag-reorder
+
+#### Categories List (`/admin/categories`)
+- Stats strip (Total, Active, Empty)
+- Search + status filter + list/tree view toggle
+- List view table: thumbnail+name+slug, parent, products count, status, sort order input, actions
+- Tree view: hierarchical drag-and-drop, expand/collapse, connecting lines, add child button per node
+- Delete modal with product reassignment options
+
+#### Category Form (`/admin/categories/create` & `/admin/categories/{id}/edit`)
+- Left: Basic Info (name, slug, parent, description, sort order), Media (image + banner), SEO fields + Google preview, Display Settings (layout, products per page, default sort, show in nav/homepage, custom color picker)
+- Right: publish card, category preview card, products in category list
+
+#### Orders List (`/admin/orders`)
+- Stats strip (Total, Pending, Processing, Delivered, Cancelled)
+- Search + status tabs + expanded filters (date range, payment method, delivery, amount range)
+- Table: order ID+date, customer avatar+name+email, product thumbnails+count, total+payment badge, payment status, delivery type, status badge, actions (view, edit status, print, more)
+- Bulk: mark processing/shipped/delivered, print, export
+
+#### Order Detail (`/admin/orders/{id}`)
+- 5-step progress tracker with timestamps
+- 3-column layout:
+  - Left (45%): order items + pricing summary, refund/adjustment card
+  - Middle (30%): customer card, delivery card, payment card
+  - Right (25%): activity timeline + internal notes, quick status change card
+- Print/invoice preview panel
+- Status update modal with customer email notification toggle
+
+#### Reviews (`/admin/reviews`)
+- Stats strip (Total, Pending, Approved, Flagged, Avg Rating)
+- Search + status tabs + rating filter stars + expanded filters
+- Review rows: customer avatar+name+verified badge, review title+excerpt+flag reason, product thumbnail, star rating, status badge, date, actions
+- Bulk approve/reject/delete
+- Slide-in review detail panel (480px): full review, customer info, product info, admin response composer, flag details, action footer
+- Review Settings page: moderation mode, profanity filter, display settings, notification preferences, review request email config
+
+#### Customers (`/admin/customers`)
+- Customer table: avatar+name+email, orders count, total spent, registered date, status, actions
+- Customer detail view (read-only profile + order history)
+
+#### Admin Users (`/admin/users`) — super_admin only
+- Admin cards grid: avatar, online indicator, name, email, role badge, permission icons row, last active, Edit Permissions button
+- Pending invite cards with resend option
+- Invite Admin modal: name, email, role selector cards (Super Admin / Admin / Custom), custom permissions checklist
+- Edit Permissions page: admin info card, permissions matrix table (toggle switches per action per section), activity restrictions card
+- Activity log sidebar card
+- Deactivate modal + Remove modal (name-confirmation pattern)
+- My Admin Profile page: personal info, security, active sessions, 2FA, notification preferences
+
+#### Site Settings (`/admin/settings`)
+- Left navigation panel (240px sticky) with section groups: General, Appearance, Homepage, SEO, Social, Sitemap, Delivery, Taxes, Payments, Email, Scripts, Security, Maintenance
+- Unsaved changes banner + sticky save footer
+- Section cards (all stacked, scroll-spy navigation):
+  - **General:** site identity (name, tagline, logo, favicon, dark logo), contact info, business hours (per-day toggles), timezone & currency
+  - **Appearance:** brand color pickers (with live preview strip), typography dropdowns (with font preview), custom CSS editor
+  - **Homepage:** hero toggle+content, featured products (auto/manual), featured categories, testimonials, promo banner config
+  - **Global SEO:** meta title template, default meta description/keywords, homepage SEO, live Google preview, indexing toggle, canonical base, preferred URL format, structured data schema checkboxes
+  - **Social & Open Graph:** OG title/description/image, OG Facebook preview card, Twitter card type, Twitter preview card, social media links
+  - **Sitemap & Robots:** auto-generate toggle, sitemap URL (copy/open), include checkboxes, regenerate button, robots.txt code editor
+  - **Delivery & Shipping:** free delivery threshold, standard/express fees, estimated times, delivery zones manager
+  - **Scripts & Integrations:** Google Analytics, GTM, Facebook Pixel IDs, integration cards grid (connect/connected), head/body custom scripts
+  - **Maintenance:** maintenance mode toggle (red-tinted track), message editor, expected online time, maintenance page preview card
+
+---
+
+## 11. Key Component Contracts
+
+### `ProductCard.vue`
+```ts
+props: {
+  product: {
+    id: number
+    name: string
+    slug: string
+    short_description: string
+    regular_price: number
+    sale_price: number | null
+    thumbnail: string
+    average_rating: number
+    reviews_count: number
+    is_featured: boolean
+    stock_status: 'in_stock' | 'out_of_stock'
+    badge: string | null  // 'New' | 'Best Seller' | '20% Off' | null
+    categories: Array<{ id: number, name: string }>
+    is_favourited: boolean
+  }
+  compact: boolean  // list view mode
+}
+emits: ['add-to-cart', 'toggle-favourite']
+```
+
+### `AppButton.vue`
+```ts
+props: {
+  variant: 'primary' | 'secondary' | 'danger' | 'ghost'
+  size: 'sm' | 'md' | 'lg'
+  loading: boolean
+  disabled: boolean
+  icon: Component | null
+}
+```
+
+### `AppModal.vue`
+```ts
+props: {
+  show: boolean
+  title: string
+  size: 'sm' | 'md' | 'lg' | 'xl'
+}
+emits: ['close']
+// Uses Headless UI Dialog internally
+```
+
+### `SeoFields.vue` (reusable in product form, category form, and settings)
+```ts
+props: {
+  modelValue: {
+    meta_title: string
+    meta_description: string
+    meta_keywords: string[]
+    og_image: string | null
+    canonical_url: string
+  }
+  previewUrl: string
+  previewTitle: string
+}
+emits: ['update:modelValue']
+```
+
+### `DataTable.vue` (admin)
+```ts
+props: {
+  columns: Array<{ key: string, label: string, sortable: boolean }>
+  rows: Array<Record<string, any>>
+  loading: boolean
+  selectable: boolean
+}
+emits: ['sort', 'select', 'select-all']
+```
+
+---
+
+## 12. Layouts
+
+### `AppLayout.vue`
+- Used by all public pages
+- Includes: `<Navbar>`, `<PromoBanner>`, `<slot>`, `<Footer>`, `<CartDrawer>`
+- Passes `$page.props.site` to Navbar for dynamic logo/name
+- Flash message toast handled here
+
+### `AuthLayout.vue`
+- Used by Login, Register, ForgotPassword, ResetPassword
+- Split two-column: left brand panel (espresso bg, logo, trust points) + right form slot
+
+### `ProfileLayout.vue`
+- Used by all `/profile/*` pages
+- Includes Navbar + Footer + left sidebar navigation + right content slot
+
+### `AdminLayout.vue`
+- Used by all `/admin/*` pages
+- Includes: `<AdminSidebar>`, `<AdminTopBar>`, `<slot>`
+- No public navbar or footer
+- Sidebar state (collapsed/expanded) managed via `useLocalStorage` from `@vueuse/core`
+
+---
+
+## 13. State Management
+
+No Pinia/Vuex. Use Inertia's built-in state + composables:
+
+### `useCart.js`
+```js
+// Wraps Inertia router.post/delete calls for cart operations
+// Reads count from $page.props.cart.count
+export function useCart() {
+  const add = (productId, attributes, quantity) => { ... }
+  const remove = (cartItemId) => { ... }
+  const update = (cartItemId, quantity) => { ... }
+  return { add, remove, update }
+}
+```
+
+### `useFavourite.js`
+```js
+// Optimistic UI — updates local state immediately, syncs with server
+export function useFavourite(productId) {
+  const isFavourited = ref(false)
+  const toggle = () => { ... }
+  return { isFavourited, toggle }
+}
+```
+
+### `useToast.js`
+```js
+// Global toast notification system
+// Reads from $page.props.flash on every Inertia navigation
+export function useToast() {
+  const show = (message, type = 'success') => { ... }
+  return { show }
+}
+```
+
+---
+
+## 14. SEO Strategy
+
+- Every public page uses `<Head>` from `@inertiajs/vue3` to set meta tags
+- Products and categories pass `meta_title`, `meta_description`, `og_image` from the controller
+- Global defaults come from `SiteSettingService` and are merged in the controller
+- Title template: `{page_title} | {site_name}`
+- `sitemap.xml` auto-generated — regenerated on product/category create/update/delete
+- `robots.txt` stored in `site_settings` and served dynamically
+- All product/category URLs use slugs (never IDs)
+- Canonical URLs set on all product and category pages
+
+---
+
+## 15. Build Order (Development Phases)
+
+### Phase 1 — Foundation
+1. Install Laravel 11 + Breeze (Inertia + Vue)
+2. Configure Tailwind with design system tokens
+3. Create all migrations and run `php artisan migrate`
+4. Create all Models with relationships and `$fillable`
+5. Create `HandleInertiaRequests` shared data
+6. Create `AppLayout`, `AdminLayout`, `AuthLayout` shells
+
+### Phase 2 — Auth & Public Shell
+7. Auth pages: Login, Register, Forgot/Reset Password
+8. Navbar component with cart count + mobile menu
+9. Footer component
+10. Homepage (hero + featured products + categories sections)
+
+### Phase 3 — Product Catalogue
+11. Product listing page with filters + pagination
+12. Product detail page with image gallery + attributes + reviews
+13. Category listing page
+
+### Phase 4 — Cart & Checkout
+14. CartService + CartController
+15. Cart page with promo code
+16. Checkout flow (3 steps + confirmation)
+17. OrderService + OrderController
+18. Order confirmation email
+
+### Phase 5 — User Account
+19. Profile pages (info, password, danger zone)
+20. Order history + order detail
+21. Addresses CRUD
+22. Favourites + Collections
+
+### Phase 6 — Admin Panel
+23. AdminLayout + Sidebar + TopBar
+24. Admin Dashboard (KPIs + charts)
+25. Products CRUD + Attributes management
+26. Categories CRUD + Tree view
+27. Orders management + Order detail
+28. Reviews moderation
+29. Customers list
+
+### Phase 7 — Super Admin
+30. Admin users list + Invite flow
+31. Permissions matrix
+32. Site Settings (all sections)
+
+### Phase 8 — Polish
+33. SEO meta tags on all pages
+34. Sitemap generation
+35. Activity logging (Spatie)
+36. Email notifications
+37. Low stock alerts
+38. Promo codes
+
+---
+
+## 16. Environment Variables
+
+```env
+APP_NAME="Crave Bakery"
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=crave_bakery
+DB_USERNAME=root
+DB_PASSWORD=
+
+MAIL_MAILER=smtp
+MAIL_FROM_ADDRESS="hello@cravebakery.com"
+MAIL_FROM_NAME="Crave Bakery"
+
+STRIPE_KEY=
+STRIPE_SECRET=
+
+MEDIA_DISK=public
+```
+
+---
+
+## 17. Naming Conventions Cheatsheet
+
+| Thing | Convention | Example |
+|---|---|---|
+| Laravel controller | PascalCase + Controller | `ProductController` |
+| Laravel model | PascalCase singular | `Product` |
+| Laravel migration | snake_case descriptive | `create_products_table` |
+| Laravel route name | dot.notation | `products.show` |
+| Vue page component | PascalCase in folder | `Products/Show.vue` |
+| Vue shared component | PascalCase with prefix | `AppButton.vue`, `AdminSidebar.vue` |
+| Vue composable | camelCase with `use` | `useCart.js` |
+| Tailwind class order | Layout → Spacing → Typography → Color → Effect | standard Prettier plugin order |
+| DB column | snake_case | `is_featured`, `meta_title` |
+| JS variable | camelCase | `cartItems`, `isLoading` |
+| CSS custom property | kebab-case | `--color-accent` |
+
+---
+
+*Last updated: 11 June 2026 — covers full conversation including design system, all 15 Google Stitch screens, and complete Cursor AI build rules*

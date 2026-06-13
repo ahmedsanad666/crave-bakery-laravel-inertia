@@ -1,0 +1,64 @@
+# Dependencies
+/node_modules
+/vendor
+
+# Environment & secrets (never commit)
+.env
+.env.*
+!.env.example
+/auth.json
+
+# Laravel build & runtime
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*
+!bootstrap/cache/.gitignore
+
+# Logs & caches
+*.log
+.phpunit.result.cache
+/.phpunit.cache
+.php-cs-fixer.cache
+.phpstan.cache
+
+# IDE & editor (local only)
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+/.codex
+.phpactor.json
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+
+# Cursor — ignore local IDE state, keep shared project rules
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+
+# Node / package managers
+npm-debug.log
+yarn-error.log
+yarn-error.log*
+pnpm-debug.log
+
+# Homestead / Valet
+Homestead.json
+Homestead.yaml
+/public/fonts-manifest.dev.json
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Editor swap files
+*.swp
+*.swo
+*~
