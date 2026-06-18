@@ -55,7 +55,7 @@ class ReviewSeeder extends Seeder
             }
         }
 
-        Review::factory(8)
+         Review::factory(8)
             ->approved()
             ->recycle($customers)
             ->recycle($products)

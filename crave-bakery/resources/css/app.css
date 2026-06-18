@@ -112,4 +112,27 @@
     .overlay-backdrop {
         @apply bg-[#1A1A1A]/40;
     }
+
+    /* Admin panel */
+    .admin-sidebar-link-active {
+        @apply border-l-4 border-secondary-container bg-white/5;
+    }
+
+    .admin-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #d6c2bd transparent;
+    }
+
+    .admin-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .admin-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .admin-scrollbar::-webkit-scrollbar-thumb {
+        background: #d6c2bd;
+        border-radius: 10px;
+    }
 }

@@ -1,0 +1,709 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Artisan Admin | Crave Bakery Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Playfair+Display:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6c2bd;
+            border-radius: 10px;
+        }
+        .sidebar-active {
+            border-left: 4px solid #fc6537;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-background": "#1c1b1b",
+                      "primary-container": "#3d1a0e",
+                      "on-secondary-fixed-variant": "#862200",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed": "#e8e1da",
+                      "on-secondary-container": "#5c1400",
+                      "inverse-on-surface": "#f3f0ef",
+                      "surface-dim": "#dcd9d9",
+                      "secondary-fixed-dim": "#ffb59f",
+                      "error": "#ba1a1a",
+                      "primary": "#220601",
+                      "tertiary-fixed-dim": "#ccc6be",
+                      "inverse-primary": "#f6b8a5",
+                      "outline": "#84746f",
+                      "surface-container-low": "#f6f3f2",
+                      "on-tertiary-fixed": "#1e1b17",
+                      "on-secondary-fixed": "#3b0a00",
+                      "tertiary": "#110f0a",
+                      "on-primary": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#313030",
+                      "surface-variant": "#e5e2e1",
+                      "secondary-fixed": "#ffdbd1",
+                      "surface": "#fcf9f8",
+                      "on-surface": "#1c1b1b",
+                      "outline-variant": "#d6c2bd",
+                      "on-tertiary-fixed-variant": "#4a4641",
+                      "surface-container-highest": "#e5e2e1",
+                      "surface-container-high": "#eae7e7",
+                      "primary-fixed": "#ffdbd0",
+                      "on-primary-container": "#b47e6d",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-container": "#8f8b84",
+                      "on-surface-variant": "#514440",
+                      "on-primary-fixed": "#321207",
+                      "surface-tint": "#825343",
+                      "surface-container": "#f0eded",
+                      "tertiary-container": "#26241f",
+                      "surface-bright": "#fcf9f8",
+                      "primary-fixed-dim": "#f6b8a5",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#fc6537",
+                      "secondary": "#b02f00",
+                      "background": "#fcf9f8",
+                      "on-primary-fixed-variant": "#663c2d",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "unit": "4px",
+                      "lg": "24px",
+                      "xxl": "48px",
+                      "sm": "8px",
+                      "gutter": "16px",
+                      "container-margin": "24px"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-sm": ["Playfair Display"],
+                      "display-lg": ["Playfair Display"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Playfair Display"],
+                      "headline-md": ["Playfair Display"],
+                      "label-caps": ["Inter"],
+                      "body-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                      "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
+<!-- SideNavBar (Authority: JSON & Context) -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-primary-container text-tertiary-fixed-dim shadow-md z-50 flex flex-col py-md overflow-y-auto transition-all duration-300">
+<!-- Logo Branding -->
+<div class="px-lg pb-xxl flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-headline-sm text-on-primary-fixed">Crave Bakery</span>
+<span class="text-[10px] tracking-widest uppercase opacity-70 text-secondary-fixed">Artisan Admin</span>
+</div>
+<span class="bg-secondary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ADMIN</span>
+</div>
+<!-- Navigation Clusters -->
+<nav class="flex-1 space-y-sm px-2">
+<!-- Main Section -->
+<div class="mb-lg">
+<p class="px-4 text-[10px] font-bold tracking-widest text-on-primary-container uppercase mb-2">Main</p>
+<a class="sidebar-active flex items-center gap-3 px-4 py-3 bg-white/5 text-white rounded-lg mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px] fill-icon">dashboard</span>
+<span class="font-body-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="font-body-lg">Analytics</span>
+</a>
+</div>
+<!-- Catalogue -->
+<div class="mb-lg">
+<p class="px-4 text-[10px] font-bold tracking-widest text-on-primary-container uppercase mb-2">Catalogue</p>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">menu_book</span>
+<span class="font-body-lg">Products</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">category</span>
+<span class="font-body-lg">Categories</span>
+</a>
+</div>
+<!-- Sales -->
+<div class="mb-lg">
+<p class="px-4 text-[10px] font-bold tracking-widest text-on-primary-container uppercase mb-2">Sales</p>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-body-lg">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">sell</span>
+<span class="font-body-lg">Promo Codes</span>
+</a>
+</div>
+<!-- Customers -->
+<div class="mb-lg">
+<p class="px-4 text-[10px] font-bold tracking-widest text-on-primary-container uppercase mb-2">Customers</p>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-body-lg">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">star</span>
+<span class="font-body-lg">Reviews</span>
+</a>
+</div>
+</nav>
+<!-- Footer Actions -->
+<div class="border-t border-white/10 pt-md mt-md">
+<a class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-white/5 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-lg">Settings</span>
+</a>
+<div class="flex items-center gap-3 px-4 py-4 mx-2 mt-2 bg-black/20 rounded-xl">
+<img alt="Mohammed A." class="w-10 h-10 rounded-full border border-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwYs6viSYzyNW424cLAleMNJI2v2mSTJEmelVu_rGZdd-R8K1EONiqFoeSO56ovwPF-Gk31TeH9gc16cGrwJ-85EtcMUg-FV_WZ3WPCaxUlP9bP3Kzm1Ra0LRfZvxGu1nXUq9v2GEqhdYp6Bp8VYuSD61R1qksU-PJbprKFF6ZMzsvTYrOABqhk-PF2CQ3T5b7g81DtGZFA9nbQ0x5Dcue3ED7km5OGSFBnc-7qbS26EIcSwY6YnBuzbWEoNKHHFOqWvEf3_4EmA">
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-white">Mohammed A.</span>
+<span class="text-xs opacity-60">Master Baker Admin</span>
+</div>
+<button class="ml-auto text-tertiary-fixed-dim hover:text-white">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface shadow-sm z-40 flex justify-between items-center px-lg">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<h1 class="font-title-lg text-primary">Dashboard</h1>
+<nav class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">
+                    Admin <span class="mx-1">/</span> <span class="text-secondary">Dashboard</span>
+</nav>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search Bar -->
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-xl">search</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 w-64 text-sm focus:ring-2 focus:ring-secondary/20 placeholder:text-outline-variant" placeholder="Search orders, customers..." type="text">
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" onclick="toggleNotifications()">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-4 h-4 bg-error text-[10px] text-white flex items-center justify-center rounded-full border-2 border-white">3</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">contrast</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/30"></div>
+<div class="flex items-center gap-3">
+<img alt="MA" class="w-8 h-8 rounded-full bg-secondary-fixed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE_x1Ebbjtv8EYsSIacE_FNtBeD2oQXNGdSJyNk6nOjLEK-nlxiQTlco36_aovbFTrQh9tt_cWBG_0fQWram80wgtvDmDuks9ZIAhxzghQsXxd8i5gUpdKg6UbXeHQoK-yVbTIihp5oZy72rCEdlEmEWfDd8DxAHlOqdUgAenCZ1Vdfsg-7A9FQhJ_ovR1VGhzYOyzdYPAbT-2B8XgCVSna_RJC4Eg-nHpjGQbbNijE2un_aOwmBeYUhtUSKbAYs4DOIxiPcB4lg">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-16 ml-64 min-h-screen bg-[#FDF6EE] p-lg">
+<div class="max-w-[1400px] mx-auto space-y-lg">
+<!-- Row 1: Welcome -->
+<section class="bg-primary-container rounded-xxl p-xl relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between">
+<div class="relative z-10 space-y-2">
+<h2 class="font-headline-md text-white">Good morning, Mohammed 👋</h2>
+<p class="text-tertiary-fixed-dim text-body-lg">Here's what's happening at Crave Bakery today.</p>
+</div>
+<div class="flex gap-4 mt-6 md:mt-0 relative z-10">
+<div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+<span class="material-symbols-outlined text-white/70 text-sm">calendar_today</span>
+<span class="text-white text-sm font-semibold">Oct 24, 2023</span>
+</div>
+<div class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+<span class="text-white text-sm font-semibold">Store Open</span>
+</div>
+<div class="bg-secondary text-white px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">local_shipping</span>
+<span class="text-sm font-bold uppercase tracking-wider">12 Active Deliveries</span>
+</div>
+</div>
+<!-- Subtle graphic overlay -->
+<div class="absolute right-0 top-0 h-full w-1/2 opacity-10 pointer-events-none">
+<div class="absolute inset-0 bg-gradient-to-l from-secondary to-transparent"></div>
+</div>
+</section>
+<!-- Row 2: KPI Cards -->
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-lg">
+<!-- Card 1 -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-xl transition-shadow group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 bg-secondary-fixed flex items-center justify-center rounded-full text-secondary">
+<span class="material-symbols-outlined text-2xl">payments</span>
+</div>
+<div class="flex items-center text-green-600 text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+12.5%</span>
+</div>
+</div>
+<p class="text-outline text-label-caps uppercase mb-1">Total Revenue</p>
+<h3 class="font-headline-sm text-primary">$14,280.50</h3>
+<div class="mt-4 h-8 flex items-end gap-0.5">
+<div class="w-full bg-secondary/10 h-3 rounded-t-sm group-hover:h-5 transition-all"></div>
+<div class="w-full bg-secondary/10 h-5 rounded-t-sm group-hover:h-8 transition-all"></div>
+<div class="w-full bg-secondary h-8 rounded-t-sm group-hover:h-4 transition-all"></div>
+<div class="w-full bg-secondary/10 h-4 rounded-t-sm group-hover:h-6 transition-all"></div>
+<div class="w-full bg-secondary/10 h-6 rounded-t-sm group-hover:h-3 transition-all"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-xl transition-shadow group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 bg-tertiary-fixed flex items-center justify-center rounded-full text-primary">
+<span class="material-symbols-outlined text-2xl">shopping_cart</span>
+</div>
+<div class="flex items-center text-green-600 text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+8.2%</span>
+</div>
+</div>
+<p class="text-outline text-label-caps uppercase mb-1">Total Orders</p>
+<h3 class="font-headline-sm text-primary">1,284</h3>
+<div class="mt-4 h-8 flex items-end gap-0.5">
+<div class="w-full bg-secondary/10 h-6 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-4 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-8 rounded-t-sm"></div>
+<div class="w-full bg-secondary h-5 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-7 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-xl transition-shadow group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 bg-blue-50 flex items-center justify-center rounded-full text-blue-600">
+<span class="material-symbols-outlined text-2xl">group_add</span>
+</div>
+<div class="flex items-center text-error text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<span>-2.4%</span>
+</div>
+</div>
+<p class="text-outline text-label-caps uppercase mb-1">New Customers</p>
+<h3 class="font-headline-sm text-primary">348</h3>
+<div class="mt-4 h-8 flex items-end gap-0.5">
+<div class="w-full bg-secondary/10 h-3 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-6 rounded-t-sm"></div>
+<div class="w-full bg-secondary h-4 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-8 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-5 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] hover:shadow-xl transition-shadow group">
+<div class="flex justify-between items-start mb-md">
+<div class="w-12 h-12 bg-amber-50 flex items-center justify-center rounded-full text-amber-600">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+</div>
+<div class="flex items-center text-green-600 text-xs font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+4.1%</span>
+</div>
+</div>
+<p class="text-outline text-label-caps uppercase mb-1">Avg. Order Value</p>
+<h3 class="font-headline-sm text-primary">$36.72</h3>
+<div class="mt-4 h-8 flex items-end gap-0.5">
+<div class="w-full bg-secondary/10 h-5 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-8 rounded-t-sm"></div>
+<div class="w-full bg-secondary h-7 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-4 rounded-t-sm"></div>
+<div class="w-full bg-secondary/10 h-6 rounded-t-sm"></div>
+</div>
+</div>
+</section>
+<!-- Row 3: Charts -->
+<section class="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+<!-- Revenue Area Chart -->
+<div class="xl:col-span-2 bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-xl">
+<h4 class="font-title-lg text-primary">Revenue Overview</h4>
+<div class="flex p-1 bg-surface-container-low rounded-lg mt-4 sm:mt-0">
+<button class="px-4 py-1.5 text-xs font-bold bg-white shadow-sm rounded-md text-primary">7D</button>
+<button class="px-4 py-1.5 text-xs font-bold text-outline hover:text-primary transition-colors">1M</button>
+<button class="px-4 py-1.5 text-xs font-bold text-outline hover:text-primary transition-colors">3M</button>
+<button class="px-4 py-1.5 text-xs font-bold text-outline hover:text-primary transition-colors">1Y</button>
+</div>
+</div>
+<div class="relative h-[300px] w-full">
+<!-- Abstract Area Chart Representation -->
+<svg class="w-full h-full" preserveAspectRatio="none" viewBox="0 0 800 300">
+<defs>
+<linearGradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#fc6537;stop-opacity:0.2"></stop>
+<stop offset="100%" style="stop-color:#fc6537;stop-opacity:0"></stop>
+</linearGradient>
+</defs>
+<path d="M0,250 Q100,200 200,220 T400,100 T600,150 T800,50 L800,300 L0,300 Z" fill="url(#gradient)"></path>
+<path d="M0,250 Q100,200 200,220 T400,100 T600,150 T800,50" fill="none" stroke="#fc6537" stroke-linecap="round" stroke-width="4"></path>
+<!-- Grid lines -->
+<line stroke="#E5DDD4" stroke-dasharray="4" x1="0" x2="800" y1="50" y2="50"></line>
+<line stroke="#E5DDD4" stroke-dasharray="4" x1="0" x2="800" y1="150" y2="150"></line>
+<line stroke="#E5DDD4" stroke-dasharray="4" x1="0" x2="800" y1="250" y2="250"></line>
+</svg>
+<div class="flex justify-between mt-4 text-outline text-xs uppercase font-bold">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+</div>
+</div>
+</div>
+<!-- Donut Chart -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col items-center justify-between">
+<div class="w-full mb-md">
+<h4 class="font-title-lg text-primary">Orders by Category</h4>
+</div>
+<div class="relative w-48 h-48 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#3d1a0e" stroke-dasharray="502" stroke-dashoffset="150" stroke-width="20"></circle>
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#fc6537" stroke-dasharray="502" stroke-dashoffset="300" stroke-width="20"></circle>
+<circle cx="96" cy="96" fill="transparent" r="80" stroke="#ffdbd1" stroke-dasharray="502" stroke-dashoffset="450" stroke-width="20"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-headline-sm text-primary">1,284</span>
+<span class="text-[10px] text-outline uppercase font-bold">Orders</span>
+</div>
+</div>
+<div class="w-full mt-6 grid grid-cols-2 gap-y-3">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-primary-container"></span>
+<span class="text-xs font-semibold">Breads (40%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-secondary"></span>
+<span class="text-xs font-semibold">Pastries (30%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-secondary-fixed"></span>
+<span class="text-xs font-semibold">Muffins (15%)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-sm bg-tertiary-fixed"></span>
+<span class="text-xs font-semibold">Cookies (10%)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Row 4: Tables/Lists -->
+<section class="grid grid-cols-1 lg:grid-cols-10 gap-lg">
+<!-- Recent Orders (40%) -->
+<div class="lg:col-span-4 bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<div class="flex justify-between items-center mb-xl">
+<h4 class="font-title-lg text-primary">Recent Orders</h4>
+<button class="text-secondary text-sm font-bold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-label-caps text-outline border-b border-outline-variant">
+<tr>
+<th class="pb-3 font-bold">ID</th>
+<th class="pb-3 font-bold">Customer</th>
+<th class="pb-3 font-bold">Amount</th>
+<th class="pb-3 font-bold">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 font-semibold">#9402</td>
+<td class="py-4">Jane Smith</td>
+<td class="py-4 font-bold text-primary">$45.00</td>
+<td class="py-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">DELIVERED</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 font-semibold">#9403</td>
+<td class="py-4">Robert D.</td>
+<td class="py-4 font-bold text-primary">$120.45</td>
+<td class="py-4"><span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">PROCESSING</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 font-semibold">#9404</td>
+<td class="py-4">Sarah Wilson</td>
+<td class="py-4 font-bold text-primary">$12.50</td>
+<td class="py-4"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-[10px] font-bold">SHIPPED</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 font-semibold">#9405</td>
+<td class="py-4">Michael K.</td>
+<td class="py-4 font-bold text-primary">$67.20</td>
+<td class="py-4"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">DELIVERED</span></td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="py-4 font-semibold">#9406</td>
+<td class="py-4">Emily Blunt</td>
+<td class="py-4 font-bold text-primary">$34.00</td>
+<td class="py-4"><span class="bg-outline-variant text-on-surface-variant px-2 py-1 rounded text-[10px] font-bold">PENDING</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Top Products (30%) -->
+<div class="lg:col-span-3 bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<h4 class="font-title-lg text-primary mb-xl">Top Products</h4>
+<div class="space-y-6">
+<div class="flex items-center gap-4">
+<span class="text-outline font-bold text-lg w-6">1</span>
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="A macro photograph of a freshly baked sourdough loaf with a perfectly crackled golden crust, sitting on a rustic wooden board in a warm sunlit bakery kitchen. The lighting is soft and golden, highlighting the artisan textures of the bread." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4qcBwLQpIPOBVNKctfx4EoD2jExqoa1vpEIYprCeKtRIxxYwwGIt_hCFC9zB2UZci8M_jtXaeQcsdNl_TsamYeZV05l4cx0rPHoVmnkPH3xiGlnbVdgnKTL3D3JiRttTqlKFHROl4oNVZfNB7BU3k8Uws5v54OdcJGXg9m8N1efyhF6UolOl8olofdMnqlhgDIDwuxbpk9Am4BbHL7sMWxnseSPukBeRXomaDdJ-SipUdDBGlYpuU0buSiH2xl8A0sk0XhcI4dA">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate">Artisan Sourdough</p>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-1">
+<div class="bg-secondary h-full rounded-full w-[85%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold">428 sold</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-outline font-bold text-lg w-6">2</span>
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="Close up of gourmet chocolate chip cookies with melting chocolate chunks and sea salt flakes on top, arranged on a cooling rack in a professional warm kitchen. The style is appetizing and clean with shallow depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANs9v1sZQUuNTvLsBfK9is9ZJophADwSb12T47t5JKoyl1RjBBXgptSdfBCJ24OawsZSZooROkIzKHiSSCkN8mHsBWC4nxhoHNFtMxkd4d1hr8QVgNF3mr_UKd2CQDZHQJmuFSxAR0nlotaE1a5Fvx-RqaVLdVWwfRrob4qnYuVVj0hYz-dpVQaXoadzUDiTVarjlYKleZGh9iWb-zaU60u1mxF2of2bN0kKJtbKWghKEGxUC5S1tW0SMVTeNXcNhZjKVpoUHDFw">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate">Choco Sea Salt Cookie</p>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-1">
+<div class="bg-secondary h-full rounded-full w-[72%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold">310 sold</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-outline font-bold text-lg w-6">3</span>
+<img class="w-12 h-12 rounded-lg object-cover" data-alt="Flaky buttery croissants stacked on a white ceramic plate against a warm cream background, catching the morning light with delicate shadows. Minimalist and premium aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDks1NOfR_ndtkFeUMgL11BDMPQ48dYWCV_J3cY1tELklJ8CsuPyrcey9u4wsN8usUt5cty9Lfzv2PNZQ5ZREHnaNqEB7as8ZxXYHKvSZkkbBjjkqkpYYNXZoaDes3T50b5c6l8lHDrYrexKJNRweuuZhdHtMa63bXBVNWjAhFpGIG8AzwqFi4YR5SqHuDxf3N5s5GxyU_dLQrPY95Awkt79mAGMYz4uA3UdfDI_9tVYJw-jQBlPA_O5dCLYn2DCAEQLKhAZn5pQA">
+<div class="flex-1 min-w-0">
+<p class="text-sm font-bold truncate">Butter Croissant</p>
+<div class="w-full bg-surface-container-low h-1.5 rounded-full mt-1">
+<div class="bg-secondary h-full rounded-full w-[65%]"></div>
+</div>
+</div>
+<span class="text-xs font-bold">285 sold</span>
+</div>
+</div>
+</div>
+<!-- Low Stock Alerts (30%) -->
+<div class="lg:col-span-3 bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<div class="flex justify-between items-center mb-xl">
+<h4 class="font-title-lg text-primary">Low Stock Alerts</h4>
+<span class="bg-error text-white text-[10px] font-bold px-2 py-1 rounded-full">5 ITEMS</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">warning</span>
+<span class="text-sm font-semibold">French Baguette</span>
+</div>
+<span class="text-xs font-bold text-error bg-white px-2 py-1 rounded">3 LEFT</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-amber-600">report</span>
+<span class="text-sm font-semibold">Cinnamon Roll</span>
+</div>
+<span class="text-xs font-bold text-amber-700 bg-white px-2 py-1 rounded">8 LEFT</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-amber-600">report</span>
+<span class="text-sm font-semibold">Berry Danish</span>
+</div>
+<span class="text-xs font-bold text-amber-700 bg-white px-2 py-1 rounded">12 LEFT</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">warning</span>
+<span class="text-sm font-semibold">Rye Loaf</span>
+</div>
+<span class="text-xs font-bold text-error bg-white px-2 py-1 rounded">2 LEFT</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Row 5: Feedback/Activity -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-lg pb-xxl">
+<!-- Recent Reviews -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<h4 class="font-title-lg text-primary mb-xl">Recent Reviews</h4>
+<div class="space-y-6">
+<div class="flex gap-4">
+<img class="w-10 h-10 rounded-full shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn3prAUHh5edYIpoEm-4DkhxVC-t3RjtVoWnPGGjqlgHgoDOTfHGKEk_BjCkPVUfqzzCnv0rdl3fKe7lrNihy4CwvyzrcOTGua1CoJk8bBqHiecY4aXuRRDLvBjLK2ACHZn8nvhsTPUvzmXmF1Q2wUhWMt-Q6AdakCCZkVHEuP0SvdjP8Csw8UiMbjHOuYRUFIWXzmzuXczN6XCdaS57SMIX05hkZEtNbrDH2oJ0hcOsnj4W7uFNVQyl0B8FmNlloMI9Iz7sQksg">
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-start">
+<span class="text-sm font-bold">Alice Johnson</span>
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant italic">"Best sourdough in the city! The crust was incredible and..."</p>
+<div class="flex gap-4 pt-2">
+<button class="text-[10px] font-bold uppercase text-secondary hover:underline">Approve</button>
+<button class="text-[10px] font-bold uppercase text-error hover:underline">Delete</button>
+</div>
+</div>
+</div>
+<div class="flex gap-4 border-t border-outline-variant/30 pt-4">
+<img class="w-10 h-10 rounded-full shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_IL73byYIDDPOnDLCWSK7T-63pU2_gQJPwyI92a1Kw0qXr4VaYSWuAYxP7piAp23xxii2JDv7wU2LJb4IarmIWP5euvbWZedquN56CzQFgVK0OaxajfgF8n6TQ5ygryj287YLUT0mzsuWW1v6vJUNJ3NSClJtiMlTMskccvLeyuRo0GiDUffqc7Dz0n3IpwXiG0kdaXY2R06TKsA2HZ9CfajYNaMJCvRnB5rjBoUjFRogoZabEUyZAs4TSm3zNt_nr_j0zP1Evw">
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-start">
+<span class="text-sm font-bold">Mark Spencer</span>
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs fill-icon">star</span>
+<span class="material-symbols-outlined text-xs">star</span>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant italic">"Croissants were flaky but a bit small. Good flavor overall."</p>
+<div class="flex gap-4 pt-2">
+<button class="text-[10px] font-bold uppercase text-secondary hover:underline">Approve</button>
+<button class="text-[10px] font-bold uppercase text-error hover:underline">Delete</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-white p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)]">
+<h4 class="font-title-lg text-primary mb-xl">Recent Activity</h4>
+<div class="relative space-y-8 before:absolute before:left-[11px] before:top-2 before:bottom-0 before:w-px before:bg-outline-variant">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-secondary flex items-center justify-center rounded-full text-white ring-4 ring-white">
+<span class="material-symbols-outlined text-sm">shopping_cart</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-sm"><span class="font-bold">New Order #9406</span> by Emily Blunt</p>
+<span class="text-[10px] text-outline font-bold">2 MIN AGO</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-blue-500 flex items-center justify-center rounded-full text-white ring-4 ring-white">
+<span class="material-symbols-outlined text-sm">person_add</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-sm"><span class="font-bold">New Customer</span> registered: David Bowie</p>
+<span class="text-[10px] text-outline font-bold">15 MIN AGO</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-amber-500 flex items-center justify-center rounded-full text-white ring-4 ring-white">
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-sm"><span class="font-bold">New Review</span> received for 'Butter Croissant'</p>
+<span class="text-[10px] text-outline font-bold">1 HOUR AGO</span>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-green-500 flex items-center justify-center rounded-full text-white ring-4 ring-white">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-sm"><span class="font-bold">Order #9398</span> marked as delivered</p>
+<span class="text-[10px] text-outline font-bold">3 HOURS AGO</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Notification Slider (Overlay) -->
+<div class="fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-[60] translate-x-full transition-transform duration-300" id="notification-panel">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center">
+<h5 class="font-title-lg text-primary">Notifications</h5>
+<button class="text-outline hover:text-primary" onclick="toggleNotifications()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-md space-y-4 h-[calc(100%-80px)] overflow-y-auto">
+<div class="p-4 bg-secondary/5 border-l-4 border-secondary rounded-lg">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary">bnagent</span>
+<div>
+<p class="text-sm font-bold">Low stock warning!</p>
+<p class="text-xs text-on-surface-variant">French Baguette is below critical level (3 left).</p>
+<p class="text-[10px] text-outline font-bold mt-2">JUST NOW</p>
+</div>
+</div>
+</div>
+<div class="p-4 hover:bg-surface-container-low rounded-lg transition-colors border-l-4 border-transparent">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-blue-500">local_shipping</span>
+<div>
+<p class="text-sm font-bold">Delivery Partner Assigned</p>
+<p class="text-xs text-on-surface-variant">Order #9403 is now being picked up by Courier Joe.</p>
+<p class="text-[10px] text-outline font-bold mt-2">12 MIN AGO</p>
+</div>
+</div>
+</div>
+<div class="p-4 hover:bg-surface-container-low rounded-lg transition-colors border-l-4 border-transparent">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-amber-500">payments</span>
+<div>
+<p class="text-sm font-bold">Payment Refunded</p>
+<p class="text-xs text-on-surface-variant">Customer Sarah W. was refunded for Order #9388.</p>
+<p class="text-[10px] text-outline font-bold mt-2">45 MIN AGO</p>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-lg bg-white border-t border-outline-variant">
+<button class="w-full py-3 bg-primary-container text-white rounded-lg font-bold hover:bg-primary transition-colors">Mark all as read</button>
+</div>
+</div>
+<!-- Overlay Backdrop -->
+<div class="fixed inset-0 bg-black/40 z-50 hidden opacity-0 transition-opacity duration-300" id="backdrop" onclick="toggleNotifications()"></div>
+<script>
+        function toggleNotifications() {
+            const panel = document.getElementById('notification-panel');
+            const backdrop = document.getElementById('backdrop');
+            
+            if (panel.classList.contains('translate-x-full')) {
+                panel.classList.remove('translate-x-full');
+                backdrop.classList.remove('hidden');
+                setTimeout(() => backdrop.classList.add('opacity-100'), 10);
+            } else {
+                panel.classList.add('translate-x-full');
+                backdrop.classList.remove('opacity-100');
+                setTimeout(() => backdrop.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+</body></html>

@@ -103,6 +103,9 @@ public function sentInvitations(): HasMany
     return $this->hasMany(AdminInvitation::class, 'invited_by');
 }
 
+public function defaultRedirectRoute():string{
+    return ($this->isAdmin() || $this->isSuperAdmin())? 'admin.dashboard' : 'dashboard';
+}
 // accessors
 
 public function getDefaultAddressAttribute(): ?Address
