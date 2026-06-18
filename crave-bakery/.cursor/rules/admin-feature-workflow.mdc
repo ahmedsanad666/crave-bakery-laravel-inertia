@@ -1,0 +1,218 @@
+---
+description: Admin CRUD feature workflow — follow the Categories module pattern (works with project brief)
+alwaysApply: true
+---
+
+# Admin Feature Workflow (Categories Reference)
+
+> **Companion rule** to `Crave-bakery-project-brief.mdc`. The brief defines *what* to build; this rule defines *how* to structure each admin feature. Use **Categories** as the canonical reference.
+
+---
+
+## 1. Layer Responsibilities
+
+| Layer | Responsibility | Categories example |
+|---|---|---|
+| **Controller** | Thin orchestration only: read request → call service/scopes → return `Inertia::render()` or `redirect()->route()` | `CategoryController` |
+| **Service** | Multi-step logic, transactions, tree building, aggregations, domain rules | `CategoryService::tree()`, `reorder()`, `stats()`, `wouldCreateCycle()` |
+| **Model scopes** | Reusable single-query filters (`blank()` guard, chainable) | `scopeSearch`, `scopeStatus`, `scopeOrdered` |
+| **FormRequest** | All validation + `authorize()` via Policy; use `$request->validated()` only | `StoreCategoryRequest`, `UpdateCategoryRequest`, `ReorderCategoryRequest` |
+| **Validation trait** | Shared rules between Store/Update when fields overlap | `ValidatesCategory` |
+| **Resource** | Shape all data sent to Inertia — never pass raw models | `CategoryResource`, `CategoryTreeResource` |
+| **Policy** | Model-level auth via `User::hasPermission('{scope}', '{action}')` | `CategoryPolicy` |
+| **Vue page** | Page shell + layout; extract reusable UI to `Components/Admin/` | `Pages/Admin/Categories/Index.vue` + `CategoryTreeList.vue` |
+
+### Scope vs Service — when to use which
+
+- **Use a model scope** when filtering/sorting a flat Eloquent query (`search`, `status`, `ordered`).
+- **Use a service** when logic spans multiple records, needs transactions, builds nested structures, or encodes business rules (tree filter keeping ancestors, drag-and-drop reorder, cycle detection, KPI stats).
+- **Controller** may chain scopes directly for simple list views; delegate to service for anything non-trivial.
+
+---
+
+## 2. Backend Checklist (per admin module)
+
+### Routes (`routes/admin.php`)
+```php
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Custom actions BEFORE resource routes
+    Route::patch('categories/{category}/reorder', [CategoryController::class, 'reorder'])
+        ->name('categories.reorder');
+
+    Route::resource('categories', CategoryController::class)->except(['show']);
+});
+```
+
+### Controller
+```php
+class CategoryController extends Controller
+{
+    public function __construct(private readonly CategoryService $categoryService)
+    {
+        $this->authorizeResource(Category::class, 'category');
+    }
+
+    public function index(Request $request): Response { /* ... */ }
+
+    // Non-resource actions need explicit authorize()
+    public function reorder(ReorderCategoryRequest $request, Category $category): RedirectResponse
+    {
+        $this->authorize('update', $category);
+        $this->categoryService->reorder(/* validated data */);
+        return back()->with('success', '...');
+    }
+}
+```
+
+**Rules:**
+- Extend `App\Http\Controllers\Controller` (must extend `Illuminate\Routing\Controller` for `authorizeResource` / `middleware()`).
+- Inject services via constructor — never put business logic in the controller.
+- Return typed responses: `Response` (Inertia) or `RedirectResponse`.
+- Use `$request->validated()` — never `$request->all()`.
+- Pass Inertia props through Resources: `(new CategoryResource($model))->resolve()` or `CategoryResource::collection($paginator)`.
+
+### FormRequest
+```php
+public function authorize(): bool
+{
+    return $this->user()->can('create', Category::class);
+    // or: $this->user()->can('update', $this->route('category'));
+}
+
+public function rules(): array
+{
+    return $this->categoryRules($this->route('category')?->id);
+}
+```
+
+- Put cross-field / domain validation in `withValidator()` or the service (e.g. cycle prevention).
+- Use `prepareForValidation()` to normalize input (`''` → `null`).
+
+### Policy
+```php
+public function update(User $user, Category $category): bool
+{
+    return $user->hasPermission('categories', 'edit');
+}
+```
+
+- One policy per model; map actions to permission scopes from `config/permissions.php`.
+- Never check `role === 'admin'` inline in controllers — use Policy + `hasPermission()`.
+- Register via `authorizeResource` for standard CRUD; call `$this->authorize()` for custom routes.
+
+### Service
+- One `{Model}Service` per complex domain area.
+- Wrap writes in `DB::transaction()` when updating multiple rows.
+- Throw `ValidationException::withMessages()` for business-rule failures the user can fix.
+- Return plain arrays for Inertia — let Resources shape individual nodes inside the service if needed.
+
+### Model scopes
+```php
+public function scopeSearch($query, ?string $search)
+{
+    if (blank($search)) return $query;
+    return $query->where(fn ($q) => $q->where('name', 'like', "%{$search}%")
+        ->orWhere('slug', 'like', "%{$search}%"));
+}
+```
+
+- Always no-op when filter is blank.
+- Keep scopes on the model; don't duplicate filter logic in controllers.
+
+---
+
+## 3. Index Page Pattern (list + filters)
+
+**Controller passes:**
+```php
+[
+    'stats' => $this->categoryService->stats(),
+    'filters' => ['search' => '...', 'status' => '...', 'view' => 'tree'],
+    'categoryTree' => $this->categoryService->tree($search, $status), // or paginated list
+]
+```
+
+**Vue filters** — sync to URL via Inertia, not local-only state:
+```js
+router.get(route('admin.categories.index'), {
+    search: search.value || undefined,
+    status: status.value || undefined,
+}, { preserveState: true, replace: true });
+```
+
+- Debounce text search (~350ms); apply select filters immediately.
+- Echo current `filters` back from controller so the page is bookmarkable/shareable.
+
+---
+
+## 4. Frontend Checklist
+
+### Page structure
+1. Wrap in `AdminLayout` with `title` + `breadcrumb`.
+2. Match visual design from `Theme/Admin/{Module}/` HTML prototypes using design-system utilities (`card-elevated`, `input-field`, `btn-primary`, etc.).
+3. Page file: `resources/js/Pages/Admin/{Module}/Index.vue` (PascalCase).
+4. Extract repeated/tree/table UI to `resources/js/Components/Admin/`.
+
+### Permissions in Vue (UI only — backend Policy is source of truth)
+```js
+const permissions = computed(() => page.props.auth?.user?.permissions?.categories ?? {});
+const isSuperAdmin = computed(() => page.props.auth?.user?.role === 'super_admin');
+const canEdit = computed(() => isSuperAdmin.value || permissions.value.edit === true);
+```
+- Hide create/edit/delete buttons when unauthorized; never rely on UI alone.
+
+### Forms & navigation
+- `useForm()` for all mutations (create/update).
+- `<Link>` and `route()` for navigation — never hardcoded URLs.
+- `router.patch/post/delete` for inline actions (e.g. drag-and-drop reorder).
+- Use `@tabler/icons-vue` exclusively; stroke `1.5`.
+
+---
+
+## 5. New Module File Checklist
+
+When adding an admin resource (e.g. Products), create in this order:
+
+1. `Policy` — map to `config/permissions.php` scope
+2. `{Model}Service` — if any non-trivial logic
+3. Model scopes — `search`, `status`, `ordered` as needed
+4. `Store{Model}Request` + `Update{Model}Request` (+ shared trait if rules overlap)
+5. `{Model}Resource` (+ specialized shapes like `CategoryTreeResource` if needed)
+6. `Admin\{Model}Controller` — thin, `authorizeResource`, typed returns
+7. Routes in `routes/admin.php`
+8. `Pages/Admin/{Module}/Index.vue` (+ `Create.vue`, `Edit.vue`)
+9. `Components/Admin/` for extracted UI
+10. Seeder — use `updateOrCreate(['slug' => ...])` for idempotent seeds
+
+---
+
+## 6. Seeders
+
+```php
+Category::query()->updateOrCreate(
+    ['slug' => $data['slug']],
+    [/* all other fields including parent_id */],
+);
+```
+
+- Nested data: recursive private method, parent created first then children.
+- Re-runnable without duplicate-key errors.
+- Keep slugs stable when other seeders reference them (e.g. `ProductSeeder` → `croissants-pastries`).
+
+---
+
+## 7. Do / Don't
+
+| Do | Don't |
+|---|---|
+| `authorizeResource` + Policy | Inline `if ($user->role === 'admin')` in controllers |
+| Resources for every Inertia prop | Pass Eloquent models/collections raw to Vue |
+| Scopes for simple query filters | Put tree-building or reorder logic in the model |
+| Service for transactions & domain rules | Fat controllers with 50+ lines of logic |
+| `updateOrCreate` in seeders | Blind `create()` that fails on re-seed |
+| Theme HTML → Vue + design tokens | One-off inline styles bypassing the design system |
+| Explicit `authorize()` on custom routes | Assume `authorizeResource` covers non-CRUD actions |
+
+---
+
+*Reference files: `CategoryController`, `CategoryService`, `CategoryPolicy`, `CategoryTreeResource`, `ReorderCategoryRequest`, `Pages/Admin/Categories/Index.vue`, `Components/Admin/CategoryTreeList.vue`, `database/seeders/CategorySeeder.php`*

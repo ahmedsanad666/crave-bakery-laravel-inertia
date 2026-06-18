@@ -55,4 +55,27 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class, 'category_product')->withTimestamps();
     }
+
+    // create scopes 
+
+    public function scopeSearch($query,?string $search){
+        if(blank($search)){
+            return $query;
+        }
+
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('slug', 'like', "%{$search}%");
+        });
+    }
+    public function scopeStatus($query,?string $status){
+        if(blank($status)){
+            return $query;
+        }
+        return $query->where('status', $status);
+    }
+
+    public function scopeOrdered($query){
+        return $query->orderBy('sort_order')->orderBy('name');
+    }
 }

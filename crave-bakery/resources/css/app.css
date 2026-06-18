@@ -135,4 +135,19 @@
         background: #d6c2bd;
         border-radius: 10px;
     }
+
+    .category-tree-connector::after {
+        content: '';
+        position: absolute;
+        left: -16px;
+        top: 16px;
+        width: 12px;
+        height: 1px;
+        background-color: #d6c2bd;
+    }
+
+    .category-drag-ghost {
+        opacity: 0.5;
+        background: #f6f3f2;
+    }
 }

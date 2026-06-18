@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Order;
+use App\Support\AdminPermissions;
 
 
 #[Fillable(['name', 'email', 'password', 'role', 'avatar', 'phone', 'date_of_birth', 'gender', 'permissions'])]
@@ -61,11 +62,15 @@ class User extends Authenticatable
 
     public function hasPermission(string $scope, string $action): bool
     {
-
         if ($this->isSuperAdmin()) {
             return true;
         }
-        if (!$this->isAdmin()) {
+
+        if (! $this->isAdmin()) {
+            return false;
+        }
+
+        if (! AdminPermissions::isValid($scope, $action)) {
             return false;
         }
 

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Support\AdminPermissions;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -49,13 +50,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'admin',
-            'permissions' => [
-                'products' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true, 'manage_stock' => true],
-                'categories' => ['view' => true, 'create' => true, 'edit' => true, 'delete' => true],
-                'orders' => ['view' => true, 'update_status' => true, 'refund' => true],
-                'reviews' => ['view' => true, 'approve' => true, 'delete' => true, 'respond' => true],
-                'customers' => ['view' => true, 'edit' => true, 'export' => true],
-            ],
+            'permissions' => AdminPermissions::fromTemplate('full_admin'),
         ]);
     }
 

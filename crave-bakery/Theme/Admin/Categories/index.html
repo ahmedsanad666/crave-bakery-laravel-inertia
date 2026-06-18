@@ -1,0 +1,501 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Crave Bakery Admin - Category Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .tree-line::before {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #d6c2bd;
+        }
+        .tree-line-last::before {
+            height: 16px;
+        }
+        .tree-node-connector::after {
+            content: '';
+            position: absolute;
+            left: -16px;
+            top: 16px;
+            width: 12px;
+            height: 1px;
+            background-color: #d6c2bd;
+        }
+        .drag-ghost {
+            opacity: 0.5;
+            background: #f6f3f2;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#26241f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-fixed": "#1e1b17",
+                        "surface-bright": "#fcf9f8",
+                        "primary-fixed": "#ffdbd0",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface-container-high": "#eae7e7",
+                        "on-secondary-container": "#5c1400",
+                        "on-surface": "#1c1b1b",
+                        "secondary-container": "#fc6537",
+                        "secondary": "#b02f00",
+                        "inverse-primary": "#f6b8a5",
+                        "background": "#fcf9f8",
+                        "primary-fixed-dim": "#f6b8a5",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f0eded",
+                        "on-tertiary-fixed-variant": "#4a4641",
+                        "primary-container": "#3d1a0e",
+                        "surface": "#fcf9f8",
+                        "on-primary-container": "#b47e6d",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-tertiary-container": "#8f8b84",
+                        "surface-tint": "#825343",
+                        "surface-container-low": "#f6f3f2",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-primary-fixed": "#321207",
+                        "secondary-fixed": "#ffdbd1",
+                        "inverse-surface": "#313030",
+                        "surface-variant": "#e5e2e1",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#514440",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#862200",
+                        "on-primary": "#ffffff",
+                        "outline": "#84746f",
+                        "tertiary-fixed-dim": "#ccc6be",
+                        "outline-variant": "#d6c2bd",
+                        "surface-dim": "#dcd9d9",
+                        "on-primary-fixed-variant": "#663c2d",
+                        "tertiary-fixed": "#e8e1da",
+                        "tertiary": "#110f0a",
+                        "error": "#ba1a1a",
+                        "primary": "#220601"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "container-margin": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Playfair Display"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Playfair Display"],
+                        "title-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-lg overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<nav class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-md flex flex-col py-md z-50">
+<div class="px-lg mb-xxl">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary-container">Crave Bakery</h1>
+<p class="font-label-caps text-label-caps text-on-primary-container opacity-60 tracking-widest mt-1">Artisanal Admin</p>
+</div>
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">bakery_dining</span>
+<span class="font-label-caps text-label-caps">Products</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<!-- Active State: Attributes / Categories -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary text-on-secondary rounded-lg mx-2 scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">format_list_bulleted</span>
+<span class="font-label-caps text-label-caps">Attributes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+</div>
+<div class="mt-auto px-lg pt-md border-t border-on-primary-container border-opacity-10">
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-full font-label-caps text-label-caps hover:opacity-90 transition-opacity mb-lg">
+                Create New Product
+            </button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container opacity-60 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-caps text-label-caps">Logout</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-surface-container-lowest border-b border-outline-variant shadow-sm flex justify-between items-center px-lg">
+<div class="flex items-center gap-lg flex-1">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Crave Bakery Admin</span>
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-xl border border-outline-variant bg-surface text-body-sm focus:ring-2 focus:ring-secondary-container outline-none" placeholder="Search categories..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="hidden lg:flex items-center gap-md mr-md">
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all font-body-sm" href="#">View Site</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all font-body-sm" href="#">Documentation</a>
+</div>
+<button class="px-md h-10 bg-secondary text-on-secondary rounded-full font-label-caps text-label-caps hover:shadow-md transition-all">Publish Changes</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim overflow-hidden border border-outline-variant">
+<img alt="Admin User Profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional bakery manager wearing a minimalist white uniform in a bright, sun-drenched artisanal bakery setting. The lighting is warm and high-key, emphasizing a clean and refined professional aesthetic. The mood is confident and welcoming, aligned with a modern premium brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvrk6KEWp4EIYAimSe-AeHs8BnoNcZd1jq6SGp1JKRZ2hVrpeJi2De9X5m2AqkW9PX1MUI6oT_4yKe7VK31idhz2tTxlJhXQ4MqqqTTkkOcG8U40V1OoyMm5pi5aa-2HrZbIPe9N_J7Y7ydYYcwCaZ_JScKOnRvrrtDvYgZyGP-FNfocp-9tsJ-DFzSyfBAbIm3MwVdddm29uJPpCe1e_gxmmy_sIPeA_LIygnE8Necl6Z12xk5bntIoz3NJdApFV-Cm_wutSgsQ">
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 mt-16 p-xxl min-h-screen">
+<!-- Breadcrumb & Header -->
+<div class="mb-lg flex justify-between items-end">
+<div>
+<nav class="flex items-center gap-2 text-label-caps text-on-surface-variant mb-2">
+<a class="hover:text-secondary" href="#">Catalog</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface">Categories</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-primary">Category Management</h2>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-lg h-12 rounded-full font-label-caps text-label-caps hover:bg-opacity-90 transition-all shadow-md">
+<span class="material-symbols-outlined">add</span>
+                Add New Root Category
+            </button>
+</div>
+<!-- Orange Info Banner -->
+<div class="bg-[#FFF4E5] border border-[#FFD9B3] rounded-xl p-md mb-lg flex items-start gap-md">
+<span class="material-symbols-outlined text-secondary pt-1">info</span>
+<div class="flex-1">
+<p class="font-title-lg text-secondary-container font-bold mb-1">Organize Your Menu</p>
+<p class="text-body-lg text-on-surface-variant">Drag and drop categories to reorder them or nest them within each other. Changes are saved locally and will be applied to the storefront once you click "Publish Changes".</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary p-1">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Tree View Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden border border-outline-variant">
+<!-- Header Row -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] px-lg py-4 border-b border-outline-variant bg-surface-container-low font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">
+<div>Category Hierarchy</div>
+<div>Slug</div>
+<div class="text-center">Products</div>
+<div class="text-center">Status</div>
+<div class="text-right">Actions</div>
+</div>
+<!-- Tree Structure -->
+<div class="p-md space-y-1">
+<!-- Level 1: Breads -->
+<div class="group">
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary active:cursor-grabbing">drag_indicator</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">expand_more</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant">
+<img alt="Breads Thumbnail" class="w-full h-full object-cover" data-alt="A top-down macro shot of freshly baked artisanal sourdough loaves with a perfect golden-brown crust. The bread is sitting on a clean marble countertop with a light dusting of flour. The lighting is soft and natural, emphasizing the texture and artisanal quality of the bakery products." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpH1RDHuIDS66QY5nGn93t67wu9Ik4jimzq8WRc_gLCA3ppkAfq21SwqmcQtzMD6-d88Iygeqw4HwhZvOxpxRyN2UDKmrWZoQl9Uc70zW8C0QR6T1zGPVfqOLwFCqgDx7RrEOEp9f9vCgt7I4ST8oOHZFTOgQRcLpa1ucprOV4xHbFnLUZUixhz4zYKdKe04Tl38Sng2cmtA6j3fZamqBl9E7cd4rBRLwY1wQfOh-RKV4ueZeKAQR1WL-uLrCXcuLoHItaWvNfEw">
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">Breads</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/breads</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">42</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors" title="Add Child"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Children of Breads -->
+<div class="ml-[32px] border-l border-outline-variant pl-4 py-1 space-y-1">
+<!-- Child: Sourdough -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg relative tree-node-connector">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant">
+<img alt="Sourdough Thumbnail" class="w-full h-full object-cover" data-alt="Close up of a sliced artisan sourdough bread revealing a beautiful open crumb structure. The background is a clean minimalist wooden table in a high-end bakery. The light is warm and directional, creating a cozy and high-quality feel consistent with a premium boutique brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeQLacPL6ArP6FD-biWVL4wFXXm2_eUUFziXPd12PPc6jgul5ysAihLjfI33QWfZ7yfyOJWgeKgvqi4lB477xDWLzuv4lVAcSo4KCn76NAScDaYZaNBW-NO9pwBDDI24g7rqDlJdgSlEjolVN-mV50L2-rFgz9PggInr2k5Kz2kZpCPY4PrsvJ_oMj47Azomam5BB-qJ6UPtDCZHnAfDqPUgQ657ZLS2mqIWlaPzQOP98P4lyJGFxnHzkQdOKhGj8Qhh55QMHm7w">
+</div>
+<span class="font-title-lg text-title-lg text-on-surface">Sourdough</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/breads/sourdough</div>
+<div class="text-center"><span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium text-[12px]">12</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<!-- Child: Artisan Loaves -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg relative tree-node-connector">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-title-lg text-title-lg text-on-surface">Artisan Loaves</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/breads/artisan</div>
+<div class="text-center"><span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium text-[12px]">18</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<!-- Child: Rye & Wholegrain -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg relative tree-node-connector">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-title-lg text-title-lg text-on-surface">Rye &amp; Wholegrain</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/breads/rye</div>
+<div class="text-center"><span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium text-[12px]">12</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Level 1: Pastries -->
+<div class="group">
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer">expand_more</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant">
+<img alt="Pastries Thumbnail" class="w-full h-full object-cover" data-alt="A luxurious selection of golden flaky croissants and pain au chocolat displayed on a rustic dark wooden board. The scene is illuminated by soft, atmospheric morning light coming from a window, highlighting the delicate layers of pastry. The style is modern minimalist with a focus on tactile sensory experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_a4_0EFNE1eW8tqsbgmqxn4k8gG8vmvjlaJPB6BdVnCrp7zzI_TdlRrN7-i_pbGiO9gnPKunIXeAVqBJFuUXBoVHmNGiKm01v6KHy2j0_X7XIAVMnH6a2L7onMSXoJPmH1p6_yi2qEwnZcTPbwqH9DoMYo56giQmf4q0RKrbivizJlnhnvu61EAQQZXVChEULzjGTbRB9c9ZRAHlmIVZxsMZSTF0IolReqehmOudEWrHMGyYBBIcymL7_9Pvr9skVLjqDb2fZCg">
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">Pastries</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/pastries</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">28</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Children of Pastries -->
+<div class="ml-[32px] border-l border-outline-variant pl-4 py-1 space-y-1">
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg relative tree-node-connector">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-title-lg text-title-lg text-on-surface">Croissants</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/pastries/croissants</div>
+<div class="text-center"><span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium text-[12px]">8</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg relative tree-node-connector">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<div class="w-8 h-8 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-title-lg text-title-lg text-on-surface">Danish</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/pastries/danish</div>
+<div class="text-center"><span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-medium text-[12px]">20</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Level 1: Muffins -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-outline opacity-30">chevron_right</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant">
+<img alt="Muffins Thumbnail" class="w-full h-full object-cover" data-alt="Gourmet blueberry muffins with large sugar crystals on top, presented in a clean white paper liner. The background is a crisp white linen surface. The lighting is bright and airy, emphasizing the freshness and the high-end artisan bakery aesthetic of the product." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJE0Y7mtNowlQrCrVNp7RiCFlT9S-tROFUKv2q7Z0sxDj2Grb6xnuC6aOtq2XHDi5gSRDRT_7DfJCAJtIv_3YTMgTq5mdRpK1wyJRji5UzZHGR7wiLS_pZFwl9vbi8__N1sVH7YIE76VinPh7QNgDOcnarfvbvkbZNe3Xw2OUi0WctCAvhgz_YVq0lrYGMk_73RKeZO7UonzjwKtwmLTvtgb7eC6wArfRq6TFZ2QLviu3vn0PNcbRQF3rqeSBtQyW8OVxlStTQLw">
+</div>
+<span class="font-headline-sm text-headline-sm text-primary">Muffins</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/muffins</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">15</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Level 1: Brownies -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-outline opacity-30">chevron_right</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-headline-sm text-headline-sm text-primary">Brownies</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/brownies</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">9</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Level 1: Cookies -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-outline opacity-30">chevron_right</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-headline-sm text-headline-sm text-primary">Cookies</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/cookies</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">22</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Level 1: Seasonal Specials (Draft) -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg bg-surface-container-low opacity-70">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-outline opacity-30">chevron_right</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-headline-sm text-headline-sm text-primary">Seasonal Specials</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/seasonal</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">0</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant font-bold text-[11px] uppercase tracking-wider">Draft</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+<!-- Level 1: Gluten Free -->
+<div class="grid grid-cols-[1fr_200px_150px_150px_180px] items-center p-md hover:bg-surface-container transition-colors rounded-lg">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined cursor-grab text-outline hover:text-primary">drag_indicator</span>
+<span class="material-symbols-outlined text-outline opacity-30">chevron_right</span>
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-variant border border-outline-variant"></div>
+<span class="font-headline-sm text-headline-sm text-primary">Gluten Free</span>
+</div>
+<div class="text-body-sm text-on-surface-variant italic">/gluten-free</div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface font-bold text-body-sm">14</span></div>
+<div class="text-center"><span class="px-3 py-1 rounded-full bg-[#E8F5E9] text-[#2E7D32] font-bold text-[11px] uppercase tracking-wider">Active</span></div>
+<div class="flex justify-end gap-2">
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-2 hover:bg-primary-fixed-dim rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<button class="p-2 hover:text-error rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="p-lg bg-surface-container-low border-t border-outline-variant flex justify-between items-center">
+<p class="text-body-sm text-on-surface-variant">Showing 11 categories total</p>
+<div class="flex gap-md">
+<button class="px-lg h-10 border border-outline text-primary font-label-caps text-label-caps rounded-full hover:bg-surface transition-colors">Discard Changes</button>
+<button class="px-xl h-10 bg-primary text-on-primary font-label-caps text-label-caps rounded-full shadow-md hover:opacity-90 transition-all">Save Structure</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple drag and drop simulation visuals
+        document.querySelectorAll('.cursor-grab').forEach(handle => {
+            handle.addEventListener('mousedown', () => {
+                handle.closest('.grid').classList.add('drag-ghost');
+            });
+            handle.addEventListener('mouseup', () => {
+                handle.closest('.grid').classList.remove('drag-ghost');
+            });
+        });
+
+        // Toggle Expand/Collapse (UI only)
+        document.querySelectorAll('.material-symbols-outlined').forEach(icon => {
+            if (icon.innerText === 'expand_more' || icon.innerText === 'expand_less') {
+                icon.addEventListener('click', (e) => {
+                    const parent = e.target.closest('.group');
+                    const children = parent.querySelector('.ml-\\[32px\\]');
+                    if (children) {
+                        if (children.classList.contains('hidden')) {
+                            children.classList.remove('hidden');
+                            icon.innerText = 'expand_more';
+                        } else {
+                            children.classList.add('hidden');
+                            icon.innerText = 'expand_less';
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body></html>

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CategoryResource extends JsonResource
+class CategoryTreeResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -14,18 +14,13 @@ class CategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'parent_id' => $this->parent_id,
             'name' => $this->name,
             'slug' => $this->slug,
-            'description' => $this->description,
-            'image' => $this->image ?? $this->og_image,
-            'parent_id' => $this->parent_id,
-            'products_count' => $this->whenCounted('products'),
             'status' => $this->status,
             'sort_order' => $this->sort_order,
-            'parent' => $this->whenLoaded('parent', fn() => $this->parent ? [
-                'id' => $this->parent->id,
-                'name' => $this->parent->name,
-            ] : null)
+            'image' => $this->image ?? $this->og_image,
+            'products_count' => $this->whenCounted('products'),
         ];
     }
 }
