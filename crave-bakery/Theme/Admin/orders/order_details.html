@@ -1,0 +1,530 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Order Detail #CB-00482 | Artisanal Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .status-pulse {
+            animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-orange {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .7; transform: scale(1.1); }
+        }
+        body {
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f0eded;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d6c2bd;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fcf9f8",
+                        "outline": "#84746f",
+                        "on-surface-variant": "#514440",
+                        "on-primary-fixed": "#321207",
+                        "error": "#ba1a1a",
+                        "tertiary": "#110f0a",
+                        "surface-dim": "#dcd9d9",
+                        "primary-fixed-dim": "#f6b8a5",
+                        "surface-container-high": "#eae7e7",
+                        "secondary-container": "#fc6537",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-tertiary-fixed": "#1e1b17",
+                        "secondary": "#b02f00",
+                        "background": "#fcf9f8",
+                        "outline-variant": "#d6c2bd",
+                        "surface-variant": "#e5e2e1",
+                        "inverse-primary": "#f6b8a5",
+                        "on-secondary-fixed-variant": "#862200",
+                        "tertiary-fixed-dim": "#ccc6be",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#825343",
+                        "error-container": "#ffdad6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbd0",
+                        "tertiary-container": "#26241f",
+                        "tertiary-fixed": "#e8e1da",
+                        "surface-bright": "#fcf9f8",
+                        "surface-container-low": "#f6f3f2",
+                        "primary-container": "#3d1a0e",
+                        "surface-container-highest": "#e5e2e1",
+                        "primary": "#220601",
+                        "on-background": "#1c1b1b",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#b47e6d",
+                        "on-secondary-container": "#5c1400",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-container": "#8f8b84",
+                        "on-secondary-fixed": "#3b0a00",
+                        "secondary-fixed": "#ffdbd1",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#4a4641",
+                        "on-surface": "#1c1b1b",
+                        "surface-container": "#f0eded",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#663c2d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "title-lg": ["Inter"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface">
+<!-- Shell: SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-primary dark:bg-primary-container shadow-xl flex flex-col py-6 px-4 z-50">
+<div class="mb-10 px-2">
+<h1 class="font-headline-sm text-headline-sm text-secondary-fixed">Artisanal Admin</h1>
+<p class="text-on-primary-container text-xs opacity-80">Premium Bakery CMS</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10 rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-lg text-body-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary dark:bg-secondary-container text-on-secondary dark:text-on-secondary-container rounded-lg" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-body-lg text-body-lg">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10 rounded-lg" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-body-lg text-body-lg">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10 rounded-lg" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-lg text-body-lg">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10 rounded-lg" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-body-lg text-body-lg">Staff</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10 rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-lg text-body-lg">Analytics</span>
+</a>
+</nav>
+<button class="mt-4 mb-8 mx-2 py-3 bg-secondary-fixed text-on-secondary-fixed font-bold rounded-full hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 shadow-lg">
+<span class="material-symbols-outlined">add</span>
+            New Order
+        </button>
+<div class="mt-auto space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-lg text-body-lg">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-lg text-body-lg">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Shell: TopNavBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface-container-lowest shadow-sm flex justify-between items-center px-8 ml-64 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-secondary/20 transition-all" placeholder="Search orders, customers, or products..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-on-surface-variant hover:text-secondary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="flex items-center gap-3 cursor-pointer group">
+<img alt="Admin Profile" class="w-8 h-8 rounded-full border border-outline-variant group-hover:border-secondary transition-colors" data-alt="A portrait of a professional male administrative manager with short dark hair and a warm, confident expression, set against a blurred bakery workshop background. The lighting is soft and warm, highlighting rich espresso tones and clean minimalist office vibes consistent with a premium artisanal brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRskpmySHzUQYwgs1-pOdu96imIzvqUPA233Vgt4G4pyFC6IgvfQfeZteuvkp099ohjU9JARPAhifLeL3UB7KqDT8zEa9yjsior-2s7MoqX6Z7eTrCOhhTJKElrvMKZi3HdWXV6Z4UlRjO42gCxbgPC9wUATB0zdUXRR_nkZtU3N6oU8apVKan2T6fN3QngheJ3bwJVNhhaD2Fno-D5PCusw7Y3NuCadpfdPpTwsywsLac-pjns5WhVN22hQquvyBLF1MQ5aYd5Q">
+<span class="font-body-sm text-body-sm font-bold text-primary group-hover:text-secondary transition-colors">Admin Profile</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-16 min-h-screen">
+<div class="max-w-[1200px] mx-auto px-container-margin py-xl">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<a class="inline-flex items-center gap-1 text-secondary font-bold text-sm hover:underline mb-4" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Orders
+                    </a>
+<h2 class="font-headline-lg text-headline-lg text-primary">Order #CB-00482</h2>
+<p class="text-on-surface-variant mt-1">Placed on 12 June 2024 at 10:45 AM via Mobile App</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2 border border-outline-variant rounded-full text-sm font-bold hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">print</span> Print
+                    </button>
+<button class="px-6 py-2 border border-outline-variant rounded-full text-sm font-bold hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">description</span> Invoice
+                    </button>
+<div class="relative inline-block text-left">
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 rounded-full font-bold flex items-center gap-3 hover:shadow-md transition-all">
+<span class="status-pulse w-2.5 h-2.5 bg-on-secondary-container rounded-full"></span>
+                            Processing
+                            <span class="material-symbols-outlined text-lg">expand_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Order Progress Tracker -->
+<div class="bg-white rounded-xl shadow-sm p-8 mb-8">
+<div class="flex items-center justify-between relative">
+<!-- Progress Line -->
+<div class="absolute top-1/2 left-0 w-full h-0.5 bg-surface-container-high -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-1/2 h-0.5 bg-secondary-container -translate-y-1/2 z-0 transition-all duration-1000"></div>
+<!-- Steps -->
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined">check</span>
+</div>
+<span class="text-xs font-bold text-on-surface">Order Placed</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center">
+<span class="material-symbols-outlined">check</span>
+</div>
+<span class="text-xs font-bold text-on-surface">Payment Confirmed</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center status-pulse ring-4 ring-secondary-container/20">
+<span class="material-symbols-outlined">cooking</span>
+</div>
+<span class="text-xs font-bold text-secondary">Processing</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<span class="text-xs font-bold text-on-surface">Out for Delivery</span>
+</div>
+<div class="relative z-10 flex flex-col items-center gap-3 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined">celebration</span>
+</div>
+<span class="text-xs font-bold text-on-surface">Delivered</span>
+</div>
+</div>
+</div>
+<!-- Three-Column Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left Column: Order Items & Pricing -->
+<div class="lg:col-span-6 space-y-6">
+<!-- Order Items Card -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+<div class="p-6 border-b border-surface-container">
+<h3 class="font-headline-sm text-headline-sm text-primary">Order Items</h3>
+</div>
+<div class="divide-y divide-surface-container">
+<!-- Item 1 -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<img alt="Artisanal Cupcake" class="w-16 h-16 rounded-lg object-cover" data-alt="A close-up of a perfectly baked artisanal chocolate cupcake with a high swirl of rich dark chocolate frosting and a sprinkle of gold leaf. The background is soft-focus bakery textures with warm amber lighting and professional food photography aesthetics, using a refined color palette of deep browns and creamy beiges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Fl2xVHFp8kID8Yz82BoU6up-eUHCXNusQReF3TiNqFZO5DI8ymwjZACb-sX7Tmzw2DnW1oA7VzIazYdMYj05HoVMMo2zpi_ttqbk7atvHMY6JrRj4U494DS1pAEuCKvHUSED87b4YlfPz-OcoBn71xngBhWJwTkxwfya0SmLG3VQi8jkRwGXo2F5q6GM9xof0FR8jI4QAwDWrrnV2eZTv7FhMf9wtIqHOdxjtHAtXo7ITTkRG95u1JIVOr75rApPZz2Rsa0W0w">
+<div class="flex-1">
+<h4 class="font-title-lg text-title-lg text-primary">Midnight Dark Chocolate Cupcake</h4>
+<p class="text-xs text-on-surface-variant">Size: Regular | Topping: Sea Salt Caramel</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">2 × $4.50</p>
+<p class="text-secondary font-bold">$9.00</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<img alt="Almond Croissant" class="w-16 h-16 rounded-lg object-cover" data-alt="A professional top-down shot of a golden-brown, flaky almond croissant on a white marble surface. The lighting is bright and natural, accentuating the delicate layers of pastry and the dusting of powdered sugar. The style is modern minimalist with a focus on high-quality organic textures and artisanal craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0G4Pw0cGa-Jv8y9iLJiVGqQkBqMpJz9yZgYyzSd_WDqQmYasS_xJJSAsfGdKeczV1egkQzJInBTi2raKBZZTpCSvxB-7WrzBPj5OWrmn2PuzcnFwDLtVU-iclmOQC8iGN_7ugYY5N6m5GzgccS3QovolZ05Uen0FS59i7e_9GdOJ5WkXxXJYM7uPMWxF7Tz1l0pJMWhNVkQNmDs9SW-km_xvoObmswKn6wcO2nYzherRQEI3xU-fTvxn_iGPbWNjT5ViPzM-rCg">
+<div class="flex-1">
+<h4 class="font-title-lg text-title-lg text-primary">Twice-Baked Almond Croissant</h4>
+<p class="text-xs text-on-surface-variant">Warm: Yes | Extra: Sliced Almonds</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">1 × $6.25</p>
+<p class="text-secondary font-bold">$6.25</p>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<img alt="Strawberry Cheesecake" class="w-16 h-16 rounded-lg object-cover" data-alt="An elegant slice of strawberry cheesecake served on a handcrafted ceramic plate. The cheesecake is creamy white with a vibrant red strawberry glaze dripping down the side. The lighting is soft and moody, emphasizing a luxurious, high-end dessert boutique atmosphere with clean lines and warm bakery tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDduylU0L0WZ6-ljpQu9-17hWVCPaOwX92Qx8TJWHUcc8s3NdvuYLNPdPEOxTmA21I0I9lDqj2kUs_b0e_ESAmD_kHSgXLs_4aUeYLslmfBKj3g-DgI6dxI2zc19Jd3o8G6CdKjve2kJ17-r9Ar9u6chyojgu4lxGrNoZ6FawymdmoTwon4AaCw75VGPgE8qbZd5-xrCRK2SDghYWDmEcrorzjnAtCJgfpki4KKJ7G0xQcKO-1fkDrKwORF4PRRLsVfun8OvongA">
+<div class="flex-1">
+<h4 class="font-title-lg text-title-lg text-primary">Rustic Strawberry Cheesecake</h4>
+<p class="text-xs text-on-surface-variant">Slice: Medium</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">1 × $12.50</p>
+<p class="text-secondary font-bold">$12.50</p>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-6 flex items-center gap-4 hover:bg-surface-container-low transition-colors">
+<img alt="Macarons" class="w-16 h-16 rounded-lg object-cover" data-alt="A close-up of three vibrant macarons (pistachio, raspberry, and vanilla) stacked vertically. The image uses high-key, bright lighting with a pristine white background and very soft shadows. The style is sophisticated corporate chic, emphasizing a clean, high-end culinary aesthetic with pops of natural color." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXbjoUejjId4ThAZdMZoNrf7GOSQqZwbKM8Pd-4Lz-QpSZDisG5SL7kmGy2_bcWfICJItuPaVGaubUzZtNKHiAcvzVlP_WI41gPrUF7zZPK5_23xjT76mh2XgOYytObtlEQukHNjN3sVExxoj1WlY1zg8g_pzoDtX-Bq4GSrm3RJ00cykARjPh8U1f15OnX2BVCftAoStsTxhEiHVJ4WC8m-eDGJT43tjI5v1Kp-CH8yf7IOIZBKdLLX8kdufWYnQETiGAbsmeTA">
+<div class="flex-1">
+<h4 class="font-title-lg text-title-lg text-primary">Assorted Macarons Trio</h4>
+<p class="text-xs text-on-surface-variant">Box: Eco-friendly Kraft</p>
+</div>
+<div class="text-right">
+<p class="font-bold text-primary">1 × $8.00</p>
+<p class="text-secondary font-bold">$8.00</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pricing Summary -->
+<div class="bg-white rounded-xl shadow-sm p-6 space-y-4">
+<div class="flex justify-between text-on-surface-variant">
+<span>Subtotal</span>
+<span>$35.75</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm">confirmation_number</span>
+                                Promo Code <span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded font-bold text-xs">CRAVE20</span>
+</span>
+<span class="text-secondary font-bold">-$7.15</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Estimated Tax (8%)</span>
+<span>$2.29</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Delivery Fee</span>
+<span>$5.83</span>
+</div>
+<div class="pt-4 border-t border-surface-container flex justify-between items-center">
+<span class="font-headline-sm text-headline-sm text-primary">Total Paid</span>
+<span class="font-headline-sm text-headline-sm text-secondary">$36.72</span>
+</div>
+</div>
+<!-- Refund/Adjustment Card -->
+<div class="bg-surface-container-low border-2 border-dashed border-outline-variant rounded-xl p-6 text-center">
+<span class="material-symbols-outlined text-outline mb-2">payments</span>
+<h4 class="font-bold text-on-surface">Issue a Refund?</h4>
+<p class="text-xs text-on-surface-variant mb-4">Refund partial amount or cancel this order entirely.</p>
+<button class="px-6 py-2 bg-on-surface text-white rounded-full text-xs font-bold hover:bg-primary transition-colors">Adjust Order</button>
+</div>
+</div>
+<!-- Middle Column: Customer & Shipping -->
+<div class="lg:col-span-3 space-y-6">
+<!-- Customer Card -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+<h3 class="font-title-lg text-title-lg text-primary mb-6">Customer Info</h3>
+<div class="flex items-center gap-4 mb-6">
+<img alt="Customer Avatar" class="w-12 h-12 rounded-full" data-alt="A portrait of a smiling young woman with warm brown eyes and natural styling, wearing a soft cream sweater. The background is a clean, bright minimalist studio setting with soft natural light, reflecting a modern light-mode interface. The aesthetic is friendly, premium, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiU_5Q2JaGTs8g07x808IMxavV2Hhtueu8UhqVcwnbY6zAopFg2T8X_x3q3BnYcYoftbFF031U-UVbSJ5IO17-r4XXZnLnlowtAZXoetlHB_Vkg0hKdK043uPVMq_HS5JyL-A5IFFFVFgMqyt2WK05uXv7wdVO-HXrOpKkfutpOlJ531awpj37d_8VGDFYLgNfw9xkxdsAnW1Pd_hEmtGFbrkC_3zBrYULE-l8SHF9TetqE-Lfu5i6yVsDTu-PZoyqX_Ch4FiTjg">
+<div>
+<p class="font-bold text-primary">Sarah Johnson</p>
+<p class="text-xs text-on-surface-variant">Customer since 2021</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-lg">mail</span>
+<div>
+<p class="text-xs font-bold text-on-surface">Email</p>
+<p class="text-sm text-on-surface-variant break-all">sarah.j@example.com</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-lg">call</span>
+<div>
+<p class="text-xs font-bold text-on-surface">Phone</p>
+<p class="text-sm text-on-surface-variant">+1 (555) 098-7654</p>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-container grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] uppercase font-bold text-outline tracking-wider">Total Orders</p>
+<p class="text-lg font-bold text-primary">12</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-outline tracking-wider">LTV</p>
+<p class="text-lg font-bold text-secondary">$412.50</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Card -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-title-lg text-title-lg text-primary">Delivery</h3>
+<span class="text-[10px] bg-primary text-white px-2 py-0.5 rounded font-bold uppercase tracking-wider">Priority</span>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-low rounded-lg border border-surface-container">
+<p class="text-xs font-bold text-on-surface mb-1">Shipping Address</p>
+<p class="text-sm text-on-surface-variant leading-relaxed">
+                                    742 Evergreen Terrace,<br>
+                                    Springfield, IL 62704<br>
+                                    United States
+                                </p>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-on-surface-variant">Method:</span>
+<span class="font-bold">Baker's Express</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface mb-1">Notes</p>
+<p class="text-xs italic text-on-surface-variant">"Please leave by the front door and ring the bell once. Thank you!"</p>
+</div>
+</div>
+</div>
+<!-- Payment Card -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+<h3 class="font-title-lg text-title-lg text-primary mb-4">Payment</h3>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-6 bg-primary rounded flex items-center justify-center text-[8px] text-white font-bold">VISA</div>
+<p class="text-sm font-bold">Visa ending in 4242</p>
+</div>
+<span class="material-symbols-outlined text-secondary" data-weight="fill">verified</span>
+</div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-on-surface-variant">Status:</span>
+<span class="text-secondary font-bold">Authorized &amp; Paid</span>
+</div>
+<p class="text-[10px] text-on-surface-variant">ID: txn_9K3lPq82mN5zX4v</p>
+</div>
+</div>
+<!-- Right Column: Timeline & Notes -->
+<div class="lg:col-span-3 space-y-6">
+<!-- Order Activity Timeline -->
+<div class="bg-white rounded-xl shadow-sm p-6 flex flex-col h-[500px]">
+<h3 class="font-title-lg text-title-lg text-primary mb-6">Activity Log</h3>
+<div class="flex-1 overflow-y-auto custom-scrollbar space-y-6 pr-2">
+<!-- Timeline Item -->
+<div class="flex gap-4 relative">
+<div class="flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-secondary/20 z-10"></div>
+<div class="flex-1 w-0.5 bg-surface-container mt-1"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Processing Started</p>
+<p class="text-[10px] text-on-surface-variant mb-1">Today at 11:15 AM</p>
+<p class="text-xs text-on-surface-variant">Order moved to kitchen queue by Chef Marcus.</p>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="flex gap-4 relative">
+<div class="flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-surface-container z-10"></div>
+<div class="flex-1 w-0.5 bg-surface-container mt-1"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Payment Successful</p>
+<p class="text-[10px] text-on-surface-variant mb-1">Today at 10:46 AM</p>
+<p class="text-xs text-on-surface-variant">Transaction ID 4242 approved via Stripe.</p>
+</div>
+</div>
+<!-- Timeline Item -->
+<div class="flex gap-4 relative">
+<div class="flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-surface-container z-10"></div>
+<div class="flex-1 w-0.5 bg-surface-container mt-1"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Order Received</p>
+<p class="text-[10px] text-on-surface-variant mb-1">Today at 10:45 AM</p>
+<p class="text-xs text-on-surface-variant">Customer Sarah Johnson placed order #CB-00482.</p>
+</div>
+</div>
+<!-- Timeline Item (Inactive) -->
+<div class="flex gap-4 relative">
+<div class="flex flex-col items-center">
+<div class="w-2.5 h-2.5 rounded-full bg-surface-container-low border border-surface-container z-10"></div>
+</div>
+<div>
+<p class="text-xs font-bold text-outline">Delivery Pending</p>
+<p class="text-[10px] text-outline">Estimated: 01:30 PM</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Internal Notes -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-title-lg text-title-lg text-primary">Internal Notes</h3>
+<button class="text-secondary text-xs font-bold hover:underline">Edit</button>
+</div>
+<textarea class="w-full h-24 p-3 bg-surface-container-low border-none rounded-lg text-xs focus:ring-1 focus:ring-secondary/50 resize-none mb-3" placeholder="Add a private note for staff..."></textarea>
+<p class="text-[10px] text-on-surface-variant italic">Only visible to administrators and kitchen staff.</p>
+</div>
+<!-- Quick Status Change -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+<h3 class="font-title-lg text-title-lg text-primary mb-4">Action Center</h3>
+<div class="space-y-2">
+<button class="w-full text-left p-3 rounded-lg border border-surface-container hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent transition-all flex items-center justify-between group">
+<span class="text-xs font-bold">Ready for Pickup</span>
+<span class="material-symbols-outlined text-lg opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<button class="w-full text-left p-3 rounded-lg border border-surface-container hover:bg-secondary-container hover:text-on-secondary-container hover:border-transparent transition-all flex items-center justify-between group">
+<span class="text-xs font-bold">Assign Courier</span>
+<span class="material-symbols-outlined text-lg opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</button>
+<button class="w-full text-left p-3 rounded-lg border border-error/20 text-error hover:bg-error hover:text-white hover:border-transparent transition-all flex items-center justify-between group">
+<span class="text-xs font-bold">Cancel Order</span>
+<span class="material-symbols-outlined text-lg opacity-0 group-hover:opacity-100 transition-opacity">cancel</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.97)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+</body></html>

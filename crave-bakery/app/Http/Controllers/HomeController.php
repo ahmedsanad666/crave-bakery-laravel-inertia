@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
-use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,21 +18,49 @@ class HomeController extends Controller
             ->where('is_active', true)
             ->with('categories')
             ->latest('published_at')
-            ->limit(6)
+            ->limit(9)
             ->get();
 
-        $featuredCategories = Category::query()
-            ->where('show_in_homepage', true)
+        $featuredIds = $featuredProducts->pluck('id');
+
+        $latestProducts = Product::query()
             ->where('status', 'active')
-            ->orderBy('sort_order')
+            ->where('is_active', true)
+            ->with('categories')
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
+        $excludeIds = $featuredIds->merge($latestProducts->pluck('id'))->unique();
+
+        $recommendedProducts = Product::query()
+            ->where('status', 'active')
+            ->where('is_active', true)
+            ->whereNotIn('id', $excludeIds)
+            ->with('categories')
+            ->latest('published_at')
             ->limit(4)
             ->get();
+
+        if ($recommendedProducts->count() < 4) {
+            $fill = Product::query()
+                ->where('status', 'active')
+                ->where('is_active', true)
+                ->whereNotIn('id', $recommendedProducts->pluck('id'))
+                ->with('categories')
+                ->latest('published_at')
+                ->limit(4 - $recommendedProducts->count())
+                ->get();
+
+            $recommendedProducts = $recommendedProducts->concat($fill);
+        }
 
         return Inertia::render('Home', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'featuredProducts' => ProductResource::collection($featuredProducts)->resolve(),
-            'featuredCategories' => CategoryResource::collection($featuredCategories)->resolve(),
+            'latestProducts' => ProductResource::collection($latestProducts)->resolve(),
+            'recommendedProducts' => ProductResource::collection($recommendedProducts)->resolve(),
         ]);
     }
 }

@@ -1,0 +1,375 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Invoice Preview | Artisanal Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#fcf9f8",
+                    "outline": "#84746f",
+                    "on-surface-variant": "#514440",
+                    "on-primary-fixed": "#321207",
+                    "error": "#ba1a1a",
+                    "tertiary": "#110f0a",
+                    "surface-dim": "#dcd9d9",
+                    "primary-fixed-dim": "#f6b8a5",
+                    "surface-container-high": "#eae7e7",
+                    "secondary-container": "#fc6537",
+                    "secondary-fixed-dim": "#ffb59f",
+                    "on-tertiary-fixed": "#1e1b17",
+                    "secondary": "#b02f00",
+                    "background": "#fcf9f8",
+                    "outline-variant": "#d6c2bd",
+                    "surface-variant": "#e5e2e1",
+                    "inverse-primary": "#f6b8a5",
+                    "on-secondary-fixed-variant": "#862200",
+                    "tertiary-fixed-dim": "#ccc6be",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#825343",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed": "#ffdbd0",
+                    "tertiary-container": "#26241f",
+                    "tertiary-fixed": "#e8e1da",
+                    "surface-bright": "#fcf9f8",
+                    "surface-container-low": "#f6f3f2",
+                    "primary-container": "#3d1a0e",
+                    "surface-container-highest": "#e5e2e1",
+                    "primary": "#220601",
+                    "on-background": "#1c1b1b",
+                    "inverse-on-surface": "#f3f0ef",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#b47e6d",
+                    "on-secondary-container": "#5c1400",
+                    "inverse-surface": "#313030",
+                    "on-tertiary-container": "#8f8b84",
+                    "on-secondary-fixed": "#3b0a00",
+                    "secondary-fixed": "#ffdbd1",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#4a4641",
+                    "on-surface": "#1c1b1b",
+                    "surface-container": "#f0eded",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed-variant": "#663c2d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "4px",
+                    "container-margin": "24px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "xxl": "48px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Playfair Display"],
+                    "headline-md": ["Playfair Display"],
+                    "display-lg": ["Playfair Display"],
+                    "title-lg": ["Inter"],
+                    "headline-lg": ["Playfair Display"],
+                    "display-lg-mobile": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                    "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .invoice-card { box-shadow: none !important; border: none !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-lg text-on-surface min-h-screen">
+<!-- Side Navigation Shell -->
+<aside class="no-print h-screen w-64 fixed left-0 top-0 bg-primary dark:bg-primary-container shadow-xl flex flex-col h-full py-6 px-4 z-50">
+<div class="mb-xxl">
+<h1 class="font-headline-sm text-headline-sm text-secondary-fixed dark:text-secondary-fixed-dim">Artisanal Admin</h1>
+<p class="font-body-sm text-body-sm text-on-primary-container opacity-80">Premium Bakery CMS</p>
+</div>
+<nav class="flex-grow space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary dark:bg-secondary-container text-on-secondary dark:text-on-secondary-container rounded-lg" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span>Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10" href="#">
+<span class="material-symbols-outlined">group</span>
+<span>Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span>Staff</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors hover:bg-on-primary-container/10" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span>Analytics</span>
+</a>
+</nav>
+<div class="pt-6 border-t border-on-primary-container/20 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-outline-variant hover:text-secondary-fixed transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top Navigation Shell -->
+<header class="no-print fixed top-0 right-0 w-[calc(100%-16rem)] h-16 shadow-sm bg-surface-container-lowest flex justify-between items-center px-8 z-40">
+<div class="flex items-center gap-4 flex-grow">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-full border-outline-variant bg-surface-container-low focus:border-secondary focus:ring-0 text-body-sm" placeholder="Search orders, invoices..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative scale-95 active:scale-90 transition-transform text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="scale-95 active:scale-90 transition-transform text-on-surface-variant hover:text-secondary">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<span class="font-body-sm font-semibold">Admin</span>
+<span class="material-symbols-outlined text-3xl">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-16 pb-xxl px-gutter flex flex-col items-center">
+<!-- Controls Bar -->
+<div class="no-print w-full max-w-[800px] flex justify-between items-center py-xl mt-md">
+<div>
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors group" href="#">
+<span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+<span class="font-title-lg">Back to Orders</span>
+</a>
+</div>
+<div class="flex gap-4">
+<button class="h-12 px-6 rounded-full border border-primary-container text-primary-container font-semibold flex items-center gap-2 hover:bg-primary-container/5 transition-colors" onclick="window.print()">
+<span class="material-symbols-outlined">print</span>
+                    Print Invoice
+                </button>
+<button class="h-12 px-8 rounded-full bg-secondary text-on-secondary font-semibold flex items-center gap-2 hover:shadow-lg transition-all scale-100 active:scale-95">
+<span class="material-symbols-outlined">download</span>
+                    Download PDF
+                </button>
+</div>
+</div>
+<!-- Invoice Card -->
+<article class="invoice-card w-full max-w-[800px] bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-xxl mb-xxl border border-outline-variant/30 relative overflow-hidden">
+<!-- Subtle Decorative Header Gradient -->
+<div class="absolute top-0 left-0 right-0 h-1.5 bg-secondary"></div>
+<!-- Header Section -->
+<section class="flex justify-between items-start mb-xxl">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">bakery_dining</span>
+</div>
+<h2 class="font-headline-md text-primary">Crave Bakery</h2>
+</div>
+<address class="not-italic text-on-surface-variant font-body-sm leading-relaxed">
+                        1242 Artisanal Way, Flour District<br>
+                        San Francisco, CA 94107<br>
+                        hello@cravebakery.com<br>
+                        (555) 012-3456
+                    </address>
+</div>
+<div class="text-right">
+<h1 class="font-headline-lg text-primary tracking-tight mb-2">INVOICE</h1>
+<div class="space-y-1">
+<p class="text-label-caps text-outline">INVOICE NUMBER</p>
+<p class="font-title-lg text-on-surface">#CB-2023-0892</p>
+</div>
+</div>
+</section>
+<!-- Metadata Grid -->
+<section class="grid grid-cols-2 gap-xxl mb-xxl py-lg border-y border-outline-variant/20">
+<div>
+<p class="text-label-caps text-outline mb-3">BILL TO</p>
+<h3 class="font-title-lg text-primary mb-1">Sarah Johnson</h3>
+<p class="text-on-surface-variant font-body-sm leading-relaxed">
+                        892 Golden Gate Ave<br>
+                        Apartment 4B<br>
+                        San Francisco, CA 94102<br>
+                        sarah.j@example.com
+                    </p>
+</div>
+<div class="flex flex-col gap-4 items-end">
+<div class="text-right">
+<p class="text-label-caps text-outline mb-1">DATE ISSUED</p>
+<p class="font-body-lg">October 24, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-label-caps text-outline mb-1">DUE DATE</p>
+<p class="font-body-lg">November 07, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-label-caps text-outline mb-1">PAYMENT STATUS</p>
+<span class="inline-block px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-[11px] uppercase tracking-wider">Unpaid</span>
+</div>
+</div>
+</section>
+<!-- Table -->
+<section class="mb-xxl">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-outline-variant">
+<th class="py-4 text-label-caps text-outline">DESCRIPTION</th>
+<th class="py-4 text-label-caps text-outline text-center">QTY</th>
+<th class="py-4 text-label-caps text-outline text-right">UNIT PRICE</th>
+<th class="py-4 text-label-caps text-outline text-right">TOTAL</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr>
+<td class="py-6">
+<p class="font-title-lg text-primary">Sourdough Country Loaf</p>
+<p class="text-body-sm text-outline">Slow-fermented organic wheat, 24-hour rise</p>
+</td>
+<td class="py-6 text-center font-body-lg">2</td>
+<td class="py-6 text-right font-body-lg">$9.50</td>
+<td class="py-6 text-right font-body-lg">$19.00</td>
+</tr>
+<tr>
+<td class="py-6">
+<p class="font-title-lg text-primary">Pain au Chocolat</p>
+<p class="text-body-sm text-outline">72-layer butter pastry with Belgian dark chocolate</p>
+</td>
+<td class="py-6 text-center font-body-lg">6</td>
+<td class="py-6 text-right font-body-lg">$5.25</td>
+<td class="py-6 text-right font-body-lg">$31.50</td>
+</tr>
+<tr>
+<td class="py-6">
+<p class="font-title-lg text-primary">Artisanal Macaron Box (Set of 12)</p>
+<p class="text-body-sm text-outline">Seasonal variety including Lavender &amp; Honey</p>
+</td>
+<td class="py-6 text-center font-body-lg">1</td>
+<td class="py-6 text-right font-body-lg">$32.00</td>
+<td class="py-6 text-right font-body-lg">$32.00</td>
+</tr>
+</tbody>
+</table>
+</section>
+<!-- Totals Section -->
+<section class="flex justify-end mb-xxl">
+<div class="w-full max-w-xs space-y-3">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-lg">Subtotal</span>
+<span class="font-body-lg">$82.50</span>
+</div>
+<div class="flex justify-between items-center text-secondary">
+<span class="font-body-lg">Early Bird Discount (10%)</span>
+<span class="font-body-lg">-$8.25</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-lg">Estimated Tax</span>
+<span class="font-body-lg">$6.31</span>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+<span class="font-headline-sm text-primary">Total Amount</span>
+<span class="font-headline-sm text-secondary">$80.56</span>
+</div>
+</div>
+</section>
+<!-- Footer Section -->
+<footer class="pt-xxl border-t border-outline-variant/30">
+<div class="grid grid-cols-2 gap-xxl items-end">
+<div class="space-y-4">
+<div class="p-4 bg-surface-container rounded-lg border border-outline-variant/20">
+<p class="text-label-caps text-outline mb-2">NOTES &amp; INSTRUCTIONS</p>
+<p class="text-body-sm text-on-surface-variant italic">Please settle the invoice within 14 days. For wholesale inquiries or recurring orders, please contact our kitchen directly.</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline-sm text-primary mb-2">Thank You!</p>
+<p class="text-on-surface-variant font-body-sm">We appreciate your support for artisanal baking.</p>
+<p class="text-label-caps text-outline mt-6">CRAVE BAKERY &amp; CO.</p>
+</div>
+</div>
+</footer>
+<!-- Texture Overlay -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');"></div>
+</article>
+<!-- Decorative Background Elements (Admin Only) -->
+<div class="no-print fixed top-[20%] -right-20 w-96 h-96 bg-primary-fixed rounded-full blur-[120px] -z-10 opacity-30"></div>
+<div class="no-print fixed bottom-[10%] -left-20 w-80 h-80 bg-secondary-fixed rounded-full blur-[100px] -z-10 opacity-30"></div>
+</main>
+<script>
+        // Simple micro-interaction for download button
+        document.querySelector('button.bg-secondary').addEventListener('click', function() {
+            const originalContent = this.innerHTML;
+            this.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Generating...`;
+            this.classList.add('opacity-80', 'pointer-events-none');
+            
+            setTimeout(() => {
+                this.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Ready`;
+                this.classList.remove('bg-secondary');
+                this.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('bg-green-600', 'opacity-80', 'pointer-events-none');
+                    this.classList.add('bg-secondary');
+                }, 2000);
+            }, 1500);
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('scale-[1.02]');
+            searchInput.parentElement.classList.add('transition-transform');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('scale-[1.02]');
+        });
+    </script>
+</body></html>

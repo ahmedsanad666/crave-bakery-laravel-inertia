@@ -1,0 +1,541 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Add/Edit Category | Crave Bakery Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#26241f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-fixed": "#1e1b17",
+                        "surface-bright": "#fcf9f8",
+                        "primary-fixed": "#ffdbd0",
+                        "on-error-container": "#93000a",
+                        "inverse-on-surface": "#f3f0ef",
+                        "surface-container-high": "#eae7e7",
+                        "on-secondary-container": "#5c1400",
+                        "on-surface": "#1c1b1b",
+                        "secondary-container": "#fc6537",
+                        "secondary": "#b02f00",
+                        "inverse-primary": "#f6b8a5",
+                        "background": "#fcf9f8",
+                        "primary-fixed-dim": "#f6b8a5",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f0eded",
+                        "on-tertiary-fixed-variant": "#4a4641",
+                        "primary-container": "#3d1a0e",
+                        "surface": "#fcf9f8",
+                        "on-primary-container": "#b47e6d",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-tertiary-container": "#8f8b84",
+                        "surface-tint": "#825343",
+                        "surface-container-low": "#f6f3f2",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-primary-fixed": "#321207",
+                        "secondary-fixed": "#ffdbd1",
+                        "inverse-surface": "#313030",
+                        "surface-variant": "#e5e2e1",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "on-surface-variant": "#514440",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#862200",
+                        "on-primary": "#ffffff",
+                        "outline": "#84746f",
+                        "tertiary-fixed-dim": "#ccc6be",
+                        "outline-variant": "#d6c2bd",
+                        "surface-dim": "#dcd9d9",
+                        "on-primary-fixed-variant": "#663c2d",
+                        "tertiary-fixed": "#e8e1da",
+                        "tertiary": "#110f0a",
+                        "error": "#ba1a1a",
+                        "primary": "#220601"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "container-margin": "24px",
+                        "gutter": "16px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Playfair Display"],
+                        "body-sm": ["Inter"],
+                        "headline-lg": ["Playfair Display"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "title-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .shadow-soft {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d6c2bd;
+            border-radius: 10px;
+        }
+        .active-layout {
+            background-color: #3d1a0e;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-lg overflow-x-hidden">
+<!-- Sidebar (Shared Component Anchor) -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-primary-container dark:bg-primary-container shadow-md flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<span class="font-headline-md text-headline-md font-bold text-on-primary-container">Crave Bakery</span>
+<p class="text-on-primary-container opacity-60 text-body-sm">Artisanal Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary text-on-secondary rounded-lg mx-2 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">bakery_dining</span>
+<span class="font-label-caps text-label-caps">Products</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">format_list_bulleted</span>
+<span class="font-label-caps text-label-caps">Attributes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-caps text-label-caps">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top Bar (Shared Component Anchor) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-surface-container-lowest dark:bg-surface-container border-b border-outline-variant flex justify-between items-center px-lg shadow-sm">
+<div class="flex items-center gap-lg">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">Crave Bakery Admin</span>
+<div class="relative group">
+<input class="h-10 w-64 rounded-xl border border-outline-variant bg-surface px-md pl-10 focus:ring-2 focus:ring-secondary-container outline-none transition-all" placeholder="Search categories..." type="text">
+<span class="material-symbols-outlined absolute left-3 top-2 text-on-surface-variant">search</span>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<nav class="hidden md:flex items-center gap-lg mr-lg">
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">View Site</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">Documentation</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">Support</a>
+</nav>
+<div class="flex items-center gap-sm">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant focus:ring-2 focus:ring-secondary-container">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant focus:ring-2 focus:ring-secondary-container">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+<button class="bg-secondary text-on-secondary px-md py-sm rounded-full font-label-caps text-label-caps hover:shadow-lg transition-all active:scale-95">Publish Changes</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-xs ml-sm overflow-hidden">
+<img alt="Admin User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a boutique bakery manager in a clean white chef shirt, set against a blurred warm interior of a modern artisanal bakery. The lighting is soft and natural, emphasizing a friendly yet authoritative expression. The image captures a clean-cut corporate yet accessible aesthetic with warm neutral tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4-RAvwE1qJ-TIsZ4oKYkisai384wApjRdJT4b8hqu8q8ziB1Onez7HSiMO2V_jW0wvlIVMSOAIlxwLbRS1d9RfVKMfF3EZXBSh6qGBGAoWJJN_aMZU6IoHnHq77xgUqmc8wddNb4jf82Z5FBCX68Iip5qBAz1jRDKIL33ZzTYdYkQe3mwqZax0rBMFPTaCbwUs6oNE6NgWSGD-LGNnFPIMWOud6-HKjpbrW90UsXMaK2OaE2G7XMaii9VY2sosRuXHEIRMeUTLg">
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-24 px-lg pb-xxl max-w-7xl">
+<!-- Breadcrumbs & Header -->
+<div class="mb-xl">
+<div class="flex items-center gap-xs text-on-surface-variant text-body-sm mb-xs">
+<a class="hover:text-secondary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-secondary transition-colors" href="#">Categories</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-on-surface font-semibold">Add New Category</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-primary">Category Management</h1>
+</div>
+<!-- Form Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-[65%_35%] gap-xl items-start">
+<!-- Left Column: Form Details -->
+<div class="space-y-lg">
+<!-- 1. Category Information -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">info</span>
+<h2 class="font-headline-sm text-headline-sm">Category Information</h2>
+</div>
+<div class="grid grid-cols-2 gap-lg mb-lg">
+<div class="col-span-2 md:col-span-1">
+<label class="block text-label-caps font-label-caps mb-xs">Category Name</label>
+<input class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary transition-all" id="cat_name" placeholder="e.g. Artisanal Breads" type="text">
+</div>
+<div class="col-span-2 md:col-span-1">
+<label class="block text-label-caps font-label-caps mb-xs">URL Slug Preview</label>
+<div class="flex items-center h-12 px-md bg-surface-container-low rounded-lg border border-dashed border-outline-variant text-on-surface-variant text-sm italic">
+                                cravebakery.com/shop/<span class="font-semibold text-primary px-1" id="slug_val">artisanal-breads</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-lg mb-lg">
+<div class="col-span-2 md:col-span-1">
+<label class="block text-label-caps font-label-caps mb-xs">Parent Category</label>
+<div class="relative">
+<select class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary appearance-none px-md">
+<option>None (Top Level)</option>
+<option>— Sourdough Series</option>
+<option>— Sweet Pastries</option>
+<option>— Savory Bakes</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-3 text-on-surface-variant pointer-events-none">unfold_more</span>
+</div>
+</div>
+<div class="col-span-2 md:col-span-1">
+<label class="block text-label-caps font-label-caps mb-xs">Display Order</label>
+<input class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary" type="number" value="1">
+</div>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Description&nbsp;</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary p-md" placeholder="Describe this category's unique offerings..." rows="4"></textarea>
+</div>
+</section>
+<!-- 2. Media -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">image</span>
+<h2 class="font-headline-sm text-headline-sm">Media &amp; Assets</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Primary Thumbnail</label>
+<div class="h-[160px] border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-secondary text-4xl mb-sm group-hover:scale-110 transition-transform">cloud_upload</span>
+<span class="text-body-sm font-medium">Upload thumbnail (1:1 recommended)</span>
+<span class="text-xs text-on-surface-variant">PNG, JPG up to 5MB</span>
+</div>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Category Banner</label>
+<div class="aspect-video border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer group overflow-hidden relative">
+<img alt="Bread banner preview" class="absolute inset-0 w-full h-full object-cover opacity-30" data-alt="A cinematic, wide-angle shot of freshly baked artisanal sourdough loaves cooling on a rustic wooden table in a sun-drenched bakery. Flour is lightly dusted across the surface, and a warm, golden morning light spills through a window, creating long shadows and a rich, inviting atmosphere. The focus is sharp on the crust's texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5Pa5HEACR1kCpwPFsIOiejwlrc9ubGf8NRIXjzFsq4V0R3cT5mTbs17gbHljcqMo3BqwrYhMSoJkZVtbjQHGg4a8E-bKxVD7Lh-Fjbk-bBNj8HCAfMCf_vG9H0J7_2BJ10Qr4E3aW1ET41CKylGUGg-Iu-6ccVHi41J8s2gc_zHKLLWC7hKHJMtRIfDVct8a5rmDeKmNO23nHL1nFEFwKI3fTUntYwSvEhaeFW48NXF71dsMaoAXXjYM7IpxNVVZ2lXVL3M0PBg">
+<div class="relative z-10 flex flex-col items-center">
+<span class="material-symbols-outlined text-secondary text-4xl mb-sm">add_photo_alternate</span>
+<span class="text-body-sm font-medium">Replace Banner Image (16:9)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. SEO Settings -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">search_check</span>
+<h2 class="font-headline-sm text-headline-sm">SEO Optimization</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg mb-xl">
+<div class="space-y-md">
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Meta Title</label>
+<input class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Artisanal Breads | Crave Bakery" type="text">
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Meta Description</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary p-md" placeholder="Shop our daily selection of crusty sourdough, baguettes, and specialty grains." rows="3"></textarea>
+</div>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Google Search Preview</label>
+<div class="bg-white p-md rounded-lg border border-outline-variant shadow-sm h-full">
+<div class="text-[#1a0dab] text-lg font-medium leading-tight mb-1 truncate">Artisanal Breads | Crave Bakery</div>
+<div class="text-[#006621] text-sm mb-1 truncate">cravebakery.com › shop › artisanal-breads</div>
+<div class="text-[#4d5156] text-sm line-clamp-2">Shop our daily selection of crusty sourdough, baguettes, and specialty grains. Baked fresh every morning using locally sourced ingredients...</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. Display Settings -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">grid_view</span>
+<h2 class="font-headline-sm text-headline-sm">Display Preferences</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+<div class="space-y-lg">
+<div>
+<label class="block text-label-caps font-label-caps mb-md">Layout Style</label>
+<div class="flex gap-sm">
+<button class="flex-1 flex flex-col items-center gap-1 p-md rounded-xl border border-outline-variant active-layout">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-xs font-bold uppercase tracking-wider">Grid</span>
+</button>
+<button class="flex-1 flex flex-col items-center gap-1 p-md rounded-xl border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">view_list</span>
+<span class="text-xs font-bold uppercase tracking-wider">List</span>
+</button>
+<button class="flex-1 flex flex-col items-center gap-1 p-md rounded-xl border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">dashboard_customize</span>
+<span class="text-xs font-bold uppercase tracking-wider">Masonry</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-xl border border-outline-variant">
+<div>
+<p class="font-title-lg text-title-lg">Public Visibility</p>
+<p class="text-body-sm text-on-surface-variant">Visible on frontend store</p>
+</div>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</div>
+</div>
+</div>
+<div class="space-y-md">
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Products Per Page</label>
+<select class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary px-md">
+<option>12</option>
+<option>24</option>
+<option>48</option>
+<option>Show All</option>
+</select>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Default Sort</label>
+<select class="w-full h-12 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary px-md">
+<option>Newest Arrivals</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Customer Rating</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. Custom Color -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-secondary">palette</span>
+<h2 class="font-headline-sm text-headline-sm">Branding &amp; Color</h2>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-md">Category Accent Color</label>
+<div class="flex flex-wrap items-center gap-md">
+<button class="w-10 h-10 rounded-full bg-secondary ring-2 ring-offset-2 ring-primary transition-transform hover:scale-110" title="Primary Orange"></button>
+<button class="w-10 h-10 rounded-full bg-primary transition-transform hover:scale-110" title="Dark Cocoa"></button>
+<button class="w-10 h-10 rounded-full bg-[#E5DDD4] transition-transform hover:scale-110" title="Warm Wheat"></button>
+<button class="w-10 h-10 rounded-full bg-[#3b0a00] transition-transform hover:scale-110" title="Dark Mahogany"></button>
+<button class="w-10 h-10 rounded-full bg-[#fc6537] transition-transform hover:scale-110" title="Soft Persimmon"></button>
+<button class="w-10 h-10 rounded-full bg-[#825343] transition-transform hover:scale-110" title="Muted Earth"></button>
+<button class="w-10 h-10 rounded-full bg-[#862200] transition-transform hover:scale-110" title="Burnt Ochre"></button>
+<button class="w-10 h-10 rounded-full bg-[#110f0a] transition-transform hover:scale-110" title="Onyx"></button>
+<div class="h-10 w-[1px] bg-outline-variant mx-sm"></div>
+<button class="h-10 px-md rounded-full border border-outline-variant bg-white flex items-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-lg">colorize</span>
+<span class="text-body-sm font-medium">Custom</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column Sidebar: Sticky Panels -->
+<aside class="space-y-lg sticky top-24">
+<!-- Publish Card -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<h3 class="font-headline-sm text-headline-sm mb-lg">Publish Settings</h3>
+<div class="space-y-md mb-lg">
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Status</label>
+<select class="w-full h-11 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary px-md text-sm">
+<option>Draft</option>
+<option selected="">Published</option>
+<option>Scheduled</option>
+</select>
+</div>
+<div>
+<label class="block text-label-caps font-label-caps mb-xs">Visibility</label>
+<select class="w-full h-11 rounded-lg border-outline-variant bg-white focus:border-primary focus:ring-1 focus:ring-primary px-md text-sm">
+<option>Public</option>
+<option>Password Protected</option>
+<option>Private</option>
+</select>
+</div>
+</div>
+<div class="flex items-center justify-between py-md border-t border-outline-variant mb-lg">
+<span class="text-body-sm font-medium">Show in Main Nav</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox">
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</div>
+</div>
+<button class="w-full py-md bg-secondary text-on-secondary rounded-full font-label-caps text-label-caps hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">publish</span>
+                        Publish Category
+                    </button>
+<button class="w-full py-md mt-sm border border-outline text-on-surface rounded-full font-label-caps text-label-caps hover:bg-surface-container transition-all">
+                        Save as Draft
+                    </button>
+</div>
+<!-- Category Preview Card -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<h3 class="font-headline-sm text-headline-sm mb-md">Live Preview</h3>
+<p class="text-xs text-on-surface-variant mb-lg uppercase tracking-widest font-bold">Storefront Card View</p>
+<div class="bg-white rounded-xl overflow-hidden shadow-soft group border border-outline-variant">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img alt="Category thumbnail preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up shot of artisanal bread rolls arranged artistically in a wicker basket lined with a clean linen cloth. The bread surfaces have beautiful flour patterns and a golden-brown, crispy texture. The background is a soft, blurred bakery setting with warm incandescent lighting that enhances the appetizing nature of the products." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOVsHt74VFaGTSBfDh_7fWIBygO7IW_GetnyWQI-TNIaj5ed-fuD-TOAi7LW7jglIxJaSj1Vp1LzFQJJLDJRk7j9zASyVX25GYKskOtdaMWiFeGCD66_JDGfjXxW4Uxjldt5uJziTdQcbIKSWmqTAyag6mdSF5B90fJRrp35hIMgmRHXsHTTLSaXFdcukytWxxj_0z0kTIbxEEwApifnufodbjVkL4vh1QkFiFTkuIskaMHCFKzEWuEi6h5gkLsohx1OkaO20zng">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<span class="bg-secondary text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-full mb-1 inline-block">New Arrival</span>
+<h4 class="text-white font-headline-sm text-headline-sm">Artisanal Breads</h4>
+</div>
+</div>
+<div class="p-md">
+<p class="text-body-sm text-on-surface-variant line-clamp-2 mb-md">Crusty, hearth-baked favorites including sourdough, baguettes, and multigrain loaves.</p>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-secondary uppercase tracking-widest">Shop Now</span>
+<span class="material-symbols-outlined text-secondary">arrow_right_alt</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Products Card -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-soft border border-outline-variant">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-headline-sm text-headline-sm">Category Products</h3>
+<span class="bg-primary-fixed-dim text-on-primary-fixed px-sm py-0.5 rounded-full text-[10px] font-bold">14 Total</span>
+</div>
+<div class="space-y-sm max-h-[320px] overflow-y-auto custom-scrollbar pr-1">
+<!-- Product Item 1 -->
+<div class="flex items-center gap-md p-sm hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-outline-variant">
+<img alt="Baguette" class="w-12 h-12 rounded-lg object-cover" data-alt="A macro photograph of a traditional French baguette, showing the intricate details of the scored crust and the dusting of flour. The lighting is bright and clean, emphasizing the fresh, crunchy texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMLFScVMB25rFEcgUX68hWIhwz9vrN5AD-H6yU9jkPiSifMJ1Vz2Hxd2ISf9Q0lGTE-V6nXiKbJHtuaTQEywviDIAZmg2mJh48BmFpAJ4F0ioDViqRsbAvhrcX2Ie00u74w0OV0U8OxK6BB-or4UhzNOH3tndLVTiP5VR4D_G9abOBUqzTyZPxnKNYHwkNe5bbvmxZzFRVEhg3-hZ6XZ-mlt39b_ow4h8_zVnXU6kOiu85YJEnC2L5JbBI7AMzUmR30Y8Ive_Gog">
+<div class="flex-1">
+<p class="text-body-sm font-semibold truncate">Classic French Baguette</p>
+<p class="text-xs text-on-surface-variant">$4.50</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+<!-- Product Item 2 -->
+<div class="flex items-center gap-md p-sm hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-outline-variant">
+<img alt="Sourdough" class="w-12 h-12 rounded-lg object-cover" data-alt="A round sourdough boule with a perfect ear, captured from a top-down perspective on a dark slate background. The contrast highlights the golden crust and the rustic, artisanal quality of the loaf." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm3BbhPWYWjIJ7gzeAJEVWNp7lkq9Hyy58JMDhLG58fQJUBfenfeusRrmeY8SQ99HdAPYLO0-xEt5aeY-ZURtOhEIocLIy0cgKa8XoCt9iCxULjSSKhC7sZbNG24iC1Vz3Fx0j4BqQoC0oYcbpFNxgcw4lsCVW7TN20K9oHPNpExFBZEWDMyg8_bTr8YHjg8x-iSAs7mBUPZOXwsdKc4QEgZeswT75_TdDKRd6IetzI9176Hx6ItYRCRg_XTap6UUAT_6VczOg_w">
+<div class="flex-1">
+<p class="text-body-sm font-semibold truncate">Country Sourdough Boule</p>
+<p class="text-xs text-on-surface-variant">$8.25</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+<!-- Product Item 3 -->
+<div class="flex items-center gap-md p-sm hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-outline-variant">
+<img alt="Ciabatta" class="w-12 h-12 rounded-lg object-cover" data-alt="Freshly baked ciabatta bread slices on a wooden board, showing the large airy holes inside the crumb. The lighting is warm and invites the viewer to imagine the soft texture and olive oil aroma." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV803faVuYDv442kg5OEKCqYa1ZoHb0dT4nkI3T0U5LC7-qLN6PcMVWqRrIFUNyd5zIIFj8xCCtTuAnNFsg39d0tRUw-QKYqJ0DtZr7zA5zLFQ0k4IPteyPTid-nqj53-vFjx7Ctgo7NskVNhGw1604uECqmaIoANsGBirfZ9XbbiB6LOldlSC5Z6vHU0PHglpCjA87yxHPXc8u9zXLcXbtBGLzIQN4xTbZblKOpJEpludwHPQ_ZdbqMuP8vm9VW_O3aRXgDPMhg">
+<div class="flex-1">
+<p class="text-body-sm font-semibold truncate">Olive Oil Ciabatta</p>
+<p class="text-xs text-on-surface-variant">$5.75</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+<!-- Product Item 4 -->
+<div class="flex items-center gap-md p-sm hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-outline-variant">
+<img alt="Rye Bread" class="w-12 h-12 rounded-lg object-cover" data-alt="A dense, dark rye bread loaf with sunflower seeds on top, placed on a linen kitchen towel. The mood is earthy and traditional, reflecting a high-quality, nutritious product." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0b8Y69BrUyS3CwvWZrONOYMALJfJR_x64m1r1PXhEjHNBRmcmuVnCEsYH1SNIAM-RHXqFg3UKc9DzPf1OD6UPN9WjNsjA1hKs6tdkcfUiDy15f1iQCaqBY8owyEtFwjr29-EBV30JqkBUS4Cdzc1eupoTca_twLZ0kO_QUgbvmkTXlMsnjV7hBqFSR1Sh1VCEqBmkJ4J8Zf0PQwMFcw_KZzLKknOuGEuEpiaQe8shIA1FOhhKl4xUFp5vgaG39jk5weqrE2lWAw">
+<div class="flex-1">
+<p class="text-body-sm font-semibold truncate">Danish Seeded Rye</p>
+<p class="text-xs text-on-surface-variant">$9.00</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+<!-- Product Item 5 -->
+<div class="flex items-center gap-md p-sm hover:bg-surface-container-low rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-outline-variant">
+<img alt="Challah" class="w-12 h-12 rounded-lg object-cover" data-alt="A beautifully braided challah bread with a glossy, egg-wash finish, resting on a white ceramic plate. The lighting is soft and high-key, emphasizing the golden, braided structure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG-uLgm_CbdreAKlgYIo_MSM6d1cuUK_2pZIa6mlDsEmZBMnQRzUSzTxQmsZIWAi1uiYofSrR8micTDV-uAojDBtKRPfpWTeCihWhU0ld2TBLCjyxSeQeaLnNU28R3-GW7qkYN2rc1vweBRQ8NskAT67w_t3kXnzXvc_MsB-hgU63z1xC3qFOMlNQ-IjnpyZw3H9jFZ-jssuzl8gtk2TnfaYITyb7-Maj_76Qk8QTHz361QSz4cROuZy-ua3fp-apeqR0j3cvd4w">
+<div class="flex-1">
+<p class="text-body-sm font-semibold truncate">Traditional Honey Challah</p>
+<p class="text-xs text-on-surface-variant">$7.50</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">open_in_new</span>
+</div>
+</div>
+<button class="w-full mt-lg pt-md border-t border-outline-variant text-center text-body-sm font-bold text-secondary hover:underline transition-all">
+                        Manage All Products
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Simple slug preview generator
+        const nameInput = document.getElementById('cat_name');
+        const slugPreview = document.getElementById('slug_val');
+        
+        nameInput.addEventListener('input', (e) => {
+            const val = e.target.value
+                .toLowerCase()
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+            slugPreview.textContent = val || 'artisanal-breads';
+        });
+
+        // Toggle layout active states
+        const layoutButtons = document.querySelectorAll('button.active-layout, button.active-layout ~ button');
+        layoutButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                layoutButtons.forEach(b => b.classList.remove('active-layout', 'bg-primary-container', 'text-white'));
+                btn.classList.add('active-layout');
+            });
+        });
+    </script>
+
+
+</body></html>

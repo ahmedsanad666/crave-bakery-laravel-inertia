@@ -11,6 +11,7 @@ class Attribute extends Model
 {
     /** @use HasFactory<AttributeFactory> */
     use HasFactory;
+
     protected $fillable = [
         'name',
         'type',
@@ -20,6 +21,20 @@ class Attribute extends Model
 
     public function attributeValues(): HasMany
     {
-        return $this->hasMany(AttributeValue::class);
+        return $this->hasMany(AttributeValue::class)->orderBy('sort_order')->orderBy('value');
+    }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if (blank($search)) {
+            return $query;
+        }
+
+        return $query->where('name', 'like', "%{$search}%");
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sort_order')->orderBy('name');
     }
 }

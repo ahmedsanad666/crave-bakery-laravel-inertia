@@ -1,0 +1,729 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Reviews Management | Crave Bakery Artisanal Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#862200",
+            "tertiary-container": "#26241f",
+            "on-tertiary-fixed-variant": "#4a4641",
+            "primary-fixed": "#ffdbd0",
+            "inverse-surface": "#313030",
+            "surface-container-low": "#f6f3f2",
+            "on-tertiary": "#ffffff",
+            "on-error-container": "#93000a",
+            "on-primary-fixed-variant": "#663c2d",
+            "on-secondary": "#ffffff",
+            "secondary": "#b02f00",
+            "primary": "#220601",
+            "error-container": "#ffdad6",
+            "tertiary-fixed-dim": "#ccc6be",
+            "surface-dim": "#dcd9d9",
+            "background": "#fcf9f8",
+            "outline": "#84746f",
+            "on-tertiary-fixed": "#1e1b17",
+            "on-primary": "#ffffff",
+            "surface-container-high": "#eae7e7",
+            "surface": "#fcf9f8",
+            "on-primary-fixed": "#321207",
+            "on-surface": "#1c1b1b",
+            "on-background": "#1c1b1b",
+            "on-primary-container": "#b47e6d",
+            "surface-bright": "#fcf9f8",
+            "surface-variant": "#e5e2e1",
+            "surface-container-highest": "#e5e2e1",
+            "on-secondary-fixed": "#3b0a00",
+            "tertiary": "#110f0a",
+            "on-secondary-container": "#5c1400",
+            "surface-container": "#f0eded",
+            "outline-variant": "#d6c2bd",
+            "inverse-primary": "#f6b8a5",
+            "inverse-on-surface": "#f3f0ef",
+            "secondary-fixed-dim": "#ffb59f",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#514440",
+            "secondary-fixed": "#ffdbd1",
+            "primary-container": "#3d1a0e",
+            "surface-tint": "#825343",
+            "secondary-container": "#fc6537",
+            "on-error": "#ffffff",
+            "primary-fixed-dim": "#f6b8a5",
+            "on-tertiary-container": "#8f8b84",
+            "tertiary-fixed": "#e8e1da",
+            "surface-container-lowest": "#ffffff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "gutter": "16px",
+            "lg": "24px",
+            "xxl": "48px",
+            "unit": "4px",
+            "container-margin": "24px",
+            "xs": "4px",
+            "md": "16px",
+            "xl": "32px",
+            "sm": "8px"
+          },
+          "fontFamily": {
+            "display-lg": ["Playfair Display"],
+            "body-lg": ["Inter"],
+            "label-caps": ["Inter"],
+            "headline-sm": ["Playfair Display"],
+            "headline-lg": ["Playfair Display"],
+            "title-lg": ["Inter"],
+            "headline-md": ["Playfair Display"],
+            "body-sm": ["Inter"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body { font-family: 'Inter', sans-serif; background-color: #fcf9f8; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .fill-icon { font-variation-settings: 'FILL' 1; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6c2bd; border-radius: 10px; }
+  </style>
+</head>
+<body class="text-on-background">
+<!-- Side Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-primary-container dark:bg-tertiary-container shadow-md flex flex-col py-lg px-md z-50">
+<div class="mb-xxl px-sm">
+<h1 class="font-display-lg text-display-lg text-secondary mb-xs">Artisanal Admin</h1>
+<p class="font-body-sm text-body-sm text-on-primary-container opacity-80">Crave Bakery Management</p>
+</div>
+<nav class="flex-1 space-y-1 custom-scrollbar overflow-y-auto">
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">bakery_dining</span>
+<span class="font-body-sm text-body-sm">Products</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-body-sm text-body-sm">Orders</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="font-body-sm text-body-sm">Attributes</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-secondary-container bg-secondary-container rounded-lg font-bold scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-body-sm text-body-sm">Customers</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body-sm text-body-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg mt-xxl" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+<a class="flex items-center gap-md p-md text-on-primary-container opacity-80 hover:opacity-100 hover:bg-primary-fixed-variant/20 transition-colors rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-sm text-body-sm">Logout</span>
+</a>
+</nav>
+</aside>
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant z-40 flex items-center justify-between px-lg shadow-sm">
+<div class="flex items-center bg-surface-container-low rounded-full px-md py-xs w-96">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-sm" placeholder="Search reviews, customers..." type="text">
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-surface-variant hover:text-secondary transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-sm">
+<img class="w-8 h-8 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a boutique bakery manager with a friendly expression, wearing a high-quality linen apron in a warm, sunlit interior space. The background features blurred artisanal bread displays, creating a mood of expertise and approachability in a premium modern environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW4RItmjYnNgtGwdGqFb_Mgy4kW0AmXd5ZklxNmf0rfSOaOU2YT08GEGUHL9krlO5QrpfKgupDq1E-5MXZCvBELfRit-cx1gYLKCDOJQO4vXeTFy3f2gi5iI0Im14vdX6rtuDOovQ98jZxW3zEIDJpOX4o79yEPpp10t81rOhRygTwK9sC0h4vKBf8jZElq4Ez7_9_1g05Ix4jhtbLG3lbilgoy6iWKXPEB8MfsnOLxyrGdjHXPm6dbdeCf9lHGBLeNTY2qKnNDQ">
+<span class="font-body-md text-on-surface font-medium">Admin</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-24 px-lg pb-xxl max-w-[1400px]">
+<!-- Breadcrumb & Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-xl gap-md">
+<div>
+<nav class="flex items-center gap-xs text-label-caps text-outline mb-sm">
+<span>Admin</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span>Customers</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-secondary">Reviews</span>
+</nav>
+<h2 class="font-headline-md text-headline-md text-primary">Reviews</h2>
+<p class="font-body-sm text-on-surface-variant">Manage customer feedback and moderate store ratings.</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-lg py-sm rounded-full border border-primary text-primary font-bold text-sm flex items-center gap-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[18px]">download</span>
+          Export CSV
+        </button>
+<button class="px-lg py-sm rounded-full border border-primary text-primary font-bold text-sm flex items-center gap-sm hover:bg-primary hover:text-white transition-all">
+<span class="material-symbols-outlined text-[18px]">settings_suggest</span>
+          Review Settings
+        </button>
+</div>
+</div>
+<!-- Stats Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-md mb-xl">
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/30">
+<p class="text-label-caps text-outline mb-xs">Total Reviews</p>
+<p class="font-headline-sm text-headline-sm text-primary">1,284</p>
+</div>
+<div class="bg-white p-md rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border-l-4 border-secondary-container">
+<p class="text-label-caps text-outline mb-xs flex items-center gap-xs">
+          Pending Approval
+          <span class="w-2 h-2 bg-secondary-container rounded-full animate-pulse"></span>
+</p>
+<p class="font-headline-sm text-headline-sm text-on-secondary-container">24</p>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/30">
+<p class="text-label-caps text-outline mb-xs">Approved</p>
+<p class="font-headline-sm text-headline-sm text-green-700">1,248</p>
+</div>
+<div class="bg-white p-md rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border-l-4 border-error">
+<p class="text-label-caps text-outline mb-xs">Flagged</p>
+<p class="font-headline-sm text-headline-sm text-error">12</p>
+</div>
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/30">
+<p class="text-label-caps text-outline mb-xs">Average Rating</p>
+<div class="flex items-center gap-sm">
+<p class="font-headline-sm text-headline-sm text-secondary">4.8</p>
+<div class="flex text-secondary">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star_half</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Toolbar -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] p-lg mb-lg border border-outline-variant/30">
+<!-- Filter Row 1 -->
+<div class="flex flex-col xl:flex-row gap-lg items-center justify-between mb-lg">
+<div class="flex flex-wrap items-center gap-sm">
+<span class="text-label-caps text-outline mr-sm">Status:</span>
+<button class="px-md py-1.5 rounded-full bg-secondary text-white text-body-sm font-bold shadow-sm">All</button>
+<button class="px-md py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-body-sm hover:border-secondary transition-colors">Pending (24)</button>
+<button class="px-md py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-body-sm hover:border-secondary transition-colors">Approved</button>
+<button class="px-md py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-body-sm hover:border-secondary transition-colors">Flagged</button>
+<button class="px-md py-1.5 rounded-full border border-outline-variant text-on-surface-variant text-body-sm hover:border-secondary transition-colors">Rejected</button>
+</div>
+<div class="flex items-center gap-sm">
+<span class="text-label-caps text-outline mr-sm">Rating:</span>
+<div class="flex gap-xs">
+<button class="p-2 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary group transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] group-hover:fill-icon">star</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary group transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] group-hover:fill-icon">star</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary group transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] group-hover:fill-icon">star</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary group transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] group-hover:fill-icon">star</span>
+</button>
+<button class="p-2 rounded-lg border border-outline-variant hover:border-secondary hover:text-secondary group transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] group-hover:fill-icon">star</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Filter Row 2 -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md pt-lg border-t border-outline-variant/30">
+<select class="h-12 px-md rounded-[10px] bg-white border border-outline-variant text-body-sm focus:border-primary outline-none">
+<option>All Products</option>
+<option>Sourdough Loaf</option>
+<option>Artisanal Croissant</option>
+<option>Berry Tart</option>
+</select>
+<select class="h-12 px-md rounded-[10px] bg-white border border-outline-variant text-body-sm focus:border-primary outline-none">
+<option>Last 30 Days</option>
+<option>This Week</option>
+<option>Quarter to Date</option>
+<option>Custom Range</option>
+</select>
+<div class="flex items-center gap-lg px-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+<span class="text-body-sm text-on-surface-variant group-hover:text-primary">Verified Purchase</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+<span class="text-body-sm text-on-surface-variant group-hover:text-primary">With Photos</span>
+</label>
+</div>
+<div class="flex justify-end">
+<button class="text-secondary font-bold text-sm underline hover:opacity-80">Reset All Filters</button>
+</div>
+</div>
+</section>
+<!-- Reviews Table -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/30 overflow-hidden relative">
+<!-- Bulk Actions Bar -->
+<div class="hidden absolute top-0 left-0 right-0 h-16 bg-primary-container text-white z-20 flex items-center justify-between px-lg animate-in slide-in-from-top duration-300" id="bulk-bar">
+<div class="flex items-center gap-lg">
+<p class="font-body-md font-bold text-on-primary-container"><span id="selected-count">3</span> reviews selected</p>
+<div class="h-6 w-px bg-on-primary-container/30"></div>
+<div class="flex gap-sm">
+<button class="px-md py-1.5 bg-green-600 rounded-full text-xs font-bold flex items-center gap-xs hover:bg-green-500 transition-colors">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Approve
+            </button>
+<button class="px-md py-1.5 bg-secondary rounded-full text-xs font-bold flex items-center gap-xs hover:bg-secondary/80 transition-colors">
+<span class="material-symbols-outlined text-[16px]">cancel</span> Reject
+            </button>
+<button class="px-md py-1.5 bg-error rounded-full text-xs font-bold flex items-center gap-xs hover:bg-error/80 transition-colors">
+<span class="material-symbols-outlined text-[16px]">delete</span> Delete
+            </button>
+</div>
+</div>
+<button class="text-on-primary-container/70 hover:text-white transition-colors" onclick="toggleBulkBar(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/30 bg-surface-container-low">
+<th class="p-md w-12 text-center">
+<input class="w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" onchange="toggleBulkBar(this.checked)" type="checkbox">
+</th>
+<th class="p-md text-label-caps text-outline">Customer &amp; Review</th>
+<th class="p-md text-label-caps text-outline">Product</th>
+<th class="p-md text-label-caps text-outline">Rating</th>
+<th class="p-md text-label-caps text-outline">Status</th>
+<th class="p-md text-label-caps text-outline">Date</th>
+<th class="p-md text-label-caps text-outline">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Row 1: Pending -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="p-md text-center">
+<input checked="" class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a young woman with a delighted expression, shot in natural lighting against a minimalist warm beige wall. Her joyful energy and clean, contemporary style reflect the artisanal warmth and high-quality aesthetic of the Crave Bakery brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSBRyV_VZQ8hLXSgpC7gbl4sxcVxvvPWbe0Qz2rjGAZupQgx6QnLmuNG6T8R5ir4xqXR9vQAorTRCnH8gonLxaO85RDJhZ4KQ0i0E1N7g9cZ3bsvysv3Ii17FrOf_vQqy3uyH31O0O1wu8lRIscSWQYOCnYbOej7iC_YhBlTR_4ylm_7ul9sxF0A3reLZczOTqb6KvnKjtT8-ldCcNwzVg68tcU8QJsFDwDAeZbDiNFP0kcfCnW5qZ_0M99owMOhBU2xAh-n1ddw">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Elena Rodriguez</span>
+<span class="material-symbols-outlined text-blue-500 text-[14px] fill-icon" title="Verified Purchase">verified</span>
+<span class="material-symbols-outlined text-outline text-[14px]" title="Contains Photo">photo_camera</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Heavenly Almond Croissants!</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"The flakey layers were absolutely perfect. It reminds me of the bakeries in Paris..."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up photograph of a golden-brown, perfectly laminated artisanal croissant, dusted with fine powdered sugar and topped with toasted almond slivers. The lighting is warm and directional, emphasizing the delicate, buttery layers and creating a sense of premium culinary quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAvV4TzerZ64pYiw815U5SWXoBq5wZgdueysZEr-xGxHLiSmMRPMSAjYPc5ww-S1qIzlBRpRFtSTQR3a-EccQpxbn_WcwgIvpfaqY2167hu_G9BVnoZ7bHHFWL_3d7pCAwn4hyLKO8CiEUKulyHl6ybeHA_TsOxB5OMNcdZMTQb6eEW510IUMrYqj9YTREIr5rOZgCRkCjLItB5sn_7ofWsJjlsRJwAsCY67AWEfdJQmzXUUXfA1J_KzCMd4GsxRQhhEXyqtzLYw">
+</div>
+<span class="text-body-sm font-medium text-primary">Almond Croissant</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">5.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary-container text-[11px] font-bold uppercase tracking-wider border border-secondary-container/20">Pending</span>
+</td>
+<td class="p-md text-body-sm text-outline">2 mins ago</td>
+<td class="p-md">
+<div class="flex gap-sm">
+<button class="p-2 hover:bg-green-50 text-green-600 rounded-full transition-colors" title="Quick Approve">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</button>
+<button class="p-2 hover:bg-error-container/20 text-error rounded-full transition-colors" title="Reject">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Pending -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-md text-center">
+<input checked="" class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-outline-variant flex items-center justify-center text-white font-bold">MK</div>
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Marcus King</span>
+<span class="material-symbols-outlined text-blue-500 text-[14px] fill-icon">verified</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Solid Sourdough</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"Great crust, though the center was a bit denser than last time."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A macro photograph of a rustic, crusty sourdough boule with a beautiful ear and deep caramelization. The bread is dusted with flour and resting on a textured linen surface, with soft morning light illuminating the intricate scoring patterns and highlighting the artisanal craftsmanship." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmuPb10Pf0KgWQioLUFbcBoqoKxK9rSDOhKEEgD7o9K6mtf1vjRSDnC2PhuXVD-IQ6QpV6jKWvYMDn2zwcjt0s3Tngi4niiNF7jDnfX0KCnLV3LBJ1Q3MPo2ZM9lBTlvfsT8iGKYHmRmdDdnPegeemrlweFw_6W2f5dU7VTkIDmtayTrFuvhvbA0aUd34YrY94YGtG6mJ2N7vNOqkMPX2UqlPmKeGuaM29nl_TCw6Wd7ta0fngZAgIWybL8bEKUK3Mh3B_RmItVw">
+</div>
+<span class="text-body-sm font-medium text-primary">Heritage Sourdough</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">4.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary-container text-[11px] font-bold uppercase tracking-wider border border-secondary-container/20">Pending</span>
+</td>
+<td class="p-md text-body-sm text-outline">1 hour ago</td>
+<td class="p-md">
+<div class="flex gap-sm">
+<button class="p-2 hover:bg-green-50 text-green-600 rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</button>
+<button class="p-2 hover:bg-error-container/20 text-error rounded-full transition-colors">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Approved -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-md text-center">
+<input checked="" class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A studio portrait of a man with a warm smile, wearing a stylish dark knit sweater. The lighting is soft and flattering with a clean, light grey background. The image has a modern, high-end feel that aligns with a premium bakery brand's customer profile." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDoCxg1tjb6y1A7oW6UD70jxHaWP5ykZdPFIwxvZEPiLUvO1gYKsJYUE_T1d5CdxLwqRGBUY7kdYSAdOWg7Cr4PbW-4K_9l53GUuFp8PiZYTONRFyVZTDhfOZRKWlGzk9k7ecTpiDEKqBP_JovLN1kXy6isSqiRYUpqyM4DTe0vD2lYBNE_onKwiqV5cwu1m5zQnAgwnP_KYOyvZgJGeZYpHzbZ8KT1k1Ko8ycM-rEyfM7XV5klobq_9HpGlArxN4ne5i1lyRPWQ">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">James Wilson</span>
+<span class="material-symbols-outlined text-blue-500 text-[14px] fill-icon">verified</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Best in the city!</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"I've tried every bakery within 10 miles and this place is consistently the winner."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A vibrant and appetizing close-up of a selection of artisanal bakery goods, showcasing different textures and colors. The image is bright and crisp, highlighting the high-quality ingredients and expert baking techniques that Crave Bakery represents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHnUbUQVRJlKzEqqUY_dMRCw0dSkTpVL5VOzP-GIHv0g6KMPLN-wNtPgsZTQUH7cCbvO8_B7Eflo592IobZIXNPaqkM0nyUi397v5ssEL19kjSyG8xPfTV9PpufUUfcZoUUyHSjk_TsOfwtE14hIKDYYiOxBV3BZsxhPFigf3t2lc0qZxIxmynIDKMt4LJ1m8BnS9YTmslG5caiESa9LDbf7_Pcmt5t7TqmCk6bycrNO_zTM8S9XrdosXqW6w8xeLWolyPpj4mcQ">
+</div>
+<span class="text-body-sm font-medium text-primary">Tasting Box</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">5.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-bold uppercase tracking-wider border border-green-200">Approved</span>
+</td>
+<td class="p-md text-body-sm text-outline">3 hours ago</td>
+<td class="p-md text-outline">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Approved -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-md text-center">
+<input class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A portrait of a woman with a confident, natural look, lit by soft side-lighting that creates a sophisticated mood. The background is a warm, neutral tone, ensuring the focus remains on the person. This high-quality photography matches the artisanal and refined aesthetic of the brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9fE9YLCmG6rK1Xn0bti5HzMevlAWcNnGklp0PPsIrZnRi3cIIre3ck9uMlmiJFEfVSNQjJAhYTWgQbo8CY9kpJkL1GHvBAteG8wLjdF7wRM4LiXTUB2R0XGLo24-n07Xw5il_ymexP53NnUX1VpDmlE3KSQv5YcZ4zWLpIL99RYIwRNDPK7JINwsBVmAI72ybQAFgg01CfZNbKsOohbJqczjxj2L5oHhB8-LlxnUt7gdL7srZmXL1votSWA42Y2ZoQXJMMJspQQ">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Sarah Chen</span>
+<span class="material-symbols-outlined text-blue-500 text-[14px] fill-icon">verified</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Delicate flavors</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"The lavender honey scone is subtle and divine. Pairs perfectly with earl grey."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up of a beautifully textured artisanal scone, with visible pieces of lavender and a light honey glaze. The image is warm and inviting, emphasizing the handmade quality and unique flavor profile of the bakery's specialty items." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA71v-3il_Fyc13aU9gYBtHZpAZT8q_2q9ydu6G5mAZHVsYhSb-MmY8Ik8_WZ97DwYDFRBmBrk-hLcu0hjOgpWE4aMSDtGrzqWNmHGG68_GNEtU6TNw-C_rWCn4osb4dbMnHpUQbnGtzewLMVYuVikJwQGpgt8AhB2dq_XjEQ9didgLPfV0u7xQW7vtFbblg5zNwAzy93mQwwZsMasCfCva0k7k2UPDtRb2i1G3cFQ4YUQBp1SOHs5kMO7MvaTfuHaaykOPPrMWig">
+</div>
+<span class="text-body-sm font-medium text-primary">Honey Scone</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">5.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-bold uppercase tracking-wider border border-green-200">Approved</span>
+</td>
+<td class="p-md text-body-sm text-outline">5 hours ago</td>
+<td class="p-md text-outline">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Approved -->
+<tr class="hover:bg-surface-container/30 transition-colors">
+<td class="p-md text-center">
+<input class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-white flex items-center justify-center font-bold">AL</div>
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Arthur Lewis</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Great for gifting</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"Sent a box of treats to my mother-in-law and she hasn't stopped raving about them."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="An elegantly packaged gift box containing a variety of colorful and textured artisanal cookies and pastries. The packaging is sophisticated, with minimal branding and high-quality materials, reflecting a premium gifting experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5WSqX26czZxuU-h2AlhG3BW4yC7uFOioW3b7TkMPYD0Yl5p3l6kaztbaUvpLH3mPyYYAbPxJMvkCDeHJa_kS1crj8J5jzpB3uVZnSYxekJizuH9hFJb6hPOCtdPWC5DABCAdWFz2tuqGV_fW7o0VauSrkvW5a3wkZl94IlCx3lRLURxDsi8NB8yZElc-DPm6nXz10UIlSZWZYkygtAZbW4RC1OYEG17LB5hSMpvlDWrZvLiTTaSQsmxkj_4IpoVTEPrDBbrMxpQ">
+</div>
+<span class="text-body-sm font-medium text-primary">Gift Assortment</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">4.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-[11px] font-bold uppercase tracking-wider border border-green-200">Approved</span>
+</td>
+<td class="p-md text-body-sm text-outline">Yesterday</td>
+<td class="p-md text-outline">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Flagged -->
+<tr class="hover:bg-error-container/5 transition-colors bg-error-container/5">
+<td class="p-md text-center">
+<input class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-outline flex items-center justify-center text-white font-bold">??</div>
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Anonymous</span>
+</div>
+<p class="font-bold text-sm text-error mb-1">Check out my website for free coupons!</p>
+<p class="text-body-sm text-error/70 mb-2">Flag Reason: Potential Spam/URL Inclusion</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic opacity-60">"Visit my site at [link] for amazing discounts on all bakery..."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm opacity-50">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A generic selection of bakery goods, presented in a clean but slightly muted way to indicate its status in a flagged or less relevant context. The quality is still visible but the focus is reduced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyHXrX2o_0qHbm3nJc4sD4XXSG2bhLaZBdDklgTCmWX5sSSX1Tj5C7Dr6v7NwQPdoVVItveO5nwMKths0ImqTWEE_Vna-UtgpOTfDcliuHnfWWg5jIyeTSjDzETT5ifK7n6A2RlNmcKMEcP6bB4yUAKE894BEvhHM468uXG_RNfMMPLJB_Ez1zPiOn2iQ4YW8bn9N2Z0cblN3hKqpM6K3Po_kDRbBEv9Q06WfcVXDe5LbQtgBkkbip1k-zKuT_N0xSANr1RzmuBg">
+</div>
+<span class="text-body-sm font-medium text-primary">Artisanal Box</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs opacity-50">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">1.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-error-container text-error text-[11px] font-bold uppercase tracking-wider border border-error/20">Flagged</span>
+</td>
+<td class="p-md text-body-sm text-outline">Oct 12, 2023</td>
+<td class="p-md">
+<div class="flex gap-sm">
+<button class="p-2 hover:bg-green-50 text-green-600 rounded-full transition-colors" title="Clear Flag">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</button>
+<button class="p-2 hover:bg-error-container/20 text-error rounded-full transition-colors" title="Permanent Delete">
+<span class="material-symbols-outlined text-[20px]">delete_forever</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 7: Rejected (Muted) -->
+<tr class="opacity-50 grayscale bg-surface-container-low transition-colors">
+<td class="p-md text-center">
+<input class="review-check w-4 h-4 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox">
+</td>
+<td class="p-md">
+<div class="flex gap-md">
+<div class="w-10 h-10 rounded-full bg-outline-variant flex items-center justify-center text-white font-bold">TG</div>
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<span class="font-title-lg text-sm font-bold text-primary">Tom G.</span>
+</div>
+<p class="font-bold text-sm text-primary mb-1">Bad delivery</p>
+<p class="text-body-sm text-on-surface-variant line-clamp-1 italic">"The driver was 2 hours late and the box was crushed. Terrible service."</p>
+</div>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A rustic sourdough loaf, shown in a way that emphasizes its texture and craftsmanship. The lighting is soft and professional, maintaining brand standards even for products associated with less favorable feedback." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaSQNkLtOdVBHUcvM08-uyK176p0IjwzLDNYxzr01kOnHgR3DU3_U6-jdovl7Xh6tZ5i1yC_dj_iIz6Buag4U-OBkDMPxdKwdL2HWS1-i4C7aVDo-2OM9rrDzIIPh9ChiUVpsD-NRR4j4D6l65SL34R63XS4iQ34oi-ePXxJr3xUqlq_CCYPDTXU5b7y_A54Iv-IDziRh44D_jWNZuppAYsx7ZLsiPKQli1CTwIQ-krsdpcSTmugIeOl9QkpAH8fIJHS1xEWdpgw">
+</div>
+<span class="text-body-sm font-medium text-primary">Heritage Sourdough</span>
+</div>
+</td>
+<td class="p-md">
+<div class="flex items-center gap-xs">
+<div class="flex text-secondary-container">
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined fill-icon text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+<span class="material-symbols-outlined text-[16px]">star</span>
+</div>
+<span class="text-body-sm font-bold text-outline">2.0</span>
+</div>
+</td>
+<td class="p-md">
+<span class="px-3 py-1 rounded-full bg-outline-variant/30 text-outline text-[11px] font-bold uppercase tracking-wider border border-outline-variant">Rejected</span>
+</td>
+<td class="p-md text-body-sm text-outline">Oct 10, 2023</td>
+<td class="p-md text-outline">
+<button class="p-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">undo</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="p-md bg-surface-container-low flex items-center justify-between border-t border-outline-variant/30">
+<p class="text-body-sm text-outline">Showing 1 to 7 of 1,284 reviews</p>
+<div class="flex gap-xs">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-secondary text-white font-bold">1</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-white transition-colors">2</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-white transition-colors">3</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+    function toggleBulkBar(show) {
+      const bar = document.getElementById('bulk-bar');
+      const checks = document.querySelectorAll('.review-check');
+      const countEl = document.getElementById('selected-count');
+      
+      if (show) {
+        bar.classList.remove('hidden');
+        let count = 0;
+        checks.forEach(c => {
+          c.checked = true;
+          count++;
+        });
+        countEl.textContent = count;
+      } else {
+        bar.classList.add('hidden');
+        checks.forEach(c => c.checked = false);
+      }
+    }
+
+    // Individual checkbox logic
+    document.querySelectorAll('.review-check').forEach(check => {
+      check.addEventListener('change', () => {
+        const bar = document.getElementById('bulk-bar');
+        const countEl = document.getElementById('selected-count');
+        const checked = document.querySelectorAll('.review-check:checked');
+        
+        if (checked.length > 0) {
+          bar.classList.remove('hidden');
+          countEl.textContent = checked.length;
+        } else {
+          bar.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</body></html>

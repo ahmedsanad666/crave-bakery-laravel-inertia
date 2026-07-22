@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import {
+    IconAdjustments,
     IconBook,
     IconCategory,
     IconChartBar,
@@ -9,9 +10,11 @@ import {
     IconLogout,
     IconReceipt,
     IconSettings,
+    IconShieldLock,
     IconStar,
     IconTag,
     IconUsers,
+    IconX,
 } from '@tabler/icons-vue';
 
 defineProps({
@@ -19,7 +22,13 @@ defineProps({
         type: Boolean,
         default: false,
     },
+    showClose: {
+        type: Boolean,
+        default: false,
+    },
 });
+
+defineEmits(['close']);
 
 const page = usePage();
 
@@ -36,6 +45,8 @@ const roleLabel = computed(() => {
     return 'Admin';
 });
 
+const isSuperAdmin = computed(() => user.value?.role === 'super_admin');
+
 const userInitials = computed(() => {
     const name = user.value?.name ?? 'A';
     return name
@@ -46,36 +57,50 @@ const userInitials = computed(() => {
         .toUpperCase();
 });
 
-const navSections = [
-    {
-        label: 'Main',
-        items: [
-            { label: 'Dashboard', icon: IconLayoutDashboard, route: 'admin.dashboard' },
-            { label: 'Analytics', icon: IconChartBar, route: 'admin.analytics.index' },
-        ],
-    },
-    {
-        label: 'Catalogue',
-        items: [
-            { label: 'Products', icon: IconBook, route: 'admin.products.index' },
-            { label: 'Categories', icon: IconCategory, route: 'admin.categories.index' },
-        ],
-    },
-    {
-        label: 'Sales',
-        items: [
-            { label: 'Orders', icon: IconReceipt, route: 'admin.orders.index' },
-            { label: 'Promo Codes', icon: IconTag, route: 'admin.promo-codes.index' },
-        ],
-    },
-    {
-        label: 'Customers',
-        items: [
-            { label: 'Customers', icon: IconUsers, route: 'admin.customers.index' },
-            { label: 'Reviews', icon: IconStar, route: 'admin.reviews.index' },
-        ],
-    },
-];
+const navSections = computed(() => {
+    const sections = [
+        {
+            label: 'Main',
+            items: [
+                { label: 'Dashboard', icon: IconLayoutDashboard, route: 'admin.dashboard' },
+                { label: 'Analytics', icon: IconChartBar, route: 'admin.analytics.index' },
+            ],
+        },
+        {
+            label: 'Catalogue',
+            items: [
+                { label: 'Products', icon: IconBook, route: 'admin.products.index' },
+                { label: 'Categories', icon: IconCategory, route: 'admin.categories.index' },
+                { label: 'Attributes', icon: IconAdjustments, route: 'admin.attributes.index' },
+            ],
+        },
+        {
+            label: 'Sales',
+            items: [
+                { label: 'Orders', icon: IconReceipt, route: 'admin.orders.index' },
+                { label: 'Promo Codes', icon: IconTag, route: 'admin.promo-codes.index' },
+            ],
+        },
+        {
+            label: 'Customers',
+            items: [
+                { label: 'Customers', icon: IconUsers, route: 'admin.customers.index' },
+                { label: 'Reviews', icon: IconStar, route: 'admin.reviews.index' },
+            ],
+        },
+    ];
+
+    if (isSuperAdmin.value) {
+        sections.push({
+            label: 'Admin',
+            items: [
+                { label: 'Admin Users', icon: IconShieldLock, route: 'admin.users.index' },
+            ],
+        });
+    }
+
+    return sections;
+});
 
 const hasRoute = (name) => {
     try {
@@ -96,18 +121,18 @@ const isActive = (routeName) => {
 
 <template>
     <aside
-        class="admin-scrollbar fixed left-0 top-0 z-50 flex h-full flex-col overflow-y-auto bg-primary-container py-md shadow-md transition-all duration-300"
+        class="admin-scrollbar flex h-full flex-col overflow-y-auto bg-primary-container py-md shadow-md transition-all duration-300"
         :class="collapsed ? 'w-[4.5rem]' : 'w-64'"
     >
         <!-- Branding -->
         <div
-            class="flex items-center justify-between px-lg pb-xxl"
-            :class="collapsed ? 'flex-col gap-2 px-2' : ''"
+            class="flex items-center px-lg pb-xxl"
+            :class="collapsed ? 'flex-col justify-center gap-2 px-2' : 'justify-between'"
         >
             <div class="flex flex-col" :class="collapsed ? 'items-center' : ''">
                 <span
-                    class="font-serif text-headline-sm text-on-primary-fixed"
-                    :class="collapsed ? 'text-center text-sm' : ''"
+                    class="font-serif text-on-primary-fixed"
+                    :class="collapsed ? 'text-center text-sm font-semibold' : 'text-headline-sm'"
                 >
                     {{ collapsed ? 'CB' : siteName }}
                 </span>
@@ -118,12 +143,23 @@ const isActive = (routeName) => {
                     Artisan Admin
                 </span>
             </div>
-            <span
-                v-if="!collapsed"
-                class="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-white"
-            >
-                ADMIN
-            </span>
+
+            <div v-if="!collapsed" class="flex items-center gap-2">
+                <span
+                    class="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-white"
+                >
+                    ADMIN
+                </span>
+                <button
+                    v-if="showClose"
+                    type="button"
+                    class="rounded-full p-1.5 text-tertiary-fixed-dim transition-colors hover:bg-white/10 hover:text-white"
+                    aria-label="Close menu"
+                    @click="$emit('close')"
+                >
+                    <IconX class="size-5" stroke="1.5" />
+                </button>
+            </div>
         </div>
 
         <!-- Navigation -->
@@ -197,8 +233,10 @@ const isActive = (routeName) => {
                 class="mx-2 mt-2 flex items-center gap-3 rounded-xl bg-black/20 px-4 py-4"
                 :class="collapsed ? 'flex-col px-2' : ''"
             >
-                <div
-                    class="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/20 bg-secondary-fixed font-sans text-sm font-semibold text-primary"
+                <Link
+                    :href="route('admin.profile.edit')"
+                    class="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-secondary-fixed font-sans text-sm font-semibold text-primary transition-opacity hover:opacity-90"
+                    title="My Profile"
                 >
                     <img
                         v-if="user?.avatar"
@@ -207,14 +245,19 @@ const isActive = (routeName) => {
                         class="size-10 rounded-full object-cover"
                     />
                     <span v-else>{{ userInitials }}</span>
-                </div>
+                </Link>
 
-                <div v-if="!collapsed" class="min-w-0 flex-1 flex-col">
+                <Link
+                    v-if="!collapsed"
+                    :href="route('admin.profile.edit')"
+                    class="flex min-w-0 flex-1 flex-col transition-opacity hover:opacity-90"
+                    title="My Profile"
+                >
                     <span class="truncate text-sm font-semibold text-white">
                         {{ user?.name }}
                     </span>
                     <span class="truncate text-xs opacity-60">{{ roleLabel }}</span>
-                </div>
+                </Link>
 
                 <Link
                     :href="route('logout')"

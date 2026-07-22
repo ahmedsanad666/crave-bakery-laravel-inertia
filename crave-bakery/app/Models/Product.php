@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -30,7 +31,7 @@ class Product extends Model
         'stock_status',
         'is_featured',
         'is_active',
-        'show_in_search',
+        'thumbnail',
         'status',
         'meta_title',
         'meta_description',
@@ -51,7 +52,6 @@ class Product extends Model
             'allow_backorders' => 'boolean',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
-            'show_in_search' => 'boolean',
             'meta_keywords' => 'array',
             'published_at' => 'datetime',
         ];
@@ -60,6 +60,11 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class)->withTimestamps();
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
     public function collections(): BelongsToMany
@@ -91,7 +96,23 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
-    // attributes
+
+    public static function toPublicUrl(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+
+        if (
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '/')
+        ) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url($path);
+    }
 
     public function getCurrentPriceAttribute(): string
     {
@@ -115,5 +136,63 @@ class Product extends Model
         }
 
         return $this->allow_backorders;
+    }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if (blank($search)) {
+            return $query;
+        }
+
+        return $query->where(function ($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('slug', 'like', "%{$search}%")
+                ->orWhere('sku', 'like', "%{$search}%");
+        });
+    }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        if (blank($status)) {
+            return $query;
+        }
+
+        return $query->where('status', $status);
+    }
+
+    public function scopeStockStatus($query, ?string $stockStatus)
+    {
+        if (blank($stockStatus)) {
+            return $query;
+        }
+
+        return $query->where('stock_status', $stockStatus);
+    }
+
+    public function scopeFeatured($query, mixed $featured = null)
+    {
+        if ($featured === null || $featured === '') {
+            return $query;
+        }
+
+        $isFeatured = filter_var($featured, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        if ($isFeatured === null) {
+            return $query;
+        }
+
+        return $query->where('is_featured', $isFeatured);
+    }
+
+    public function scopeInCategory($query, mixed $categoryId)
+    {
+        if (blank($categoryId)) {
+            return $query;
+        }
+
+        return $query->whereHas(
+            'categories',
+            fn ($q) => $q->where('categories.id', (int) $categoryId),
+        );
     }
 }

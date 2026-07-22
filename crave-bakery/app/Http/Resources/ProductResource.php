@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -27,7 +28,7 @@ class ProductResource extends JsonResource
             'short_description' => $this->short_description,
             'regular_price' => (float) $this->regular_price,
             'sale_price' => $this->sale_price !== null ? (float) $this->sale_price : null,
-            'thumbnail' => $this->og_image,
+            'thumbnail' => Product::toPublicUrl($this->thumbnail ?? $this->og_image),
             'average_rating' => 0,
             'reviews_count' => 0,
             'is_featured' => $this->is_featured,

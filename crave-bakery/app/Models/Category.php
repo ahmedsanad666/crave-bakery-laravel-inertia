@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Category extends Model
 {
@@ -54,6 +55,27 @@ class Category extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'category_product')->withTimestamps();
+    }
+
+    /**
+     * Convert a stored path to a browser-ready public URL.
+     * Absolute http(s) and root-relative paths are returned unchanged.
+     */
+    public static function toPublicUrl(?string $path): ?string
+    {
+        if (blank($path)) {
+            return null;
+        }
+
+        if (
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '/')
+        ) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url($path);
     }
 
     // create scopes 

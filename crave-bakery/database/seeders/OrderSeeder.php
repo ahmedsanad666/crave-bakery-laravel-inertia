@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -10,21 +11,56 @@ use Illuminate\Database\Seeder;
 
 class OrderSeeder extends Seeder
 {
+    /**
+     * Demo order profiles: mixed statuses for admin stats / UI later.
+     *
+     * @var list<array{status: string, payment_status: string}>
+     */
+    private const ORDER_PROFILES = [
+        ['status' => 'pending', 'payment_status' => 'pending'],
+        ['status' => 'processing', 'payment_status' => 'paid'],
+        ['status' => 'processing', 'payment_status' => 'paid'],
+        ['status' => 'shipped', 'payment_status' => 'paid'],
+        ['status' => 'shipped', 'payment_status' => 'paid'],
+        ['status' => 'delivered', 'payment_status' => 'paid'],
+        ['status' => 'delivered', 'payment_status' => 'paid'],
+        ['status' => 'delivered', 'payment_status' => 'refunded'],
+        ['status' => 'cancelled', 'payment_status' => 'pending'],
+        ['status' => 'cancelled', 'payment_status' => 'refunded'],
+    ];
+
     public function run(): void
     {
         $customers = User::query()->where('role', 'user')->get();
+
+        if ($customers->isEmpty()) {
+            $customers = $this->ensureCustomers();
+        }
+
         $products = Product::query()->where('status', 'active')->get();
 
-        if ($customers->isEmpty() || $products->isEmpty()) {
+        // Products must be seeded first (CategorySeeder → ProductSeeder).
+        if ($products->isEmpty()) {
+            $this->command?->warn('OrderSeeder skipped: no active products found.');
+
             return;
         }
 
-        $orderNumber = 1;
+        foreach (self::ORDER_PROFILES as $index => $profile) {
+            $orderNumber = 'CB-'.str_pad((string) ($index + 1), 5, '0', STR_PAD_LEFT);
 
-        foreach ($customers->take(8) as $customer) {
+            if (Order::query()->where('order_number', $orderNumber)->exists()) {
+                continue;
+            }
+
+            $customer = $customers[$index % $customers->count()];
             $address = $customer->addresses()->first();
             $itemCount = fake()->numberBetween(1, 3);
             $selectedProducts = $products->random(min($itemCount, $products->count()));
+
+            if (! $selectedProducts instanceof \Illuminate\Support\Collection) {
+                $selectedProducts = collect([$selectedProducts]);
+            }
 
             $subtotal = 0;
             $lineItems = [];
@@ -46,14 +82,16 @@ class OrderSeeder extends Seeder
             $deliveryFee = $subtotal >= 30 ? 0 : 4.99;
             $tax = round($subtotal * 0.08, 2);
             $total = round($subtotal + $deliveryFee + $tax, 2);
+            $isDelivered = $profile['status'] === 'delivered';
+            $isPaid = in_array($profile['payment_status'], ['paid', 'refunded'], true);
 
             $order = Order::query()->create([
                 'user_id' => $customer->id,
-                'order_number' => 'CB-'.str_pad((string) $orderNumber++, 5, '0', STR_PAD_LEFT),
-                'status' => fake()->randomElement(['processing', 'shipped', 'delivered', 'delivered']),
-                'payment_status' => 'paid',
-                'payment_method' => fake()->randomElement(['card', 'paypal']),
-                'transaction_id' => fake()->uuid(),
+                'order_number' => $orderNumber,
+                'status' => $profile['status'],
+                'payment_status' => $profile['payment_status'],
+                'payment_method' => fake()->randomElement(['card', 'paypal', 'apple_pay']),
+                'transaction_id' => $isPaid ? fake()->uuid() : null,
                 'subtotal' => $subtotal,
                 'discount_amount' => 0,
                 'promo_code' => null,
@@ -71,9 +109,13 @@ class OrderSeeder extends Seeder
                 'postal_code' => $address?->postal_code ?? fake()->postcode(),
                 'country' => $address?->country ?? 'US',
                 'delivery_method' => fake()->randomElement(['standard', 'express']),
-                'estimated_delivery_at' => now()->addDays(2),
-                'delivered_at' => fake()->optional(0.6)->dateTimeBetween('-10 days', '-1 day'),
-                'paid_at' => now()->subDays(fake()->numberBetween(1, 14)),
+                'estimated_delivery_at' => now()->addDays(fake()->numberBetween(1, 5)),
+                'delivered_at' => $isDelivered
+                    ? now()->subDays(fake()->numberBetween(1, 10))
+                    : null,
+                'paid_at' => $isPaid
+                    ? now()->subDays(fake()->numberBetween(1, 14))
+                    : null,
             ]);
 
             foreach ($lineItems as $item) {
@@ -89,5 +131,48 @@ class OrderSeeder extends Seeder
                 ]);
             }
         }
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, User>
+     */
+    private function ensureCustomers()
+    {
+        $users = collect();
+
+        for ($i = 1; $i <= 5; $i++) {
+            $user = User::query()->updateOrCreate(
+                ['email' => "order-customer-{$i}@example.com"],
+                [
+                    'name' => "Order Customer {$i}",
+                    'password' => 'password',
+                    'role' => 'user',
+                    'permissions' => null,
+                    'email_verified_at' => now(),
+                ],
+            );
+
+            Address::query()->firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'is_default' => true,
+                ],
+                [
+                    'label' => 'Home',
+                    'first_name' => fake()->firstName(),
+                    'last_name' => fake()->lastName(),
+                    'phone' => fake()->phoneNumber(),
+                    'address_line1' => fake()->streetAddress(),
+                    'city' => fake()->city(),
+                    'state' => fake()->stateAbbr(),
+                    'postal_code' => fake()->postcode(),
+                    'country' => 'US',
+                ],
+            );
+
+            $users->push($user);
+        }
+
+        return $users;
     }
 }

@@ -1,0 +1,427 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Edit Admin Permissions - Ahmed Sami</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e8e1da",
+                        "primary-container": "#3d1a0e",
+                        "on-tertiary-fixed-variant": "#4a4641",
+                        "on-secondary-container": "#5c1400",
+                        "primary-fixed": "#ffdbd0",
+                        "surface-variant": "#e5e2e1",
+                        "surface-container-high": "#eae7e7",
+                        "secondary": "#b02f00",
+                        "on-surface": "#1c1b1b",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-error": "#ffffff",
+                        "outline": "#84746f",
+                        "background": "#fcf9f8",
+                        "on-background": "#1c1b1b",
+                        "surface-tint": "#825343",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#26241f",
+                        "on-primary-fixed": "#321207",
+                        "surface-bright": "#fcf9f8",
+                        "error": "#ba1a1a",
+                        "surface-container": "#f0eded",
+                        "outline-variant": "#d6c2bd",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#ccc6be",
+                        "secondary-fixed": "#ffdbd1",
+                        "surface-container-highest": "#e5e2e1",
+                        "primary-fixed-dim": "#f6b8a5",
+                        "primary": "#220601",
+                        "on-surface-variant": "#514440",
+                        "tertiary": "#110f0a",
+                        "on-tertiary-container": "#8f8b84",
+                        "inverse-surface": "#313030",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f6f3f2",
+                        "inverse-primary": "#f6b8a5",
+                        "on-primary-fixed-variant": "#663c2d",
+                        "on-secondary-fixed": "#3b0a00",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#fc6537",
+                        "on-primary-container": "#b47e6d",
+                        "surface": "#fcf9f8",
+                        "on-tertiary-fixed": "#1e1b17",
+                        "surface-dim": "#dcd9d9",
+                        "on-secondary-fixed-variant": "#862200"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "xxl": "48px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "container-margin": "24px",
+                        "gutter": "16px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"],
+                        "title-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .toggle-switch {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background: #e5e2e1;
+            border-radius: 999px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+        .toggle-switch:checked {
+            background: #b02f00;
+        }
+        .toggle-switch:checked::before {
+            transform: translateX(20px);
+        }
+        .toggle-delete:checked {
+            background: #ba1a1a;
+        }
+        .sidebar-fixed {
+            position: sticky;
+            top: 100px;
+        }
+    </style>
+</head>
+<body class="font-body-lg text-body-lg antialiased">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 right-0 w-full md:w-[calc(100%-16rem)] h-16 z-40 bg-surface dark:bg-inverse-surface shadow-sm flex justify-between items-center px-lg">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md text-primary dark:text-inverse-primary">Artisan Dashboard</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:text-secondary transition-all" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:text-secondary transition-all" data-icon="contrast">contrast</span>
+</div>
+<img alt="Admin User Profile" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB58Pu2clnyOy780apNTcU2c2KZRaIjox7qqifV5VCCimxEukJiLa8F73xdgABStK7D245LZl6RbOLkYNjmIAZx7TrhInjj1cCaVxHTXoK7RTERB_foT9u2Pvox9sBxJTK-nET3AI6UVnKHvlUeNuc8IzEjJsR0aFDNyQs2tsopE_gQ02wl4Y3Md6csf0j7iyqqHP2Mq1TGrCx8cp2TvCHrMg56GkGd-sQNHXJcmDh7CTZr9Xnr5CXDEiskyvU4uXI3HJEwsoMdUg">
+</div>
+</nav>
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-primary-container dark:bg-primary-container shadow-md flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-sm text-headline-sm text-on-primary-fixed dark:text-primary-fixed-dim">Artisan Admin</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-primary-container/60 font-bold">Premium Management</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-lg">Main</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="menu_book">menu_book</span>
+<span class="font-body-lg">Catalogue</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-lg">Sales</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 bg-secondary text-white rounded-lg mx-2 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-lg">Customers</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer active:scale-95">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="font-body-lg">Admin</span>
+</div>
+</nav>
+<div class="mt-auto border-t border-white/10 pt-md">
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-lg">Settings</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-tertiary-fixed-dim hover:text-white mx-2 hover:bg-primary transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body-lg">Logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-lg pb-xxl max-w-[1400px]">
+<!-- Breadcrumb / Header Actions -->
+<header class="mb-xl">
+<a class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors mb-4 group" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+<span class="font-label-caps uppercase">Back to Admin Users</span>
+</a>
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Edit Admin Permissions</h2>
+<p class="text-on-surface-variant">Modifying access levels for <span class="font-bold text-on-surface">Ahmed Sami</span></p>
+</div>
+<div class="flex gap-4">
+<button class="px-6 py-2 rounded-full border border-outline text-primary font-bold hover:bg-surface-container transition-all">Discard</button>
+<button class="px-8 py-2 rounded-full bg-secondary text-white font-bold shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all">Save Changes</button>
+</div>
+</div>
+</header>
+<!-- Warning Banner for Super Admin (Dynamic Simulation) -->
+<div class="hidden mb-lg p-lg bg-error-container border-l-4 border-error flex items-start gap-4 rounded-lg animate-pulse" id="super-admin-warning">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+<div>
+<h4 class="font-title-lg text-error">Critical Access Warning</h4>
+<p class="text-on-error-container font-body-sm">You have selected the 'Super Admin' role. This user will have unrestricted access to all financial data, system logs, and security settings. Proceed with extreme caution.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+<!-- Left Column: Permissions Matrix -->
+<div class="lg:col-span-2 space-y-lg">
+<section class="bg-white rounded-xl card-shadow overflow-hidden border border-outline-variant">
+<div class="p-lg bg-surface-container-low border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-primary">Permissions Matrix</h3>
+<div class="flex items-center gap-2">
+<span class="text-body-sm font-label-caps">Bulk Action:</span>
+<select class="text-body-sm rounded-lg border-outline-variant py-1">
+<option>Read Only</option>
+<option>Full Access</option>
+<option>No Access</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-lowest">
+<tr>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant">Section</th>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant text-center">View</th>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant text-center">Create</th>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant text-center">Edit</th>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant text-center">Delete</th>
+<th class="px-lg py-4 font-label-caps text-on-surface-variant">Special Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Products Row -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-title-lg text-primary">Products</td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch toggle-delete" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex flex-col gap-1">
+<label class="flex items-center gap-2 text-body-sm cursor-pointer">
+<input class="rounded text-secondary" type="checkbox">
+<span>Bulk Export</span>
+</label>
+</div>
+</td>
+</tr>
+<!-- Orders Row -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-title-lg text-primary">Orders</td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch toggle-delete" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex flex-col gap-1">
+<label class="flex items-center gap-2 text-body-sm cursor-pointer">
+<input checked="" class="rounded text-secondary" type="checkbox">
+<span>Process Refunds</span>
+</label>
+</div>
+</td>
+</tr>
+<!-- Customers Row -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-title-lg text-primary">Customers</td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input class="toggle-switch toggle-delete" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex flex-col gap-1 text-on-surface-variant text-body-sm italic">
+                                            No special actions
+                                        </div>
+</td>
+</tr>
+<!-- Marketing Row -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-title-lg text-primary">Marketing</td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch" type="checkbox"></td>
+<td class="px-lg py-4 text-center"><input checked="" class="toggle-switch toggle-delete" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex flex-col gap-1">
+<label class="flex items-center gap-2 text-body-sm cursor-pointer">
+<input checked="" class="rounded text-secondary" type="checkbox">
+<span>Approve Reviews</span>
+</label>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Danger Zone Section -->
+<section class="bg-surface-container rounded-xl p-lg border border-error/20">
+<h3 class="font-headline-sm text-error mb-md flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="dangerous">dangerous</span>
+                        Danger Zone
+                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-white p-md rounded-lg flex justify-between items-center border border-outline-variant">
+<div>
+<h4 class="font-title-lg text-primary">Deactivate Account</h4>
+<p class="text-body-sm text-on-surface-variant">Temporarily disable all access</p>
+</div>
+<button class="px-4 py-2 bg-outline text-white rounded-lg hover:bg-primary transition-all">Deactivate</button>
+</div>
+<div class="bg-white p-md rounded-lg flex justify-between items-center border border-error/30">
+<div>
+<h4 class="font-title-lg text-error">Remove Admin Access</h4>
+<p class="text-body-sm text-on-surface-variant">Permanently delete admin profile</p>
+</div>
+<button class="px-4 py-2 border-2 border-error text-error rounded-lg hover:bg-error hover:text-white transition-all">Remove</button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Admin Summary -->
+<aside class="space-y-lg sidebar-fixed">
+<!-- Profile Card -->
+<div class="bg-white rounded-xl card-shadow p-lg text-center border border-outline-variant">
+<div class="relative inline-block mb-md">
+<img alt="Ahmed Sami Admin Avatar" class="w-32 h-32 rounded-full border-4 border-primary-fixed shadow-inner mx-auto object-cover" data-alt="A professional studio portrait of a young man with a friendly expression and short dark hair, wearing a clean white chef's shirt. The lighting is bright and warm, reflecting an artisanal bakery theme. The background is a soft-focus wooden interior with warm glowing lights, creating an inviting and high-end atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN-vxT-dBey5-r9v1OzDqTbPmJ_P7Id9El1UVXZW_yDPCkCAzQx9B85_-CQysQ00VC3MTp6nAE-bbmTX13zAiQ6nkWYK72ULzyYvyW8KkK5B51F9OvkZLjUGF1Z26_hV40tEEJz3b40J6cBdM2rz0IHHvMEaDV3fp9IDWAO5Z1TUVu7K5ifaYlvnq9iOhEqK5UPSXU6hUowca7k55FGT_ztHfyrJ9EzebgIBVaBMj5rzfWsrO0zrkwEyCRvTUkAz3GHLZiwEIwMA">
+<span class="absolute bottom-1 right-2 bg-green-500 w-6 h-6 rounded-full border-4 border-white"></span>
+</div>
+<h3 class="font-headline-sm text-primary">Ahmed Sami</h3>
+<p class="text-on-surface-variant mb-md">Senior Bakery Manager</p>
+<div class="inline-block px-4 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-label-caps">
+                        Manager Role
+                    </div>
+</div>
+<!-- Current Access Live Summary -->
+<div class="bg-white rounded-xl card-shadow p-lg border border-outline-variant">
+<h4 class="font-title-lg text-primary mb-md">Current Access Summary</h4>
+<div class="flex flex-wrap gap-2 mb-lg" id="summary-pills">
+<span class="px-3 py-1 bg-tertiary-fixed rounded-full text-[12px] font-bold text-on-tertiary-fixed border border-outline-variant">Products: Full</span>
+<span class="px-3 py-1 bg-tertiary-fixed rounded-full text-[12px] font-bold text-on-tertiary-fixed border border-outline-variant">Orders: Limited</span>
+<span class="px-3 py-1 bg-tertiary-fixed rounded-full text-[12px] font-bold text-on-tertiary-fixed border border-outline-variant">Customers: View Only</span>
+<span class="px-3 py-1 bg-tertiary-fixed rounded-full text-[12px] font-bold text-on-tertiary-fixed border border-outline-variant">Marketing: Full</span>
+</div>
+<div class="space-y-3">
+<label class="block text-body-sm font-label-caps text-on-surface-variant">Update Primary Role</label>
+<select class="w-full rounded-lg border-outline-variant bg-surface-container-lowest p-2 focus:ring-secondary focus:border-secondary transition-all" id="role-selector">
+<option selected="" value="manager">Store Manager</option>
+<option value="editor">Content Editor</option>
+<option value="finance">Finance Specialist</option>
+<option value="super">Super Admin</option>
+</select>
+</div>
+</div>
+<!-- Quick Stats -->
+<div class="bg-primary-container text-white rounded-xl p-lg card-shadow">
+<h4 class="font-title-lg mb-md opacity-80">Activity Log</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]" data-icon="history">history</span>
+<div class="text-body-sm">
+<p class="font-bold">Last modified 2h ago</p>
+<p class="opacity-70">by Admin Sarah J.</p>
+</div>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]" data-icon="login">login</span>
+<div class="text-body-sm">
+<p class="font-bold">Last login</p>
+<p class="opacity-70">Yesterday, 14:32 PM</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<script>
+        // Simple Interaction logic for role selection warning
+        const roleSelector = document.getElementById('role-selector');
+        const warningBanner = document.getElementById('super-admin-warning');
+
+        roleSelector.addEventListener('change', (e) => {
+            if (e.target.value === 'super') {
+                warningBanner.classList.remove('hidden');
+                warningBanner.classList.add('flex');
+            } else {
+                warningBanner.classList.add('hidden');
+                warningBanner.classList.remove('flex');
+            }
+        });
+
+        // Micro-interaction for toggles
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('change', () => {
+                // Potential to update the "Current Access Summary" pills dynamically here
+                console.log('Permission updated');
+            });
+        });
+    </script>
+</body></html>

@@ -13,7 +13,7 @@ const flashError = computed(() => page.props.flash?.error);
 </script>
 
 <template>
-    <div class="flex min-h-screen flex-col bg-surface">
+    <div class="flex min-h-screen flex-col bg-surface-bright text-on-surface">
         <PromoBanner />
         <Navbar />
 

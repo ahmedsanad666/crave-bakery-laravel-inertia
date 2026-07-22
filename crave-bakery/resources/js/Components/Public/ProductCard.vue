@@ -1,13 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import {
-    IconHeart,
-    IconHeartFilled,
-    IconShoppingCart,
-    IconStarFilled,
-} from '@tabler/icons-vue';
-import AppButton from '@/Components/Shared/AppButton.vue';
+import { IconShoppingCart } from '@tabler/icons-vue';
 
 const props = defineProps({
     product: {
@@ -15,6 +9,11 @@ const props = defineProps({
         required: true,
     },
     compact: {
+        type: Boolean,
+        default: false,
+    },
+    /** First card in a row uses filled accent CTA (theme pattern). */
+    featuredCta: {
         type: Boolean,
         default: false,
     },
@@ -31,142 +30,107 @@ const displayPrice = computed(() => {
     }).format(price);
 });
 
-const originalPrice = computed(() => {
-    if (!props.product.sale_price) {
-        return null;
-    }
-
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(props.product.regular_price);
-});
-
 const isOutOfStock = computed(
     () => props.product.stock_status === 'out_of_stock',
 );
 
-const categoryLabel = computed(
-    () => props.product.categories?.[0]?.name ?? 'Pastry',
-);
+const productHref = computed(() => `/products/${props.product.slug}`);
 </script>
 
 <template>
+    <!-- Compact recommended card -->
     <article
-        class="group flex flex-col overflow-hidden rounded-card bg-card shadow-card transition-shadow hover:shadow-interactive"
-        :class="{ 'flex-row gap-4 p-4': compact }"
+        v-if="compact"
+        class="group rounded-xl border border-outline-variant bg-white p-sm shadow-sm"
     >
-        <Link
-            :href="`/products/${product.slug}`"
-            class="relative block shrink-0 overflow-hidden"
-            :class="compact ? 'h-24 w-24 rounded-lg' : 'aspect-square'"
-        >
+        <Link :href="productHref" class="mb-md block aspect-square overflow-hidden rounded-lg">
             <img
                 v-if="product.thumbnail"
                 :src="product.thumbnail"
                 :alt="product.name"
-                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 :class="{ 'opacity-60 grayscale': isOutOfStock }"
             />
             <div
                 v-else
-                class="flex h-full w-full items-center justify-center bg-surface-container text-4xl"
+                class="flex h-full w-full items-center justify-center bg-surface-container text-3xl"
+            >
+                🧁
+            </div>
+        </Link>
+        <h4 class="mb-xs text-body-lg font-bold text-primary">
+            <Link :href="productHref">{{ product.name }}</Link>
+        </h4>
+        <p class="mb-md text-body-sm text-on-surface-variant">
+            {{ displayPrice }}
+        </p>
+        <button
+            type="button"
+            class="w-full rounded-lg bg-primary py-2 text-xs font-bold text-on-primary transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+            :disabled="isOutOfStock"
+            @click="emit('add-to-cart', product)"
+        >
+            {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
+        </button>
+    </article>
+
+    <!-- Premium selection card -->
+    <article
+        v-else
+        class="group relative transform overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+    >
+        <div
+            class="absolute right-4 top-4 z-10 rounded-full bg-white/90 px-md py-xs shadow-sm backdrop-blur-sm"
+        >
+            <span class="font-sans text-title-lg font-bold text-accent">
+                {{ displayPrice }}
+            </span>
+        </div>
+
+        <Link :href="productHref" class="block aspect-square overflow-hidden bg-surface-container">
+            <img
+                v-if="product.thumbnail"
+                :src="product.thumbnail"
+                :alt="product.name"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                :class="{ 'opacity-60 grayscale': isOutOfStock }"
+            />
+            <div
+                v-else
+                class="flex h-full w-full items-center justify-center text-5xl"
                 :class="{ 'opacity-60': isOutOfStock }"
             >
                 🧁
             </div>
-
-            <span
-                v-if="product.badge"
-                class="absolute left-3 top-3 rounded-badge bg-accent px-2 py-1 text-xs font-semibold text-white"
-            >
-                {{ product.badge }}
-            </span>
         </Link>
 
-        <div class="flex flex-1 flex-col p-4" :class="{ 'p-0': compact }">
-            <p class="text-label-caps uppercase text-text-muted">
-                {{ categoryLabel }}
-            </p>
-
-            <Link
-                :href="`/products/${product.slug}`"
-                class="mt-1 font-serif text-headline-sm text-primary transition-colors hover:text-accent"
-            >
-                {{ product.name }}
-            </Link>
-
-            <div
-                v-if="product.reviews_count > 0"
-                class="mt-2 flex items-center gap-1.5"
-            >
-                <div class="flex text-accent">
-                    <IconStarFilled
-                        v-for="i in 5"
-                        :key="i"
-                        :size="14"
-                        :class="
-                            i <= Math.round(product.average_rating)
-                                ? 'opacity-100'
-                                : 'opacity-30'
-                        "
-                    />
-                </div>
-                <span class="text-xs text-text-muted">
-                    ({{ product.reviews_count }})
-                </span>
-            </div>
-
-            <p
-                v-if="!compact && product.short_description"
-                class="mt-2 line-clamp-2 text-body-sm text-text-muted"
-            >
-                {{ product.short_description }}
-            </p>
-
-            <div class="mt-auto flex items-end justify-between gap-3 pt-4">
-                <div>
-                    <span class="font-sans text-title-lg text-primary">
-                        {{ displayPrice }}
-                    </span>
-                    <span
-                        v-if="originalPrice"
-                        class="ml-2 text-body-sm text-text-muted line-through"
-                    >
-                        {{ originalPrice }}
-                    </span>
-                </div>
-
-                <button
-                    type="button"
-                    class="rounded-full p-2 text-primary transition-colors hover:bg-surface-container hover:text-accent"
-                    :class="{ 'text-accent': product.is_favourited }"
-                    :aria-label="
-                        product.is_favourited
-                            ? 'Remove from favourites'
-                            : 'Add to favourites'
-                    "
-                    @click.prevent="emit('toggle-favourite', product)"
+        <div class="space-y-md p-lg">
+            <div>
+                <h3 class="font-serif text-headline-sm text-primary">
+                    <Link :href="productHref">{{ product.name }}</Link>
+                </h3>
+                <p
+                    v-if="product.short_description"
+                    class="mt-1 line-clamp-2 font-sans text-body-sm text-on-surface-variant"
                 >
-                    <IconHeartFilled
-                        v-if="product.is_favourited"
-                        :size="20"
-                        stroke-width="1.5"
-                    />
-                    <IconHeart v-else :size="20" stroke-width="1.5" />
-                </button>
+                    {{ product.short_description }}
+                </p>
             </div>
 
-            <AppButton
-                class="mt-4 w-full"
+            <button
+                type="button"
+                class="flex w-full items-center justify-center gap-sm rounded-full py-md font-bold transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                :class="
+                    featuredCta
+                        ? 'bg-accent text-on-primary'
+                        : 'border border-accent text-accent hover:bg-accent hover:text-white'
+                "
                 :disabled="isOutOfStock"
                 @click="emit('add-to-cart', product)"
             >
-                <span class="inline-flex items-center justify-center gap-2">
-                    <IconShoppingCart :size="18" stroke-width="1.5" />
-                    {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
-                </span>
-            </AppButton>
+                <IconShoppingCart :size="18" stroke-width="1.5" />
+                {{ isOutOfStock ? 'Out of Stock' : 'Add to Cart' }}
+            </button>
         </div>
     </article>
 </template>

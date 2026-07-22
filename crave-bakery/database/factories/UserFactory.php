@@ -27,6 +27,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'role' => 'user',
+            'status' => 'active',
             'phone' => fake()->phoneNumber(),
         ];
     }
@@ -42,6 +43,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'super_admin',
+            'status' => 'active',
             'permissions' => null,
         ]);
     }
@@ -50,6 +52,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'admin',
+            'status' => 'active',
             'permissions' => AdminPermissions::fromTemplate('full_admin'),
         ]);
     }
@@ -58,7 +61,22 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => 'user',
+            'status' => 'active',
             'permissions' => null,
+        ]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'inactive',
+        ]);
+    }
+
+    public function banned(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'banned',
         ]);
     }
 }

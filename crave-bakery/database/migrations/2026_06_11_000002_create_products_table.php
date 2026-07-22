@@ -25,7 +25,7 @@ return new class extends Migration
             $table->enum('stock_status', ['in_stock', 'out_of_stock', 'on_backorder'])->default('in_stock')->index();
             $table->boolean('is_featured')->default(false)->index();
             $table->boolean('is_active')->default(true)->index();
-           
+            $table->string('thumbnail')->nullable();
             $table->enum('status', ['active', 'draft', 'archived'])->default('draft')->index();
             $table->string('meta_title')->nullable();
             $table->text('meta_description')->nullable();

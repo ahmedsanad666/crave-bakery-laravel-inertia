@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +20,7 @@ class CategoryTreeResource extends JsonResource
             'slug' => $this->slug,
             'status' => $this->status,
             'sort_order' => $this->sort_order,
-            'image' => $this->image ?? $this->og_image,
+            'image' => Category::toPublicUrl($this->image ?? $this->og_image),
             'products_count' => $this->whenCounted('products'),
         ];
     }

@@ -1,6 +1,7 @@
 <script setup>
-import { usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { onClickOutside } from '@vueuse/core';
+import { computed, ref } from 'vue';
 import {
     IconBell,
     IconLayoutSidebarLeftCollapse,
@@ -28,6 +29,14 @@ const emit = defineEmits(['toggle-sidebar', 'toggle-mobile-sidebar', 'toggle-not
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
+const siteName = computed(() => page.props.siteSettings?.site_name ?? 'Crave Bakery');
+const brandShort = computed(() => {
+    const name = siteName.value;
+    if (name.toLowerCase().includes('crave')) {
+        return 'Crave';
+    }
+    return name.split(' ')[0] || 'Crave';
+});
 
 const userInitials = computed(() => {
     const name = user.value?.name ?? 'A';
@@ -40,17 +49,41 @@ const userInitials = computed(() => {
 });
 
 const breadcrumbLabel = computed(() => props.breadcrumb || props.title);
+
+const tabletSearchOpen = ref(false);
+const tabletSearchRef = ref(null);
+const tabletSearchInput = ref(null);
+
+const openTabletSearch = () => {
+    tabletSearchOpen.value = true;
+    requestAnimationFrame(() => {
+        tabletSearchInput.value?.focus();
+    });
+};
+
+const closeTabletSearch = () => {
+    tabletSearchOpen.value = false;
+};
+
+onClickOutside(tabletSearchRef, () => {
+    closeTabletSearch();
+});
 </script>
 
 <template>
     <header
-        class="fixed left-0 right-0 top-0 z-40 flex h-16 items-center justify-between bg-surface px-lg shadow-navbar transition-all duration-300"
-        :class="sidebarCollapsed ? 'lg:left-[4.5rem]' : 'lg:left-64'"
+        class="fixed left-0 right-0 top-0 z-40 flex items-center justify-between border-b border-outline-variant/30 bg-surface/80 px-md shadow-navbar backdrop-blur-md transition-all duration-300 md:left-[4.5rem] md:h-16 md:px-lg"
+        :class="[
+            sidebarCollapsed ? 'lg:left-[4.5rem]' : 'lg:left-64',
+            'h-14',
+        ]"
     >
-        <div class="flex items-center gap-4">
+        <!-- Left: menu + (tablet+) title -->
+        <div class="flex min-w-0 items-center gap-2 md:gap-4">
             <button
                 type="button"
-                class="rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant lg:hidden"
+                class="rounded-full p-2 text-secondary transition-colors hover:bg-surface-variant lg:hidden"
+                aria-label="Open menu"
                 @click="emit('toggle-mobile-sidebar')"
             >
                 <IconMenu2 class="size-5" stroke="1.5" />
@@ -59,6 +92,7 @@ const breadcrumbLabel = computed(() => props.breadcrumb || props.title);
             <button
                 type="button"
                 class="hidden rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant lg:inline-flex"
+                aria-label="Toggle sidebar"
                 @click="emit('toggle-sidebar')"
             >
                 <IconLayoutSidebarLeftCollapse
@@ -73,8 +107,9 @@ const breadcrumbLabel = computed(() => props.breadcrumb || props.title);
                 />
             </button>
 
-            <div class="flex flex-col">
-                <h1 class="font-sans text-title-lg text-primary">{{ title }}</h1>
+            <!-- Mobile centered brand is absolute; tablet+ title here -->
+            <div class="hidden min-w-0 flex-col md:flex">
+                <h1 class="truncate font-sans text-title-lg text-primary">{{ title }}</h1>
                 <nav class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
                     Admin
                     <span class="mx-1">/</span>
@@ -83,7 +118,52 @@ const breadcrumbLabel = computed(() => props.breadcrumb || props.title);
             </div>
         </div>
 
-        <div class="flex items-center gap-4 lg:gap-6">
+        <!-- Mobile: centered brand -->
+        <div class="pointer-events-none absolute inset-x-0 flex justify-center md:hidden">
+            <span class="font-serif text-headline-sm leading-none text-secondary">
+                {{ brandShort }}
+            </span>
+        </div>
+
+        <!-- Right actions -->
+        <div class="flex items-center gap-1 md:gap-4 lg:gap-6">
+            <!-- Tablet expandable search -->
+            <div
+                ref="tabletSearchRef"
+                class="relative hidden items-center md:flex lg:hidden"
+            >
+                <button
+                    type="button"
+                    class="rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant"
+                    aria-label="Search"
+                    @click="openTabletSearch"
+                >
+                    <IconSearch class="size-5" stroke="1.5" />
+                </button>
+                <input
+                    ref="tabletSearchInput"
+                    type="search"
+                    placeholder="Search..."
+                    class="absolute left-10 rounded-full border border-outline-variant bg-surface-container-lowest py-1.5 px-4 font-sans text-body-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-secondary-container/20"
+                    :class="
+                        tabletSearchOpen
+                            ? 'w-48 opacity-100'
+                            : 'pointer-events-none w-0 opacity-0'
+                    "
+                    @keydown.escape="closeTabletSearch"
+                />
+            </div>
+
+            <!-- Mobile search icon (page-level filters handle search) -->
+            <button
+                type="button"
+                class="rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant md:hidden"
+                aria-label="Search"
+            >
+                <IconSearch class="size-5" stroke="1.5" />
+            </button>
+
+            <!-- Desktop full search -->
             <div class="relative hidden lg:block">
                 <IconSearch
                     class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-outline"
@@ -96,33 +176,34 @@ const breadcrumbLabel = computed(() => props.breadcrumb || props.title);
                 />
             </div>
 
-            <div class="flex items-center gap-3 lg:gap-4">
+            <div class="flex items-center gap-2 md:gap-3 lg:gap-4">
                 <button
                     type="button"
                     class="relative rounded-full p-2 text-on-surface-variant transition-colors hover:bg-surface-variant"
+                    aria-label="Notifications"
                     @click="emit('toggle-notifications')"
                 >
                     <IconBell class="size-5" stroke="1.5" />
                     <span
-                        class="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full border-2 border-white bg-error text-[10px] text-white"
-                    >
-                        3
-                    </span>
+                        class="absolute right-1.5 top-1.5 size-2 rounded-full border-2 border-surface bg-secondary"
+                    />
                 </button>
 
                 <div class="hidden h-8 w-px bg-outline-variant/30 sm:block" />
 
-                <div
-                    class="flex size-8 items-center justify-center overflow-hidden rounded-full bg-secondary-fixed font-sans text-xs font-bold text-primary"
+                <Link
+                    :href="route('admin.profile.edit')"
+                    class="flex size-8 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-fixed font-sans text-xs font-bold text-primary transition-opacity hover:opacity-90 md:size-10 md:border-2 md:border-secondary/20"
+                    title="My Profile"
                 >
                     <img
                         v-if="user?.avatar"
                         :src="user.avatar"
                         :alt="user.name"
-                        class="size-8 object-cover"
+                        class="size-full object-cover"
                     />
                     <span v-else>{{ userInitials }}</span>
-                </div>
+                </Link>
             </div>
         </div>
     </header>

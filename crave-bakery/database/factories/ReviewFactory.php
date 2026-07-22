@@ -31,10 +31,52 @@ class ReviewFactory extends Factory
         ];
     }
 
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'pending',
+            'flag_reason' => null,
+            'flagged_at' => null,
+        ]);
+    }
+
     public function approved(): static
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'approved',
+            'flag_reason' => null,
+            'flagged_at' => null,
+        ]);
+    }
+
+    public function flagged(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'flagged',
+            'flag_reason' => fake()->randomElement([
+                'Possible spam content',
+                'Offensive language',
+                'Suspected fake review',
+                'Irrelevant to product',
+            ]),
+            'flagged_at' => now()->subDays(fake()->numberBetween(1, 14)),
+        ]);
+    }
+
+    public function rejected(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'rejected',
+            'flag_reason' => null,
+            'flagged_at' => null,
+        ]);
+    }
+
+    public function withAdminResponse(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'admin_response' => fake()->paragraph(1),
+            'admin_response_at' => now()->subDays(fake()->numberBetween(1, 7)),
         ]);
     }
 }

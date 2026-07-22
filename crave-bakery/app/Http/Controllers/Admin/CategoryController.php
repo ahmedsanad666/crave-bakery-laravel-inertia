@@ -11,6 +11,8 @@ use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -100,7 +102,17 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        Category::create($request->validated());
+        $data = $request->safe()->except(['image', 'banner_image']);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories/thumbnails', 'public');
+        }
+
+        if ($request->hasFile('banner_image')) {
+            $data['banner_image'] = $request->file('banner_image')->store('categories/banners', 'public');
+        }
+
+        Category::create($data);
 
         return redirect()
             ->route('admin.categories.index')
@@ -125,7 +137,25 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->update($request->validated());
+        $data = $request->safe()->except(['image', 'banner_image']);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->replacePublicImage(
+                $category->image,
+                $request->file('image'),
+                'categories/thumbnails',
+            );
+        }
+
+        if ($request->hasFile('banner_image')) {
+            $data['banner_image'] = $this->replacePublicImage(
+                $category->banner_image,
+                $request->file('banner_image'),
+                'categories/banners',
+            );
+        }
+
+        $category->update($data);
 
         return redirect()
             ->route('admin.categories.index')
@@ -160,5 +190,19 @@ class CategoryController extends Controller
                 ->orderBy('name')
                 ->get()
         )->resolve();
+    }
+
+    private function replacePublicImage(?string $currentPath, UploadedFile $file, string $directory): string
+    {
+        if (
+            $currentPath
+            && ! str_starts_with($currentPath, 'http://')
+            && ! str_starts_with($currentPath, 'https://')
+            && ! str_starts_with($currentPath, '/')
+        ) {
+            Storage::disk('public')->delete($currentPath);
+        }
+
+        return $file->store($directory, 'public');
     }
 }

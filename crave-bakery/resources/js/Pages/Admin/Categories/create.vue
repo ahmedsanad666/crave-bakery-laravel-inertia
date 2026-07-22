@@ -1,13 +1,14 @@
-<template>
-  <div>
-    
-  </div>
-</template>
+<script setup>
+import CategoryForm from '@/Components/Admin/CategoryForm.vue';
 
-<script lang="ts" setup>
-
+defineProps({
+    parentOptions: {
+        type: Array,
+        default: () => [],
+    },
+});
 </script>
 
-<style>
-
-</style>
+<template>
+    <CategoryForm mode="create" :parent-options="parentOptions" />
+</template>

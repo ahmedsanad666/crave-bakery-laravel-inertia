@@ -10,12 +10,20 @@ use App\Models\Category;
 class StoreCategoryRequest extends FormRequest
 {
     use ValidatesCategory;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
         return $this->user()->can('create', Category::class);
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('parent_id') === '' || $this->input('parent_id') === 'null') {
+            $this->merge(['parent_id' => null]);
+        }
     }
 
     /**
@@ -25,6 +33,9 @@ class StoreCategoryRequest extends FormRequest
      */
     public function rules(): array
     {
-        return $this->categoryRules();
+        return array_merge($this->categoryRules(), [
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'banner_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+        ]);
     }
 }

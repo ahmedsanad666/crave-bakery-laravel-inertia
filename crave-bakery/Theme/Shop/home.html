@@ -1,0 +1,883 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Crave Bakery | Artisanal Warmth in Every Bite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+    /* Custom Scrollbar for premium feel */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #fcf9f8; }
+    ::-webkit-scrollbar-thumb { background: #d6c2bd; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #84746f; }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .hero-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30c0-5 2-10 6-10s6 5 6 10-2 10-6 10-6-5-6-10zm-15-5c0-3 1.5-6 4-6s4 3 4 6-1.5 6-4 6-4-3-4-6zm30 0c0-3 1.5-6 4-6s4 3 4 6-1.5 6-4 6-4-3-4-6z' fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "surface-bright": "#fcf9f8",
+                  "error": "#ba1a1a",
+                  "primary-fixed-dim": "#f6b8a5",
+                  "on-primary": "#ffffff",
+                  "on-error": "#ffffff",
+                  "on-secondary": "#ffffff",
+                  "surface-container": "#f0eded",
+                  "primary-container": "#3d1a0e",
+                  "primary": "#220601",
+                  "on-tertiary-fixed": "#1e1b17",
+                  "on-tertiary": "#ffffff",
+                  "on-error-container": "#93000a",
+                  "secondary-fixed": "#ffdbd1",
+                  "on-primary-fixed": "#321207",
+                  "inverse-surface": "#313030",
+                  "surface-container-high": "#eae7e7",
+                  "surface-container-lowest": "#ffffff",
+                  "on-secondary-fixed": "#3b0a00",
+                  "tertiary-fixed": "#e8e1da",
+                  "tertiary-fixed-dim": "#ccc6be",
+                  "on-primary-fixed-variant": "#663c2d",
+                  "inverse-primary": "#f6b8a5",
+                  "inverse-on-surface": "#f3f0ef",
+                  "secondary-fixed-dim": "#ffb59f",
+                  "on-surface": "#1c1b1b",
+                  "on-secondary-container": "#5c1400",
+                  "surface-dim": "#dcd9d9",
+                  "on-tertiary-fixed-variant": "#4a4641",
+                  "background": "#fcf9f8",
+                  "tertiary-container": "#26241f",
+                  "surface-container-highest": "#e5e2e1",
+                  "primary-fixed": "#ffdbd0",
+                  "secondary": "#b02f00",
+                  "surface-variant": "#e5e2e1",
+                  "outline-variant": "#d6c2bd",
+                  "tertiary": "#110f0a",
+                  "on-tertiary-container": "#8f8b84",
+                  "secondary-container": "#fc6537",
+                  "on-primary-container": "#b47e6d",
+                  "on-background": "#1c1b1b",
+                  "surface-container-low": "#f6f3f2",
+                  "on-secondary-fixed-variant": "#862200",
+                  "surface-tint": "#825343",
+                  "outline": "#84746f",
+                  "on-surface-variant": "#514440",
+                  "error-container": "#ffdad6",
+                  "surface": "#fcf9f8",
+                  "accent-orange": "#E8572A",
+                  "espresso": "#3D1A0E",
+                  "warm-cream": "#FDF6EE"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "unit": "4px",
+                  "xxl": "48px",
+                  "lg": "24px",
+                  "gutter": "16px",
+                  "container-margin": "24px",
+                  "xl": "32px",
+                  "md": "16px",
+                  "sm": "8px",
+                  "xs": "4px"
+          },
+          "fontFamily": {
+                  "display-lg": ["Playfair Display"],
+                  "label-caps": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "title-lg": ["Inter"],
+                  "headline-md": ["Playfair Display"],
+                  "headline-lg": ["Playfair Display"],
+                  "headline-sm": ["Playfair Display"],
+                  "body-sm": ["Inter"]
+          },
+          "fontSize": {
+                  "display-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                  "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                  "body-lg": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                  "title-lg": ["18px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                  "headline-md": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                  "headline-lg": ["36px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                  "headline-sm": ["22px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                  "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style><style>
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style></head>
+<body class="bg-surface-bright text-on-surface font-body-lg overflow-x-hidden">
+<!-- TopNavBar Navigation Shell -->
+<nav class="fixed top-0 w-full z-50 bg-espresso shadow-md transition-all duration-300">
+<div class="max-w-[1200px] mx-auto px-lg py-md flex justify-between items-center">
+<!-- Logo -->
+<a class="font-headline-md text-headline-md font-bold text-on-primary font-display-lg" href="#">Crave Bakery</a>
+<!-- Navigation Links -->
+<div class="hidden md:flex items-center gap-xl">
+<a class="font-body-sm text-on-primary border-b-2 border-secondary-container pb-1 transition-opacity" href="#">Home</a>
+<a class="font-body-sm text-on-primary/80 hover:text-on-primary transition-opacity" href="#">Catalogue</a>
+<a class="font-body-sm text-on-primary/80 hover:text-on-primary transition-opacity" href="#">About Us</a>
+<a class="font-body-sm text-on-primary/80 hover:text-on-primary transition-opacity" href="#">Contact Us</a>
+<a class="font-body-sm text-on-primary/80 hover:text-on-primary transition-opacity" href="#">Blog</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-lg">
+<a class="hidden sm:flex font-body-sm text-on-primary items-center gap-sm hover:opacity-90 active:scale-95 duration-150 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">shopping_bag</span>
+          Cart (02)
+        </a>
+<button class="bg-accent-orange text-on-primary px-xl py-sm rounded-full font-bold font-body-sm hover:opacity-90 active:scale-95 duration-150 transition-all">Sign Up</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative bg-espresso min-h-[80vh] flex items-center pt-xxl overflow-hidden hero-pattern">
+<div class="max-w-[1200px] mx-auto px-lg grid md:grid-cols-2 gap-xl items-center w-full py-xxl">
+<!-- Left Content -->
+<div class="z-10 space-y-xl animate-fade-in">
+<div class="space-y-md">
+<h1 class="text-on-primary font-display-lg text-display-lg leading-tight">
+            Baking Smiles, <br>One Pastry At A Time
+          </h1>
+<p class="text-on-primary/70 font-body-lg max-w-md">
+            Experience the warmth of our ovens delivered straight to your heart. Artisanal craftsmanship meets neighborhood comfort.
+          </p>
+</div>
+<button class="bg-accent-orange text-on-primary px-xxl py-md rounded-full font-bold text-body-lg shadow-lg hover:shadow-xl active:scale-95 duration-200 transition-all">
+          See Our Menu
+        </button>
+<div class="pt-xl border-t border-white/10">
+<p class="text-on-primary font-body-lg">
+            Bringing Joy With <span class="text-accent-orange font-bold">Homemade Baked Delights</span>
+</p>
+</div>
+</div>
+<!-- Right Image & Widget Cluster -->
+<div class="relative z-10 flex justify-center items-center">
+<!-- Floating Rating Widget -->
+<div class="absolute -top-8 -left-8 bg-white/10 backdrop-blur-md p-lg rounded-xl border border-white/20 shadow-2xl max-w-[200px] hidden md:block">
+<div class="flex gap-xs text-accent-orange mb-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star_half</span>
+</div>
+<p class="text-on-primary font-bold text-title-lg">4.8 Stars</p>
+<p class="text-on-primary/60 text-body-sm italic">"The best croissant in the city, hands down!"</p>
+</div>
+<div class="relative w-full max-w-md aspect-square rounded-full overflow-hidden border-8 border-white/5 shadow-2xl animate-float">
+<img alt="Gourmet Croissant" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg">
+</div>
+<!-- Secondary Decoration -->
+<div class="absolute -bottom-4 -right-4 bg-accent-orange w-32 h-32 rounded-full -z-10 opacity-20 blur-3xl"></div>
+</div>
+</div>
+</section>
+<!-- About Us Section -->
+<section class="py-32 bg-warm-cream">
+<div class="max-w-[1200px] mx-auto px-lg grid md:grid-cols-2 gap-xxl items-center">
+<div class="relative group">
+<div class="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Bakery Interior" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmPeHM84-yiu02IwoBqmVbF2-FiRMsGOuHE1Bvly-ruXAUdfL8uFtzo-dMvYQjLUkcNSGjkiJE7CbKp6WJUyuhaCG2WRJpx1_ANQAd8xT90ZJ2HOncP7qEyopQ_-BVqWYUNKVUIk7G4rCX0S_c2f4MaWrTeii0DN973MghMCj3_pQWDq-uVQ6wxtn67TuD9CFsna6rgbpgYgKkJWp4V9p8csAKusW9YW0pegKPGnhlaeVJL9I5w9KPJOu6roeF4Azbyb3RgRAuiw">
+</div>
+<div class="absolute -bottom-8 -right-8 bg-espresso p-xl rounded-2xl shadow-xl hidden lg:block">
+<p class="text-on-primary font-display-lg text-headline-md italic">Since 1994</p>
+</div>
+</div>
+<div class="space-y-xl">
+<div class="space-y-md">
+<h2 class="font-display-lg text-headline-lg text-espresso leading-tight">The Heart of Our Bakery</h2>
+<div class="h-1 w-24 bg-accent-orange rounded-full"></div>
+</div>
+<div class="space-y-lg text-on-surface-variant font-body-lg leading-relaxed">
+<p class="">
+            For over three decades, Crave Bakery has been the aromatic heartbeat of our neighborhood. What started as a small family dream has blossomed into a destination for those who appreciate the patient art of slow-fermented dough and the golden crunch of a perfect crust.
+          </p>
+<p class="">
+            We believe that good bread takes time. Our bakers arrive when the city still sleeps, hand-shaping every loaf and tempering every batch of chocolate to ensure that the warmth you feel in every bite is as authentic as the ingredients we source from local artisans.
+          </p>
+</div>
+<button class="flex items-center gap-md text-espresso font-bold hover:text-accent-orange transition-colors group">
+<span class="">Learn Our Full Story</span>
+<span class="material-symbols-outlined transition-transform group-hover:translate-x-2">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Product Section (Curated Highlights) -->
+<section class="py-32 bg-white">
+<div class="max-w-[1200px] mx-auto px-lg">
+<div class="flex flex-col md:flex-row justify-between items-end gap-lg mb-xl">
+<div class="space-y-sm">
+<h2 class="font-display-lg text-headline-lg text-espresso">Our Premium Selection</h2>
+<div class="h-1 w-24 bg-accent-orange rounded-full"></div>
+</div>
+<div class="flex items-center gap-md">
+<button class="w-12 h-12 rounded-full border border-outline flex items-center justify-center text-espresso hover:bg-espresso hover:text-white transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-outline flex items-center justify-center text-espresso hover:bg-espresso hover:text-white transition-all">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Filters -->
+<div class="flex gap-md overflow-x-auto pb-md no-scrollbar">
+<button class="bg-espresso text-on-primary px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm shadow-md">All Items</button>
+<button class="border border-outline text-on-surface-variant px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm hover:border-espresso hover:text-espresso transition-all">Breads</button>
+<button class="border border-outline text-on-surface-variant px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm hover:border-espresso hover:text-espresso transition-all">Muffins</button>
+<button class="border border-outline text-on-surface-variant px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm hover:border-espresso hover:text-espresso transition-all">Brownies</button>
+<button class="border border-outline text-on-surface-variant px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm hover:border-espresso hover:text-espresso transition-all">Cookies</button>
+<button class="border border-outline text-on-surface-variant px-lg py-sm rounded-full whitespace-nowrap font-bold text-body-sm hover:border-espresso hover:text-espresso transition-all">Pastries</button>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl mt-xl">
+<!-- Card 1 -->
+<div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-md py-xs rounded-full shadow-sm z-10">
+<span class="text-accent-orange font-bold font-title-lg">$4.50</span>
+</div>
+<div class="aspect-square overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh4BGAOkT88g71lzWrVNL4PS4G5cOa3JwQMIOE1APPEVveAQqWQgReN2qqGkvH6BZhiwSaivEADQjekF4DZhDE0IhgIIFc5y6EE9mLtqX5LQxWkQ4IagL4ZSHovCTWcJaaX5x-rQFOQM3vUv37oyAb5g63f98otHYUwVlYR6Xv7mwaLdTGpatFEygNXYL9Z8RiA-eJWtByJSkZSoow8PV8ruvvp9-mwg_xMVT-uzZqIRuH3bgPMUgU72YfKx6ZdSWQCJLszJD40g">
+</div>
+<div class="p-lg space-y-md">
+<div>
+<h3 class="font-display-lg text-headline-sm text-espresso">Classic Butter Croissant</h3>
+<p class="text-on-surface-variant font-body-sm line-clamp-2">Our signature 72-hour fermented dough, hand-rolled with premium French butter.</p>
+</div>
+<button class="w-full bg-accent-orange text-on-primary py-md rounded-full font-bold flex items-center justify-center gap-sm transition-all active:scale-95">
+<span class="material-symbols-outlined">shopping_cart</span>
+              Add to Cart
+            </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-outline-variant">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-md py-xs rounded-full shadow-sm z-10">
+<span class="text-espresso font-bold font-title-lg">$12.00</span>
+</div>
+<div class="aspect-square overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjsBF9bcW4leI6074lfdMXATmnVAhVsRImyNbF54IWjscjIdkjZwfJFaDBIe0B_4UXjPRueDwYrkltE-T_JKswrhK437vRJVxeZSBHScj_Cvcdurj-YBLp82O423rVnhEbUZiW4RkFqy1fyUHnWhLnNAT-Ui06xeolJecdmy3d1Z-xhs4EfZggykkybHGd0975XKtsFoJithNlepq6zmu8oXzanzzYA6toeUYAynij0eLgKQV7p1EblxOmJO5Ebjt4SoKnlQmBsQ">
+</div>
+<div class="p-lg space-y-md">
+<div>
+<h3 class="font-display-lg text-headline-sm text-espresso">Artisan Sourdough Loaf</h3>
+<p class="text-on-surface-variant font-body-sm line-clamp-2">Wild yeast starter, organic rye flour, and a perfect crunchy crust. Stone hearth baked.</p>
+</div>
+<button class="w-full border border-accent-orange text-accent-orange py-md rounded-full font-bold flex items-center justify-center gap-sm hover:bg-accent-orange hover:text-white transition-all active:scale-95">
+<span class="material-symbols-outlined">shopping_cart</span>
+              Add to Cart
+            </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-outline-variant">
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-md py-xs rounded-full shadow-sm z-10">
+<span class="text-espresso font-bold font-title-lg">$5.75</span>
+</div>
+<div class="aspect-square overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5qgk_jFNKTuVh73Q1nTxPDOsvkf13SaBabSTL5UsztxgMfms14ZUCHGi4Ubrx9rJHbdpl08oPDv_WVoDtefy65gGuO1Gl0Jta4z_Bb2yH5jLQuy6SduUcs4KE5xbcfp4i6EdY252IYGrjDB4Z4eaKCSTlRDCA68O1znCnOQDCnAOe4m05o83Wgha6y7PJIjMx76UEpxOZcve0EkJ1sG3idHqPohq92o6e5AgchilZyg3wc7Kfne1MFM82to17KH18iMgUUx6w9A">
+</div>
+<div class="p-lg space-y-md">
+<div>
+<h3 class="font-display-lg text-headline-sm text-espresso">Dark Chocolate Truffle Cake</h3>
+<p class="text-on-surface-variant font-body-sm line-clamp-2">Intense 70% cocoa sponge layered with silky ganache and a hint of Maldon sea salt.</p>
+</div>
+<button class="w-full border border-accent-orange text-accent-orange py-md rounded-full font-bold flex items-center justify-center gap-sm hover:bg-accent-orange hover:text-white transition-all active:scale-95">
+<span class="material-symbols-outlined">shopping_cart</span>
+              Add to Cart
+            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Latest from our Ovens Section -->
+<section class="py-32 bg-espresso hero-pattern">
+<div class="max-w-[1200px] mx-auto px-lg">
+<div class="space-y-sm mb-xl text-center">
+<h2 class="font-display-lg text-headline-lg text-on-primary">Latest From Our Ovens</h2>
+<p class="text-on-primary/60 font-body-lg">Fresh innovations and seasonal specials</p>
+<div class="h-1 w-24 bg-accent-orange rounded-full mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<!-- New Item 1 -->
+<div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-md group hover:bg-white/10 transition-all">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-lg">
+<span class="absolute top-3 left-3 bg-accent-orange text-on-primary px-md py-1 rounded-full text-xs font-bold uppercase tracking-wider z-10">New</span>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwV6HGFsHHZhbi_lQL47DxdiNDB2xfhwQTan-1Uo8M3uE4_CQBPKKEWbzwTrhwvlmG0XGxiVpTgZcdIYmUYkzY6JCtR-eYwD_U7yR05bNwnJuXrNPdmpENCqFcfXebya76XbztFxVg2N2Pj1T9MYsDonCev30Ower91CHs2n2iJQarHGgO5eaMkoiTUC5izdw6o6iBEfMDwOZR2F2GxVNrVW0MCQvsuiZ_rRxqurIxAQvYhEJBjkdq5l1hO8XdN_bJI0WTTPzt5A">
+</div>
+<h3 class="text-on-primary font-display-lg text-title-lg mb-sm">Rosemary Sea Salt Focaccia</h3>
+<p class="text-on-primary/60 text-body-sm mb-lg">A fluffy, olive oil-infused crumb topped with fresh garden rosemary.</p>
+<div class="flex justify-between items-center">
+<span class="text-accent-orange font-bold text-headline-sm">$8.50</span>
+<button class="bg-white/10 hover:bg-accent-orange text-on-primary px-lg py-2 rounded-full text-sm font-bold transition-all">Quick Add</button>
+</div>
+</div>
+<!-- New Item 2 -->
+<div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-md group hover:bg-white/10 transition-all">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-lg">
+<span class="absolute top-3 left-3 bg-accent-orange text-on-primary px-md py-1 rounded-full text-xs font-bold uppercase tracking-wider z-10">New</span>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS83jSF1AwggrTZn1xq0TDlnVsyzeo2lnflMYnaj0HqJ-_YYpyj1EBkoWz6YO-XzlGofzUe7XYjV1LEONrA1LNlf9Z-NvUv3b0pxEry5qYOpUX6S6Ay4shHTPFP67pGVZMjV3hunyizACMmuVOCJ0XTDg54sSSg85fmfqDbBOM2qZ1TGLCIX2OkDkam-WQE7YYlxrOi9o_OP_pR20tLJZqLbW6ZD_i1PGQoc0g010wgzTjuEnoZGLj7BAKrsH2u29e4OIONHF_Sw">
+</div>
+<h3 class="text-on-primary font-display-lg text-title-lg mb-sm">Lemon Poppyseed Muffin</h3>
+<p class="text-on-primary/60 text-body-sm mb-lg">Bright citrus notes paired with the satisfying crunch of poppy seeds.</p>
+<div class="flex justify-between items-center">
+<span class="text-accent-orange font-bold text-headline-sm">$3.75</span>
+<button class="bg-white/10 hover:bg-accent-orange text-on-primary px-lg py-2 rounded-full text-sm font-bold transition-all">Quick Add</button>
+</div>
+</div>
+<!-- New Item 3 -->
+<div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-md group hover:bg-white/10 transition-all">
+<div class="relative rounded-xl overflow-hidden aspect-[4/3] mb-lg">
+<span class="absolute top-3 left-3 bg-accent-orange text-on-primary px-md py-1 rounded-full text-xs font-bold uppercase tracking-wider z-10">New</span>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7XERfGzdnSXHuiIx71SpglQz4o0aBb7yGIVY4amMRZsWhjSe_yOoUW0oaue5YdWdmaj8EdM5I5b_9sduggz_Fb7palvzRwHZY_HclGpQ4RQCifK2qZKKuyDQC67AACpN8dvGJdGfqSAgrWQYd1Tn7lG24ILqBZrw2eHbZYBX1avJqcqsB4NOl1KJa0h0BqRHDO7T2jcZLZtQdwqDK3JtWqtO5-65E7VF57gQm1QD8ZD9dxMMjVhOOx4eblqSRjGERaYasfohvKw">
+</div>
+<h3 class="text-on-primary font-display-lg text-title-lg mb-sm">Caramel Pecan Danish</h3>
+<p class="text-on-primary/60 text-body-sm mb-lg">Multi-layered pastry filled with buttery caramel and toasted pecans.</p>
+<div class="flex justify-between items-center">
+<span class="text-accent-orange font-bold text-headline-sm">$5.25</span>
+<button class="bg-white/10 hover:bg-accent-orange text-on-primary px-lg py-2 rounded-full text-sm font-bold transition-all">Quick Add</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Recommended For You Section -->
+<section class="py-32 bg-surface-bright">
+<div class="max-w-[1200px] mx-auto px-lg">
+<div class="space-y-sm mb-xl">
+<h2 class="font-display-lg text-headline-lg text-espresso">Recommended For You</h2>
+<div class="h-1 w-24 bg-accent-orange rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Rec 1 -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant p-sm group">
+<div class="aspect-square rounded-lg overflow-hidden mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf3Qv3c9KsmXYTNgdsrrC8wu2r90XZvhShSmp1DT2WA3XTrEq_29Pyxj-LtR6Nflj3B_duw6blbMtUdnzkVr8Pxy3J-O3o8TK2U3KvEIiflOL5b6k0HhlYoRXWonrvKTvs8ONjENS1Sw36OzRgfn6oCQDc5MdN7oqY4GyXxEdjXk0ilRNHyC1xIxc6Tbv6Ojbw677MTfzi3BwecWr4eL0SVPT8RHBJr4LT8Z_Y8sG7RfYpS6-yjG9Dn539aCS-_1QSuIN0Sv_u9w">
+</div>
+<h4 class="font-bold text-espresso text-body-lg mb-xs">Honey Walnut Loaf</h4>
+<p class="text-on-surface-variant text-body-sm mb-md">$9.00</p>
+<button class="w-full py-2 bg-espresso text-on-primary rounded-lg text-xs font-bold hover:bg-accent-orange transition-colors">Add to Cart</button>
+</div>
+<!-- Rec 2 -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant p-sm group">
+<div class="aspect-square rounded-lg overflow-hidden mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLzdy2Hw4MadNj_fNn4BP5BvLPI3d1P1FwbokO9St1JU3NL6pj0gPdO9LAbuCf0FuD1M37GuC7qzflwtcSuW3EuWh75jlJbfJsUNCVxmfM6XWTC643H59Z9CyLrdCtS17fX98Hjt6B1824PTF4zlEs3fXeAudQafTN_shGy_Ak0hDH-2yW9m3EVrxZwmfoHxwsiTAjPqw8X91OYQkTWABiJiYduRMCcLqbA79t9kx-M3uRIAilJX_2aDiB3GqJlkU6RVeHYxuHbQ">
+</div>
+<h4 class="font-bold text-espresso text-body-lg mb-xs">Cinnamon Roll</h4>
+<p class="text-on-surface-variant text-body-sm mb-md">$4.25</p>
+<button class="w-full py-2 bg-espresso text-on-primary rounded-lg text-xs font-bold hover:bg-accent-orange transition-colors">Add to Cart</button>
+</div>
+<!-- Rec 3 -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant p-sm group">
+<div class="aspect-square rounded-lg overflow-hidden mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5U8tBX9WCnPwgX3tng1NgeIi1pVS7AVYEUW-YOBwLY91gHcwssbRf_1jZZDkeeV0mb3B4aO5QttG9vE_nowm3uUtabffghNjuV4IlkM9rrIy3_DMpbFiOso0sGQuUt22BcWUIRxy9mwmDyuPN2xenxovWCHUJCzxAijr3tCvHQd7yvuD5y7gTByav6sEeh2bwh7HYUcq20mGYsSZ_oS9ZlgT0v6uYGgaseHRU9JhJiTQxh42737dqrvUVf4wTEp8Ht-2S328Qgw">
+</div>
+<h4 class="font-bold text-espresso text-body-lg mb-xs">Almond Tart</h4>
+<p class="text-on-surface-variant text-body-sm mb-md">$6.50</p>
+<button class="w-full py-2 bg-espresso text-on-primary rounded-lg text-xs font-bold hover:bg-accent-orange transition-colors">Add to Cart</button>
+</div>
+<!-- Rec 4 -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant p-sm group">
+<div class="aspect-square rounded-lg overflow-hidden mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1NstUzGSdMmA-V1FjLb8mjeJh4WCHpck8E6TWUQoibFm3sYAuTzhsQJ6espmCnZ4lfdMytYi1dayyGnC4Zsj7yyGrM9C4pfmVOtG1BKSNexZDvLZcsbOM_kJGma2Y2t60e3_aC-R2nPWYhHO20SfiVqEXfy_aWY-xc8DpbZa6XFN-ypNYa8994gpXtpy748GR7VgfYPV4PMsApHoyKOgte62rWEcJk2j8t1oPhQpFuhJT2QPeBzjmqr1V5zIKm_eNJFN9FUbQcg">
+</div>
+<h4 class="font-bold text-espresso text-body-lg mb-xs">Sesame Bagels</h4>
+<p class="text-on-surface-variant text-body-sm mb-md">$7.00 (6pk)</p>
+<button class="w-full py-2 bg-espresso text-on-primary rounded-lg text-xs font-bold hover:bg-accent-orange transition-colors">Add to Cart</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-32 bg-warm-cream">
+<div class="max-w-[1200px] mx-auto px-lg">
+<div class="text-center space-y-md mb-xxl">
+<h2 class="font-display-lg text-headline-lg text-espresso">What Our Customers Say</h2>
+<div class="h-1 w-24 bg-accent-orange rounded-full mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<!-- Testimonial 1 -->
+<div class="bg-white p-xl rounded-2xl shadow-md space-y-lg relative">
+<span class="absolute -top-4 left-8 text-6xl text-accent-orange/20 font-serif">“</span>
+<div class="flex text-accent-orange">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+</div>
+<p class="italic text-on-surface-variant font-body-lg leading-relaxed">
+            "The sourdough here is life-changing. I drive 20 miles every Saturday just to get a fresh loaf. It's the highlight of my week."
+          </p>
+<div class="pt-md border-t border-outline-variant flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Customer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJP5azAsw_utqBVlVzNYWKI_X0gOBKKU3NHA3Kx5E0sbXVGIbHJyvL9diOGE6KlvH4pwhAYzOKTNWpmTrDKVEAHybN-GnznkyghpctMjlQHAuY4EXDn_YkB53bXXkk6T-ZN3wSXKTBw2mWnuPKWsH2Iu-rOSLeLFB7S0rclq9DVxaybGrDzD9ooG59q80wvpdmmTO8sH1d12-w9W3-AddmILPzvgtX7hUg41huOQE9mK4lNfIWPYPHzF4c72hLbVxS1mtPBJrXUA">
+</div>
+<div>
+<p class="font-bold text-espresso">Sarah Jenkins</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Loyal Customer</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="bg-white p-xl rounded-2xl shadow-md space-y-lg relative">
+<span class="absolute -top-4 left-8 text-6xl text-accent-orange/20 font-serif">“</span>
+<div class="flex text-accent-orange">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+</div>
+<p class="italic text-on-surface-variant font-body-lg leading-relaxed">
+            "Their croissants are exactly like the ones I had in Paris. Flaky, buttery, and perfectly layered. Absolutely incredible quality."
+          </p>
+<div class="pt-md border-t border-outline-variant flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Customer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj7ecliR_lGu9qb9kdES-4-sFsTLO6gDHu5s5KHsOpxkV51EBN8xY9z8jQ8r30tNOw9CweXCi1iHgSnUazsWtIwxykrNN5PctJZUdVGh8GRSB5ltM8FvJcD82OG_To61qYnMSBeY3Jy-HofxoCAm5nO05nnj1tXlNj7kqaaP6_T2ni4m4tvErrq60nmcDwFfZf1O9HCGfeRGYllhZpjf0k3uYET5JTeB-HbV9hNm6gNDcAYCrPTWXqLe4Ww7-PTX3GU-IxOfjLxQ">
+</div>
+<div>
+<p class="font-bold text-espresso">Mark Thompson</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Food Critic</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="bg-white p-xl rounded-2xl shadow-md space-y-lg relative">
+<span class="absolute -top-4 left-8 text-6xl text-accent-orange/20 font-serif">“</span>
+<div class="flex text-accent-orange">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">star_half</span>
+</div>
+<p class="italic text-on-surface-variant font-body-lg leading-relaxed">
+            "The staff is so warm and the atmosphere is lovely. My kids love the dark chocolate muffins. It's our favorite neighborhood spot."
+          </p>
+<div class="pt-md border-t border-outline-variant flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Customer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWuz6Y2hEMoQ-Vrt_FtOIo6nR5A8TK0l6BDaq4x3LUlWQ8zyBVlpJr6xszestnl0rvUIYu2oCwg5wnvYx6oc-oX_nAkUyR_PoEfNQozADqLEI4J9mW3jt7c7cpfYy3zBGKaIax9eaHSTLCJplvLKKZ-GlZ-f1p4xqdnqUah71lbrSWlXCaw_bg5Uf9PYylGGPsfg3SVxNbxKDJKVO86trRBlJosUxoYpNqIxFo6lQfrt5r1259xIMZWHsM9blMIUZM7AhXQE2bMg">
+</div>
+<div>
+<p class="font-bold text-espresso">Elena Rodriguez</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Local Resident</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Section -->
+<footer class="w-full py-32 px-lg border-t border-outline-variant bg-espresso hero-pattern">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-xxl mb-xxl">
+      <!-- Brand Column -->
+      <div class="space-y-lg">
+        <div class="space-y-sm">
+          <span class="font-display-lg text-headline-sm font-bold text-on-primary block">Crave Bakery</span>
+          <p class="text-on-primary/70 font-body-sm leading-relaxed">
+            Crafting smiles one pastry at a time since 1994. Our commitment to artisanal methods and premium ingredients brings the warmth of the oven to your doorstep.
+          </p>
+        </div>
+        <div class="flex gap-md">
+          <a href="#" class="w-10 h-10 rounded-full bg-white/10 text-on-primary flex items-center justify-center hover:bg-accent-orange transition-all">
+            <span class="material-symbols-outlined text-[20px]">public</span>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/10 text-on-primary flex items-center justify-center hover:bg-accent-orange transition-all">
+            <span class="material-symbols-outlined text-[20px]">share</span>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/10 text-on-primary flex items-center justify-center hover:bg-accent-orange transition-all">
+            <span class="material-symbols-outlined text-[20px]">camera</span>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-white/10 text-on-primary flex items-center justify-center hover:bg-accent-orange transition-all">
+            <span class="material-symbols-outlined text-[20px]">alternate_email</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Links Column 1 -->
+      <div class="space-y-lg">
+        <h4 class="font-bold text-on-primary uppercase tracking-widest text-xs">Explore</h4>
+        <ul class="space-y-md">
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Catalogue</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">About Us</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Locations</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Careers</a></li>
+        </ul>
+      </div>
+
+      <!-- Links Column 2 -->
+      <div class="space-y-lg">
+        <h4 class="font-bold text-on-primary uppercase tracking-widest text-xs">Support</h4>
+        <ul class="space-y-md">
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Contact Us</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Shipping</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">FAQs</a></li>
+          <li class=""><a href="#" class="text-on-primary/80 hover:text-accent-orange transition-colors font-body-sm">Help Center</a></li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div class="space-y-lg">
+        <h4 class="font-bold text-on-primary uppercase tracking-widest text-xs">Join Our Community</h4>
+        <p class="text-on-primary/70 font-body-sm">Subscribe for fresh updates and exclusive offers.</p>
+        <div class="flex flex-col gap-sm">
+          <input type="email" placeholder="Your email address" class="bg-white/5 border border-white/10 rounded-lg px-md py-sm text-body-sm text-on-primary placeholder:text-on-primary/40 focus:ring-2 focus:ring-accent-orange focus:border-accent-orange outline-none transition-all">
+          <button class="bg-accent-orange text-on-primary py-sm rounded-lg font-bold text-body-sm hover:opacity-90 active:scale-95 transition-all">Subscribe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="pt-xl border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-md">
+      <p class="text-on-primary/60 hover:text-on-primary transition-colors text-xs">© 2024 Crave Bakery. All rights reserved.</p>
+      <div class="flex gap-lg">
+        <a href="#" class="text-on-primary/60 hover:text-on-primary transition-colors text-xs">Privacy Policy</a>
+        <a href="#" class="text-on-primary/60 hover:text-on-primary transition-colors text-xs">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script>
+    // Smooth navigation interaction
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('py-sm');
+        nav.classList.remove('py-md');
+        nav.style.backgroundColor = 'rgba(61, 26, 14, 0.95)';
+        nav.style.backdropFilter = 'blur(10px)';
+      } else {
+        nav.classList.add('py-md');
+        nav.classList.remove('py-sm');
+        nav.style.backgroundColor = '#3D1A0E';
+        nav.style.backdropFilter = 'none';
+      }
+    });
+
+    // Floating animation for hero image
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+        100% { transform: translateY(0px); }
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+
+
+
+
+</body></html>

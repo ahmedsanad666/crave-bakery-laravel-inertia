@@ -65,6 +65,48 @@
         @apply border-error focus:border-error focus:ring-error/20;
     }
 
+    /* Dropdowns */
+    .dropdown-trigger {
+        @apply relative flex h-12 w-full cursor-pointer items-center rounded-input border border-border-base bg-card px-4 text-left text-sm text-text-primary transition-colors focus:outline-none;
+    }
+
+    .dropdown-trigger-open {
+        @apply border-accent;
+    }
+
+    .dropdown-trigger-error {
+        @apply border-error;
+    }
+
+    .dropdown-trigger-sm {
+        @apply h-9 rounded-lg px-3 text-xs font-bold;
+    }
+
+    .dropdown-panel {
+        @apply absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border-base bg-card py-1 shadow-card focus:outline-none;
+    }
+
+    .dropdown-option {
+        @apply relative cursor-pointer select-none px-4 py-2.5 text-sm text-on-surface transition-colors;
+    }
+
+    .dropdown-option-active {
+        @apply bg-surface-container-low;
+    }
+
+    .dropdown-option-selected {
+        @apply bg-surface-container-low font-semibold text-primary;
+    }
+
+    .dropdown-option-selected::before {
+        content: '';
+        @apply absolute bottom-1.5 left-0 top-1.5 w-[3px] rounded-full bg-accent;
+    }
+
+    .dropdown-tag {
+        @apply inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-bold text-white;
+    }
+
     /* Cards & elevation */
     .card-elevated {
         @apply rounded-card bg-card shadow-card;
@@ -149,5 +191,76 @@
     .category-drag-ghost {
         opacity: 0.5;
         background: #f6f3f2;
+    }
+}
+
+@layer utilities {
+    .hero-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30c0-5 2-10 6-10s6 5 6 10-2 10-6 10-6-5-6-10zm-15-5c0-3 1.5-6 4-6s4 3 4 6-1.5 6-4 6-4-3-4-6zm30 0c0-3 1.5-6 4-6s4 3 4 6-1.5 6-4 6-4-3-4-6z' fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-fade-in {
+        animation: fade-in 1s ease-out forwards;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .invoice-card {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .admin-main {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        min-height: 0 !important;
+        background: white !important;
+    }
+
+    body {
+        background: white !important;
     }
 }

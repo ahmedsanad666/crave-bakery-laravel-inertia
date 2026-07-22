@@ -1,0 +1,590 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Products | Crave Bakery Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fcf9f8",
+                    "surface": "#fcf9f8",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#321207",
+                    "secondary-container": "#fc6537",
+                    "inverse-primary": "#f6b8a5",
+                    "surface-variant": "#e5e2e1",
+                    "surface-container-low": "#f6f3f2",
+                    "inverse-surface": "#313030",
+                    "on-tertiary-fixed-variant": "#4a4641",
+                    "on-tertiary-fixed": "#1e1b17",
+                    "inverse-on-surface": "#f3f0ef",
+                    "on-primary-fixed-variant": "#663c2d",
+                    "background": "#fcf9f8",
+                    "surface-container-highest": "#e5e2e1",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#f0eded",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#26241f",
+                    "primary-fixed-dim": "#f6b8a5",
+                    "outline": "#84746f",
+                    "secondary-fixed": "#ffdbd1",
+                    "primary-container": "#3d1a0e",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#ccc6be",
+                    "tertiary": "#110f0a",
+                    "surface-tint": "#825343",
+                    "primary": "#220601",
+                    "on-secondary-container": "#5c1400",
+                    "on-secondary-fixed-variant": "#862200",
+                    "primary-fixed": "#ffdbd0",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#dcd9d9",
+                    "tertiary-fixed": "#e8e1da",
+                    "secondary": "#b02f00",
+                    "outline-variant": "#d6c2bd",
+                    "on-tertiary-container": "#8f8b84",
+                    "on-surface": "#1c1b1b",
+                    "secondary-fixed-dim": "#ffb59f",
+                    "surface-container-high": "#eae7e7",
+                    "on-secondary-fixed": "#3b0a00",
+                    "on-surface-variant": "#514440",
+                    "on-background": "#1c1b1b",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#b47e6d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "xs": "4px",
+                    "xxl": "48px",
+                    "unit": "4px",
+                    "md": "16px",
+                    "gutter": "16px",
+                    "container-margin": "24px",
+                    "xl": "32px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Inter"],
+                    "headline-sm": ["Playfair Display"],
+                    "display-lg-mobile": ["Playfair Display"],
+                    "headline-md": ["Playfair Display"],
+                    "headline-lg": ["Playfair Display"],
+                    "title-lg": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Playfair Display"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #fcf9f8; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6c2bd; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body-lg text-on-background">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-md flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary-container">Crave Bakery</h1>
+<p class="text-on-primary-container opacity-60 text-xs tracking-wider uppercase font-bold">Artisanal Admin</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary text-on-secondary rounded-lg mx-2 transition-transform duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined">bakery_dining</span>
+<span class="font-label-caps text-label-caps">Products</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-caps text-label-caps">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">format_list_bulleted</span>
+<span class="font-label-caps text-label-caps">Attributes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-label-caps text-label-caps">Analytics</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-on-primary-container/10 pt-md">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-caps text-label-caps">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-64 min-h-screen pb-xxl">
+<!-- Top Navigation -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 z-40 bg-surface-container-lowest shadow-sm flex justify-between items-center px-lg border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="h-10 pl-10 pr-4 rounded-lg bg-surface-container border-none text-body-sm focus:ring-2 focus:ring-secondary-container w-[300px]" placeholder="Search product name..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">View Site</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">Documentation</a>
+<a class="text-on-surface-variant font-medium hover:text-secondary transition-all" href="#">Support</a>
+</nav>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">help_outline</button>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD_TUiA2sgv_5LGTfuXVZxr7k8CpR2w8qbUhkUVLVS2807MRJk_iUsJxDcxoqeN3Pp6U_j7b0pNwtHAULefUbWZ0KtPWRo3m6aWo4rcdsX4VbvKv7HmW9ClpMkT6VNHm0BMRjWLRLUXbnQHwHP5xd22Knlec0v_902v8s7WyotXRLkq2DgUqUnGDfrTjGxeFlKv-kArd4sf-NQMZWSsjFW060P6SsBJVEqacStofIlPX8nmFVBPV17X4zsufqqpY6gAseVUo-aFA">
+</div>
+</div>
+</header>
+<!-- Page Header & Stats -->
+<div class="pt-24 px-lg max-w-[1200px] mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
+<div>
+<nav class="flex text-xs font-label-caps text-on-surface-variant mb-2 gap-2">
+<span>Admin</span>
+<span>/</span>
+<span>Catalogue</span>
+<span>/</span>
+<span class="text-secondary font-bold">Products</span>
+</nav>
+<h2 class="font-headline-md text-headline-md text-primary">Products</h2>
+</div>
+<div class="flex gap-3">
+<button class="h-12 px-6 rounded-full border border-primary-container text-primary-container font-bold text-sm flex items-center gap-2 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">file_download</span>
+                        Export CSV
+                    </button>
+<button class="h-12 px-6 rounded-full bg-secondary-container text-white font-bold text-sm flex items-center gap-2 shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined">add</span>
+                        Add New Product
+                    </button>
+</div>
+</div>
+<!-- Stats Strip -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg mb-xl">
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col">
+<span class="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest mb-1">Total Products</span>
+<span class="font-headline-sm text-headline-sm text-primary">148</span>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col">
+<span class="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest mb-1 text-green-700">Active</span>
+<span class="font-headline-sm text-headline-sm text-primary">132</span>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col">
+<span class="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest mb-1 text-red-600">Out of Stock</span>
+<span class="font-headline-sm text-headline-sm text-primary">9</span>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex flex-col">
+<span class="text-on-surface-variant font-label-caps text-[10px] uppercase tracking-widest mb-1 text-secondary">Featured</span>
+<span class="font-headline-sm text-headline-sm text-primary">12</span>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+<!-- Bulk Actions Toolbar (Visible when items selected) -->
+<div class="bg-primary text-white px-lg py-3 flex items-center justify-between transition-all duration-300 transform" id="bulkActions">
+<div class="flex items-center gap-lg">
+<span class="text-body-sm font-medium">3 products selected</span>
+<div class="flex gap-4">
+<button class="flex items-center gap-1 hover:text-secondary-fixed text-sm"><span class="material-symbols-outlined text-sm">visibility_off</span> Archive</button>
+<button class="flex items-center gap-1 hover:text-secondary-fixed text-sm"><span class="material-symbols-outlined text-sm">star</span> Feature</button>
+<button class="flex items-center gap-1 text-red-300 hover:text-red-400 text-sm" onclick="document.getElementById('deleteModal').classList.remove('hidden')"><span class="material-symbols-outlined text-sm">delete</span> Delete</button>
+</div>
+</div>
+<button class="text-white/60 hover:text-white" onclick="document.getElementById('bulkActions').classList.add('hidden')">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Filters -->
+<div class="p-lg border-b border-outline-variant flex flex-wrap gap-4 items-center bg-surface-container-low">
+<select class="h-10 px-4 rounded-lg bg-white border border-outline-variant text-body-sm min-w-[140px] focus:ring-2 focus:ring-secondary-container">
+<option>All Categories</option>
+<option>Viennoiserie</option>
+<option>Sourdough</option>
+<option>Tarts</option>
+</select>
+<select class="h-10 px-4 rounded-lg bg-white border border-outline-variant text-body-sm min-w-[140px] focus:ring-2 focus:ring-secondary-container">
+<option>Status: Active</option>
+<option>Draft</option>
+<option>Out of Stock</option>
+<option>Archived</option>
+</select>
+<select class="h-10 px-4 rounded-lg bg-white border border-outline-variant text-body-sm min-w-[140px] focus:ring-2 focus:ring-secondary-container">
+<option>Stock Level</option>
+<option>Low Stock (&lt; 10)</option>
+<option>Out of Stock</option>
+</select>
+<button class="h-10 px-4 rounded-lg border border-outline-variant text-on-surface-variant font-medium text-sm flex items-center gap-2 hover:bg-white">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        More Filters
+                    </button>
+<div class="ml-auto text-body-sm text-on-surface-variant">
+                        Showing 1-8 of 148 products
+                    </div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-[#FDF6EE]">
+<tr class="font-label-caps text-[10px] text-on-surface-variant tracking-widest uppercase">
+<th class="px-lg py-4 w-12"><input checked="" class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></th>
+<th class="px-lg py-4">Product</th>
+<th class="px-lg py-4">Categories</th>
+<th class="px-lg py-4">Price</th>
+<th class="px-lg py-4">Stock</th>
+<th class="px-lg py-4">Status</th>
+<th class="px-lg py-4">Featured</th>
+<th class="px-lg py-4">Created</th>
+<th class="px-lg py-4 text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant text-body-sm">
+<!-- Row 1 Selected -->
+<tr class="bg-surface-container-low/30 hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input checked="" class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A close-up shot of a golden-brown, flaky almond croissant on a rustic ceramic plate. The pastry is dusted with powdered sugar and topped with toasted almond slices, set against a warm, sunlit bakery background with soft wood tones and beige accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFbS-gjLyEjE_QUxLU9z_B1WrgdAHHaK09WUyre6XizZYF-T0DijAVNzQg9zY8uYA-GmqTue02GG-ry3T_AhL7ifdO379EkbqF8-RNzJIRDc8hsdLRcC3n7H_jcypBbPSPdv6njwsCuGR_AaK4CtVfVOkdWW_mFR4TZhFwCTDOkQwdKkBIUlXg4KwYxwnVpYFlx6xG64yWSaSz9r4rSa8itX3VvRUc5VxLuA_7MDrBWh-ohtO4JJdu5akCo0Y_AU6alv6wTCq_tg">
+</div>
+<div>
+<div class="font-bold text-primary">Almond Croissant</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: VN-ALM-001</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">VIENNOISERIE</span></td>
+<td class="px-lg py-4 font-bold text-primary">$4.50</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>42 left</span> <span class="text-on-surface-variant/60">High</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[75%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 12, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A beautifully scored sourdough loaf with a deep brown, crispy crust sitting on a linen towel. The lighting is warm and directional, emphasizing the texture of the bread and the flour-dusted surface, reflecting a high-end artisanal aesthetic with earthy tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPrQbywyRgrxVQImtwrDE2RXzTilJ0d7VeQQO9O69rl1oFlEKMoyJWhguZsDCvnwnkjNf285oG116NBSssnFJAKmOEZ4BBhM2_M4TthDhsDbZ9NcPrLRGqVfo2Vidj4Dx4P1vJqFdMXhnyyEZ0sG0FK2LPCxC6kRLRKFhddphdKGvP9VSeBYL3WNOZnCoCxAM9EbCpPSXLPKnZuVXg1sHMJXfWgsYOeWfLzVJA-GQUqXxVR-KfEHt8LV18V4J9-GxBEVwv3HTAEw">
+</div>
+<div>
+<div class="font-bold text-primary">Sourdough Loaf</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: SD-ORG-002</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">BREADS</span></td>
+<td class="px-lg py-4 font-bold text-primary">$8.00</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>12 left</span> <span class="text-on-surface-variant/60">Mid</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-orange-400 w-[30%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-on-surface-variant">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 11, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 3 Selected -->
+<tr class="bg-surface-container-low/30 hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input checked="" class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A gourmet chocolate tart decorated with elegant gold leaf and a single hazelnut, presented on a dark stone slab. The composition uses moody, high-contrast lighting with a focus on the glossy ganache texture, maintaining a premium, modern corporate bakery feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmjpGyisqybnuQcmBjNYt6lu-PZ9P06AstVgmXnXKl2iyDBT7uZ-nRMwQusa0eBA1bwqdqFjUDGdGGYRiw5e9VRtMYR6ta_6Dh9XJxtLWD9Y83dcf4wZl3HSKMMQyGsJz956a1zJQLVclDPHzj3zZxuRu5FX39QvGrlNFbaMIu-uNlPYtzP9cN_IL0sHRhsHxGQv_2bNSs8ta-UdH92DOO590FzWst12lUZqOSM2xyABuz7aHKd36KDWDDk_ivBuRAVq6I-I8uHg">
+</div>
+<div>
+<div class="font-bold text-primary">Chocolate Ganache Tart</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: PT-CHO-003</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">PASTRY</span></td>
+<td class="px-lg py-4 font-bold text-primary">$6.50</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1 text-red-600"><span>0 left</span> <span>None</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-red-500 w-[0%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase">Out of Stock</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 10, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A close-up of a fresh blueberry muffin with a tall, sugary muffin top and plump berries peeking through the crumb. Soft, bright daylight illuminates the texture of the paper liner and the golden crumb, set in a clean, minimalist kitchen environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA67ANJKRLdO_u3ZbVVFqcs__3Bi1jRWktF3gbZusJIimKW1-WNBeAPnvkSwswYtHqc6heSzsvOAkwNpQI_3WPUTEZGPblrjgTH7eTZpPuiQxccFZ5l9tWtWh9-_4r59h7vtuBod3RqhU2wjiMxWOoQIoT0IZe9O8py-FjjOWqf6ng02s_mIZPb19nl-7hLdahD0pG0kF-6OaW3R75pzgGJNht9r9ZBgJNJsDmp5XNUWZF6qzIVahz1uzk5xDVecSQFMVaNml2n4g">
+</div>
+<div>
+<div class="font-bold text-primary">Wild Blueberry Muffin</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: MF-BLU-004</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">MUFFINS</span></td>
+<td class="px-lg py-4 font-bold text-primary">$3.75</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>28 left</span> <span class="text-on-surface-variant/60">Mid</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[55%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-on-surface-variant">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 09, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Golden-brown sea salt focaccia with sprigs of rosemary and dimples filled with olive oil. The image captures the oily sheen and crystalline salt on a wooden cutting board, with warm, inviting lighting typical of a high-end artisanal bakery shop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsCiE4zsKNjsq26aIPcys2DhGC6lRDWq68h1YmbMo2C5kNMEilDBQM-NA3ZfDPjdNngSwPbKQpP0QXfIvrKPQ8tSM6DvTJ-8TOXBGGz_962mTVORwJACQl-XCOcv-GdToHO8XGL0IvpUReXY_W-3mPFVCiV-cHBepn-j_PvrkZ6zeogdHwh7PMqViGdusUl-Pcj9_-42yF5sQhwxDr23Ak8y4JjEzSUzb6K-B0VOgW9EXuGwaZJqTA5xJJBQFNVTe1dMEMZR2Psw">
+</div>
+<div>
+<div class="font-bold text-primary">Sea Salt Focaccia</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: SD-FOC-005</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">SAVORY</span></td>
+<td class="px-lg py-4 font-bold text-primary">$5.50</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>8 left</span> <span class="text-red-500 font-bold">Low</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-red-500 w-[15%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-bold">DRAFT</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-on-surface-variant">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 08, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 6 Selected -->
+<tr class="bg-surface-container-low/30 hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input checked="" class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A stack of lemon poppyseed cookies on a white plate, with bright, high-key lighting that emphasizes the yellow zest and dark poppyseeds. The background is a clean white marble surface, giving the image a fresh and professional commercial bakery look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEzLVyeH45Rp5imNeqZVHGbih1cLdXCJ_R6FClNZg89QU7JN6weyKJ77kD_rN4Y9OgxKnSsSVM_Zu3rxuDrxkTcSA04Za6ssJIcsK1awEF1rPpmbk2OuRD8o9CtiUQD-KfcXM6jFpOC4_9G26ynFW45J1476bfbQyNjvfi3lMfwDHmghMc0tFnfp6RaXeXp4gVZI0pjRNlQEATx-3HkVGexYwWcJ2dcoggtyb2ZMwSpevMq8kBD7dZ2D9kDKMFERPfbbWcTSb1xg">
+</div>
+<div>
+<div class="font-bold text-primary">Lemon Poppyseed Cookies</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: CK-LEM-006</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">COOKIES</span></td>
+<td class="px-lg py-4 font-bold text-primary">$2.50</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>60 left</span> <span class="text-on-surface-variant/60">High</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-[90%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 07, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 7 -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A festive chocolate fudge brownie topped with sea salt flakes and walnuts. The brownie is sliced into a perfect square, showing a moist and fudgy interior. The lighting is soft and ambient, creating a cozy and indulgent atmosphere with warm chocolate brown tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7OilbqDQnLIBBBQIcAODunE4Wwo0bGK2z1sifHVGHSrJqRH3Ge_6VTVyQo74QMfN143q4bESmco80Ck19Jr9POXJoV5VvSoQe07JzrqfdUfQdkIf0SWZW7CbpJAEZ-H6a0wvJ5Mp458KlNm7ejY4i3uUIKNjSBUUlcHnFpbTZHZbZqDgXF0OPa7viyrYT9kYQRxL08Ne3WjscXcbDzxUbDWO47uOxa026KUYUlql7VyquunzURiJmGl_O_Mnqxd4k2DWNe1WWAA">
+</div>
+<div>
+<div class="font-bold text-primary">Sea Salt Brownie</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: CK-BRN-007</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">COOKIES</span></td>
+<td class="px-lg py-4 font-bold text-primary">$4.00</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>15 left</span> <span class="text-on-surface-variant/60">Mid</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-orange-400 w-[35%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">ACTIVE</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-on-surface-variant">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 06, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+<!-- Row 8 -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-4"><input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"></td>
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex-shrink-0 overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A whole wheat baguette wrapped in paper, lying on a wooden countertop with some flour scattered around. The lighting is warm and golden, highlighting the crusty exterior and rustic presentation typical of a traditional French bakery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF1etUzZwXPDVVgv2btJiCsqc0tDWc03GcgJMvvNKHNPix5sp44bW8cyG67GMiTehk23FEUPBdFfc8tPodK36935pBOUbglTqJDEqUKsF2ZAB-l32cDZzJAUSgknEZj3UXzHYdkfhum6KsxuXVcErlMUhT5PKDLOTSU8t3BwjxXMTWRBfphYbn6qLcQfXy9bifV-ct8eQWWdrvhKmdTxZIpbhFG_O3mPGNC2jz-Q_lz5xDb5BsExAPSCUF_N6bl2PUlgssa_WsjQ">
+</div>
+<div>
+<div class="font-bold text-primary">Whole Wheat Baguette</div>
+<div class="text-[10px] text-on-surface-variant font-mono">SKU: SD-BAG-008</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="px-2 py-1 bg-surface-container-highest rounded text-[10px] font-bold">BREADS</span></td>
+<td class="px-lg py-4 font-bold text-primary">$3.50</td>
+<td class="px-lg py-4">
+<div class="w-24">
+<div class="flex justify-between text-[10px] mb-1"><span>5 left</span> <span class="text-red-600 font-bold">Critical</span></div>
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-red-600 w-[8%]"></div>
+</div>
+</div>
+</td>
+<td class="px-lg py-4"><span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-bold">LOW STOCK</span></td>
+<td class="px-lg py-4"><span class="material-symbols-outlined text-on-surface-variant">star</span></td>
+<td class="px-lg py-4 text-on-surface-variant">Oct 05, 2023</td>
+<td class="px-lg py-4 text-center">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-secondary">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-4 bg-[#FDF6EE] flex items-center justify-between border-t border-outline-variant">
+<div class="text-body-sm text-on-surface-variant">Page 1 of 19</div>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-white transition-colors disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded bg-secondary text-white font-bold text-xs">1</button>
+<button class="w-8 h-8 rounded hover:bg-white font-medium text-xs">2</button>
+<button class="w-8 h-8 rounded hover:bg-white font-medium text-xs">3</button>
+<span class="mx-1 text-on-surface-variant">...</span>
+<button class="w-8 h-8 rounded hover:bg-white font-medium text-xs">19</button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Delete Confirmation Modal -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center hidden" id="deleteModal">
+<div class="absolute inset-0 bg-[#1A1A1A] opacity-40"></div>
+<div class="relative bg-white w-full max-w-md rounded-2xl p-xl shadow-2xl animate-in fade-in zoom-in duration-200">
+<div class="flex items-center gap-4 text-red-600 mb-4">
+<div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm">Delete Products?</h3>
+</div>
+<p class="text-on-surface-variant mb-xl">
+                Are you sure you want to delete the 3 selected products? This action cannot be undone and will remove all associated sales data and inventory records.
+            </p>
+<div class="flex gap-3 justify-end">
+<button class="h-11 px-6 rounded-full border border-outline text-on-surface-variant font-bold hover:bg-surface-container transition-colors" onclick="document.getElementById('deleteModal').classList.add('hidden')">
+                    Cancel
+                </button>
+<button class="h-11 px-6 rounded-full bg-red-600 text-white font-bold hover:bg-red-700 transition-colors shadow-sm">
+                    Confirm Delete
+                </button>
+</div>
+</div>
+</div>
+<script>
+        // Micro-interactions and Modal control
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('deleteModal').classList.add('hidden');
+            }
+        });
+    </script>
+</body></html>

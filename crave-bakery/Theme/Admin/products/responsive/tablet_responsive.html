@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crave Bakery Admin - Products</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .sidebar-transition {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-header {
+            backdrop-filter: blur(8px);
+            background-color: rgba(252, 249, 248, 0.8);
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6c2bd;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#3d1a0e",
+                      "outline": "#84746f",
+                      "on-primary-fixed": "#321207",
+                      "on-secondary-container": "#5c1400",
+                      "outline-variant": "#d6c2bd",
+                      "surface-tint": "#825343",
+                      "tertiary-fixed-dim": "#ccc6be",
+                      "on-tertiary-fixed-variant": "#4a4641",
+                      "primary-fixed": "#ffdbd0",
+                      "surface-variant": "#e5e2e1",
+                      "on-secondary-fixed-variant": "#862200",
+                      "surface-container-highest": "#e5e2e1",
+                      "on-tertiary-fixed": "#1e1b17",
+                      "on-surface": "#1c1b1b",
+                      "surface": "#fcf9f8",
+                      "on-secondary-fixed": "#3b0a00",
+                      "surface-bright": "#fcf9f8",
+                      "secondary": "#b02f00",
+                      "primary": "#220601",
+                      "inverse-on-surface": "#f3f0ef",
+                      "surface-container-low": "#f6f3f2",
+                      "secondary-container": "#fc6537",
+                      "on-surface-variant": "#514440",
+                      "on-primary-fixed-variant": "#663c2d",
+                      "surface-container-lowest": "#ffffff",
+                      "background": "#fcf9f8",
+                      "on-primary-container": "#b47e6d",
+                      "error-container": "#ffdad6",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-container": "#8f8b84",
+                      "tertiary-container": "#26241f",
+                      "secondary-fixed-dim": "#ffb59f",
+                      "surface-container-high": "#eae7e7",
+                      "error": "#ba1a1a",
+                      "on-secondary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-background": "#1c1b1b",
+                      "surface-container": "#f0eded",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed": "#e8e1da",
+                      "inverse-primary": "#f6b8a5",
+                      "primary-fixed-dim": "#f6b8a5",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#313030",
+                      "surface-dim": "#dcd9d9",
+                      "secondary-fixed": "#ffdbd1",
+                      "tertiary": "#110f0a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "sm": "8px",
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "lg": "24px",
+                      "xxl": "48px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "container-margin": "24px"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "display-lg-mobile": ["Playfair Display"],
+                      "display-lg": ["Playfair Display"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Playfair Display"],
+                      "label-caps": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Playfair Display"],
+                      "headline-sm": ["Playfair Display"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface font-body-lg overflow-x-hidden">
+<!-- Mobile Drawer Overlay -->
+<div class="fixed inset-0 bg-inverse-surface/40 z-40 hidden opacity-0 transition-opacity duration-300" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- Sidebar Rail / Full Drawer -->
+<aside class="fixed left-0 top-0 bottom-0 w-[64px] bg-primary-container z-50 sidebar-transition flex flex-col items-center py-lg shadow-xl overflow-hidden" id="sidebar">
+<!-- Logo / Expand Button -->
+<div class="mb-xxl flex flex-col items-center w-full px-xs">
+<div class="h-10 w-10 bg-secondary rounded-full flex items-center justify-center text-on-secondary mb-md cursor-pointer" onclick="toggleSidebar()">
+<span class="material-symbols-outlined" data-icon="bakery_dining">bakery_dining</span>
+</div>
+<span class="hidden opacity-0 font-headline-sm text-surface whitespace-nowrap" id="full-logo-text">Crave Admin</span>
+</div>
+<!-- Navigation Icons -->
+<nav class="flex flex-col gap-xl w-full">
+<div class="group relative flex items-center px-lg cursor-pointer text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Dashboard</span>
+</div>
+<div class="group relative flex items-center px-lg border-l-4 border-secondary text-on-secondary-fixed bg-on-primary-fixed-variant/20 py-sm">
+<span class="material-symbols-outlined" data-icon="inventory_2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Products</span>
+</div>
+<div class="group relative flex items-center px-lg cursor-pointer text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Orders</span>
+</div>
+<div class="group relative flex items-center px-lg cursor-pointer text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Customers</span>
+</div>
+<div class="group relative flex items-center px-lg cursor-pointer text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Reports</span>
+</div>
+</nav>
+<div class="mt-auto flex flex-col gap-xl w-full">
+<div class="group relative flex items-center px-lg cursor-pointer text-secondary-fixed-dim">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="sidebar-label hidden opacity-0 ml-md font-title-lg text-surface whitespace-nowrap">Settings</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pl-[64px] min-h-screen transition-all duration-300">
+<!-- Header -->
+<header class="h-16 glass-header sticky top-0 z-30 px-lg flex items-center justify-between border-b border-outline-variant/30">
+<div class="flex items-center gap-md">
+<button class="p-sm hover:bg-surface-container rounded-full transition-colors" onclick="toggleSidebar()">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</button>
+<div class="relative flex items-center" id="search-container">
+<button class="p-sm hover:bg-surface-container rounded-full transition-colors" id="search-toggle" onclick="toggleSearch()">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+</button>
+<input class="absolute left-10 w-0 opacity-0 transition-all duration-300 bg-surface-container-lowest border border-outline-variant rounded-full py-1 px-4 focus:w-48 focus:opacity-100 outline-none font-body-sm" id="search-input" placeholder="Search products..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="relative p-sm hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-surface"></span>
+</button>
+<div class="flex items-center gap-sm pl-md border-l border-outline-variant/50">
+<div class="text-right">
+<p class="font-title-lg text-primary text-[14px]">Admin Jane</p>
+<p class="font-body-sm text-on-surface-variant text-[11px]">Manager</p>
+</div>
+<div class="h-10 w-10 rounded-full bg-surface-container overflow-hidden border-2 border-secondary/20">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly female bakery manager with a warm smile, wearing a clean white chef apron, captured in soft natural lighting within a high-end artisanal bakery background with blurred pastries. The style is modern, professional, and corporate with tactile minimalist influences." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkp2CMmOxeu9ZM8Nqnpwvdk25dR3AGeR4FNFz0DDNRQxfbiUPgDNEkM8PFS-bsfppo9h41WCHwY-gUCgtsYyCVE2xHaBqTqXTYcX-ILGCPYX8JKBM_64pyUvYDLnDxqwL5yKqE6fCsHSlvL1AKKQMFdmwrQNugK7j_7iipqlDrir1DXvEsTNse_b9K7aDOEnAsynsAMmjE9DgZBUl-5Rf1vzj4iGqj3gUvF-MT1MORfVuiYRz2VU4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Canvas -->
+<section class="p-lg max-w-[1200px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xl">
+<div>
+<h1 class="font-headline-sm text-headline-sm text-primary">Products</h1>
+<p class="font-body-sm text-on-surface-variant mt-1">Manage your bakery inventory and catalogs</p>
+</div>
+<div class="flex gap-md">
+<button class="flex-1 md:flex-none px-lg h-10 border border-primary-container text-primary-container rounded-full font-title-lg flex items-center justify-center gap-2 hover:bg-primary-container hover:text-surface transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="ios_share">ios_share</span>
+                        Export
+                    </button>
+<button class="flex-1 md:flex-none px-lg h-10 bg-secondary text-on-secondary rounded-full font-title-lg flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+                        Add Product
+                    </button>
+</div>
+</div>
+<!-- Stats Grid (2x2 Tablet optimized) -->
+<div class="grid grid-cols-2 gap-md mb-xl">
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/20">
+<div class="flex items-center justify-between mb-sm">
+<span class="p-2 bg-primary-fixed text-on-primary-fixed rounded-lg">
+<span class="material-symbols-outlined" data-icon="cake">cake</span>
+</span>
+<span class="text-secondary font-bold text-xs">+12%</span>
+</div>
+<p class="font-label-caps text-on-surface-variant uppercase text-[10px]">Total Items</p>
+<p class="font-headline-sm text-primary">1,284</p>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/20">
+<div class="flex items-center justify-between mb-sm">
+<span class="p-2 bg-secondary-fixed text-on-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</span>
+<span class="text-secondary font-bold text-xs">+5.2%</span>
+</div>
+<p class="font-label-caps text-on-surface-variant uppercase text-[10px]">Active Stock</p>
+<p class="font-headline-sm text-primary">892</p>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/20">
+<div class="flex items-center justify-between mb-sm">
+<span class="p-2 bg-error-container text-on-error-container rounded-lg">
+<span class="material-symbols-outlined" data-icon="warning">warning</span>
+</span>
+<span class="text-error font-bold text-xs">-2</span>
+</div>
+<p class="font-label-caps text-on-surface-variant uppercase text-[10px]">Low Inventory</p>
+<p class="font-headline-sm text-primary">14</p>
+</div>
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/20">
+<div class="flex items-center justify-between mb-sm">
+<span class="p-2 bg-tertiary-fixed text-on-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined" data-icon="attach_money">attach_money</span>
+</span>
+<span class="text-secondary font-bold text-xs">+18%</span>
+</div>
+<p class="font-label-caps text-on-surface-variant uppercase text-[10px]">Avg. Price</p>
+<p class="font-headline-sm text-primary">$24.50</p>
+</div>
+</div>
+<!-- Product Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] border border-outline-variant/20 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full border-collapse text-left">
+<thead>
+<tr class="border-b border-outline-variant/30 bg-surface-container-low/50">
+<th class="py-md px-lg w-12 text-center">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</th>
+<th class="py-md px-md font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider">Product</th>
+<th class="py-md px-md font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider">Categories</th>
+<th class="py-md px-md font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider">Price</th>
+<th class="py-md px-md font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider">Stock</th>
+<th class="py-md px-md font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider text-center">Status</th>
+<th class="py-md px-lg font-label-caps text-on-surface-variant text-[11px] uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/20">
+<!-- Product Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-md px-lg text-center">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close-up artisanal shot of a golden sourdough bread loaf with a perfectly dusted flour crust, set against a dark rustic wood background. The lighting is warm and dramatic, highlighting the tactile texture of the crust. High-end gourmet bakery aesthetic with deep browns and warm ambers." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_Xyy55fDMMiIALk1SbYi8_U_lHuHaYzLmBQZKyBOp49ewN5THPmc-kDYhwAH6AlAykkS4QXcEwXTZltqHufBIeMKiXM6QfsBh3q0q2uHtUdWQttnEXAwOy3UY9CDms-VqTtRK9rFIw8gsB8zan_IA-EkF80DFn3py_Chxh_3e79h6B5K5ree1cU-BJmHAKEb0V-Hs0prH0ellglvBpRU8LEkcWeoo1PKCZwb5LTP6wjV9nNnq_EQ"/>
+</div>
+<div>
+<p class="font-title-lg text-[14px] text-primary">Sourdough Classic</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">SKU: CB-00124</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-2 py-1 bg-outline-variant/30 text-primary-container text-[10px] font-bold rounded-md">Breads</span>
+</td>
+<td class="py-md px-md font-title-lg text-[14px] text-primary">$8.50</td>
+<td class="py-md px-md">
+<div class="flex flex-col">
+<span class="font-title-lg text-[14px] text-primary">42</span>
+<div class="w-16 h-1 bg-outline-variant rounded-full mt-1">
+<div class="bg-secondary h-1 rounded-full w-3/4"></div>
+</div>
+</div>
+</td>
+<td class="py-md px-md text-center">
+<span class="px-3 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded-full uppercase tracking-tight">In Stock</span>
+</td>
+<td class="py-md px-lg text-right">
+<div class="flex items-center justify-end gap-2 text-on-surface-variant">
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Product Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-md px-lg text-center">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="Exquisite dark chocolate macarons with a glossy smooth shell and rich ganache filling, presented on a minimalist white ceramic platter. Soft side lighting creates delicate shadows, emphasizing the refined artisanal quality. Modern corporate palette with deep cocoa tones and pristine white highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClRP04YYnULSvq0-NlzcinJHD7jVMZp9tUQV7CyB6wHnc3CEy7SH5UMnEhGrhUoqHHMPbvj3uqGBcS9cnsDrcGKmAnNQxmLwUdfHc0d1q9YaKjopiV5iPD0qM61Y9C_CC_RiRccoJoGwm45pazH1d_w26IWkesxEpjQQoI64rHaH54l1vWJ_1KHcsbWoDtCBYajZIZI4do_tCUz2lVE7L2pM9zf-asoMoxjSf2CN3vQL_vVnkLSFE"/>
+</div>
+<div>
+<p class="font-title-lg text-[14px] text-primary">Cocoa Macarons</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">SKU: CB-00562</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-2 py-1 bg-outline-variant/30 text-primary-container text-[10px] font-bold rounded-md">Pastries</span>
+</td>
+<td class="py-md px-md font-title-lg text-[14px] text-primary">$18.00</td>
+<td class="py-md px-md">
+<div class="flex flex-col">
+<span class="font-title-lg text-[14px] text-primary">12</span>
+<div class="w-16 h-1 bg-outline-variant rounded-full mt-1">
+<div class="bg-error h-1 rounded-full w-1/4"></div>
+</div>
+</div>
+</td>
+<td class="py-md px-md text-center">
+<span class="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full uppercase tracking-tight">Low Stock</span>
+</td>
+<td class="py-md px-lg text-right">
+<div class="flex items-center justify-end gap-2 text-on-surface-variant">
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span></button>
+</div>
+</td>
+</tr>
+<!-- Product Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors">
+<td class="py-md px-lg text-center">
+<input class="rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</td>
+<td class="py-md px-md">
+<div class="flex items-center gap-md">
+<div class="h-12 w-12 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="A beautiful layered lemon lavender cake with light purple buttercream frosting and fresh sprigs of lavender on top. The cake is shot against a light airy off-white background with bright high-key lighting. The style is clean, modern, and feminine with a sophisticated premium bakery feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoq-el100aFgYA01xRvAQnAQnw9BnrwiJMLYOfngmbSvB-UoVvZgiVqijsRM3I9DhIn_kT2zB2X8jzcXIOg_npGvkOoUGVrJ8fvzZkFKrwJ2qGrmwwsa8c4WC8Xoh3VBPC6M3v_JmuAmY7VHn2TbbQe0AfS6NV3GhFz9S1R4-GHc79q6fjnUK8_J8sW0f-wKbdJPrTIT-9MYm2YBc9AL00nILd8Fd_nDsQ-55l8HJQPnjdt6G7RbE"/>
+</div>
+<div>
+<p class="font-title-lg text-[14px] text-primary">Lavender Lemon Cake</p>
+<p class="font-body-sm text-[11px] text-on-surface-variant">SKU: CB-00918</p>
+</div>
+</div>
+</td>
+<td class="py-md px-md">
+<span class="px-2 py-1 bg-outline-variant/30 text-primary-container text-[10px] font-bold rounded-md">Cakes</span>
+</td>
+<td class="py-md px-md font-title-lg text-[14px] text-primary">$45.00</td>
+<td class="py-md px-md">
+<div class="flex flex-col">
+<span class="font-title-lg text-[14px] text-primary">0</span>
+<div class="w-16 h-1 bg-outline-variant rounded-full mt-1">
+<div class="bg-outline-variant h-1 rounded-full w-0"></div>
+</div>
+</div>
+</td>
+<td class="py-md px-md text-center">
+<span class="px-3 py-1 bg-red-100 text-red-800 text-[10px] font-bold rounded-full uppercase tracking-tight">Out of Stock</span>
+</td>
+<td class="py-md px-lg text-right">
+<div class="flex items-center justify-end gap-2 text-on-surface-variant">
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-1 hover:text-secondary"><span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-md border-t border-outline-variant/30 flex items-center justify-between">
+<p class="font-body-sm text-on-surface-variant text-[12px]">Showing 1 to 10 of 48 products</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-secondary text-on-secondary font-bold text-[12px]">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors text-[12px]">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors text-[12px]">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Shell -->
+<footer class="mt-xxl border-t border-outline-variant/20 py-xl px-lg bg-surface-container-low">
+<div class="max-w-[1200px] mx-auto flex flex-col items-center justify-between gap-md md:flex-row">
+<p class="font-body-sm text-on-surface-variant text-[12px]">© 2024 Crave Bakery Admin. All rights reserved.</p>
+<div class="flex gap-lg">
+<a class="font-body-sm text-on-surface-variant hover:text-secondary text-[12px]" href="#">Support</a>
+<a class="font-body-sm text-on-surface-variant hover:text-secondary text-[12px]" href="#">Documentation</a>
+<a class="font-body-sm text-on-surface-variant hover:text-secondary text-[12px]" href="#">Privacy Policy</a>
+</div>
+</div>
+</footer>
+</main>
+<script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const labels = document.querySelectorAll('.sidebar-label');
+            const logoText = document.getElementById('full-logo-text');
+            
+            const isCollapsed = sidebar.classList.contains('w-[64px]');
+
+            if (isCollapsed) {
+                // Open Sidebar
+                sidebar.classList.replace('w-[64px]', 'w-64');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.replace('opacity-0', 'opacity-100');
+                    labels.forEach(l => {
+                        l.classList.remove('hidden');
+                        l.classList.replace('opacity-0', 'opacity-100');
+                    });
+                    logoText.classList.remove('hidden');
+                    logoText.classList.replace('opacity-0', 'opacity-100');
+                }, 100);
+            } else {
+                // Collapse Sidebar
+                overlay.classList.replace('opacity-100', 'opacity-0');
+                labels.forEach(l => {
+                    l.classList.replace('opacity-100', 'opacity-0');
+                });
+                logoText.classList.replace('opacity-100', 'opacity-0');
+                
+                setTimeout(() => {
+                    sidebar.classList.replace('w-64', 'w-[64px]');
+                    overlay.classList.add('hidden');
+                    labels.forEach(l => l.classList.add('hidden'));
+                    logoText.classList.add('hidden');
+                }, 200);
+            }
+        }
+
+        function toggleSearch() {
+            const searchInput = document.getElementById('search-input');
+            const isHidden = searchInput.classList.contains('w-0');
+            
+            if (isHidden) {
+                searchInput.classList.replace('w-0', 'w-48');
+                searchInput.classList.replace('opacity-0', 'opacity-100');
+                searchInput.focus();
+            } else {
+                searchInput.classList.replace('w-48', 'w-0');
+                searchInput.classList.replace('opacity-100', 'opacity-0');
+            }
+        }
+
+        // Close search on click outside
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('search-container');
+            const input = document.getElementById('search-input');
+            if (!container.contains(e.target)) {
+                input.classList.replace('w-48', 'w-0');
+                input.classList.replace('opacity-100', 'opacity-0');
+            }
+        });
+    </script>
+</body></html>

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AcceptInvitationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,4 +19,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('guest')->group(function () {
+    Route::get('/admin-invitations/{token}', [AcceptInvitationController::class, 'show'])
+        ->name('admin-invitations.show');
+    Route::post('/admin-invitations/{token}', [AcceptInvitationController::class, 'accept'])
+        ->name('admin-invitations.accept');
+});
+
 require __DIR__.'/auth.php';
+
+Route::get('/test', [TestController::class, 'index'])->name('test');

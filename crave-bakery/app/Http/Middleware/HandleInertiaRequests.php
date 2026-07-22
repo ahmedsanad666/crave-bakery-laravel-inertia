@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\AdminProfileService;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -39,7 +40,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'role' => $request->user()->role,
-                    'avatar' => $request->user()->avatar,
+                    'avatar' => AdminProfileService::avatarUrl($request->user()->avatar),
                     'permissions' => $request->user()->permissions,
                 ] : null
             ],
