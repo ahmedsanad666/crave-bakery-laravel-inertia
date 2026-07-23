@@ -61,7 +61,7 @@ class AdminOrderResource extends JsonResource
             ),
             'items' => OrderItemResource::collection(
                 $this->whenLoaded('orderItems'),
-            ),
+            )->resolve(),
         ];
     }
 }

@@ -162,7 +162,9 @@ class User extends Authenticatable
 
     public function defaultRedirectRoute(): string
     {
-        return ($this->isAdmin() || $this->isSuperAdmin()) ? 'admin.dashboard' : 'dashboard';
+        return ($this->isAdmin() || $this->isSuperAdmin())
+            ? 'admin.dashboard'
+            : 'profile.edit';
     }
 
     public function getDefaultAddressAttribute(): ?Address

@@ -18,6 +18,10 @@ class OrderItemResource extends JsonResource
             'product_id' => $this->product_id,
             'product_name' => $this->product_name,
             'product_sku' => $this->product_sku,
+            'product_slug' => $this->when(
+                $this->relationLoaded('product') && $this->product,
+                fn () => $this->product->slug,
+            ),
             'selected_attributes' => $this->selected_attributes ?? [],
             'quantity' => (int) $this->quantity,
             'unit_price' => (float) $this->unit_price,

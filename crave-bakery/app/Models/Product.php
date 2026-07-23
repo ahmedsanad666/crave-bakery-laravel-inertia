@@ -195,4 +195,80 @@ class Product extends Model
             fn ($q) => $q->where('categories.id', (int) $categoryId),
         );
     }
+
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'active')->where('is_active', true);
+    }
+
+    public function scopePriceRange($query, mixed $min = null, mixed $max = null)
+    {
+        $effectivePrice = 'COALESCE(sale_price, regular_price)';
+
+        if ($min !== null && $min !== '') {
+            $query->whereRaw("{$effectivePrice} >= ?", [(float) $min]);
+        }
+
+        if ($max !== null && $max !== '') {
+            $query->whereRaw("{$effectivePrice} <= ?", [(float) $max]);
+        }
+
+        return $query;
+    }
+
+    public function scopeMinRating($query, mixed $min = null)
+    {
+        if ($min === null || $min === '') {
+            return $query;
+        }
+
+        $min = (float) $min;
+
+        return $query->whereIn('id', function ($sub) use ($min) {
+            $sub->select('product_id')
+                ->from('reviews')
+                ->where('status', 'approved')
+                ->whereNull('deleted_at')
+                ->groupBy('product_id')
+                ->havingRaw('AVG(rating) >= ?', [$min]);
+        });
+    }
+
+    public function scopeAvailability($query, mixed $inStock = null, mixed $outOfStock = null)
+    {
+        $wantInStock = filter_var($inStock, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
+        $wantOutOfStock = filter_var($outOfStock, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === true;
+
+        if ($wantInStock === $wantOutOfStock) {
+            return $query;
+        }
+
+        if ($wantInStock) {
+            return $query->where('stock_status', 'in_stock');
+        }
+
+        return $query->where('stock_status', 'out_of_stock');
+    }
+
+    public function scopeSorted($query, ?string $sort = 'recommended')
+    {
+        $sort = $sort ?: 'recommended';
+        $effectivePrice = 'COALESCE(sale_price, regular_price)';
+
+        return match ($sort) {
+            'price_asc' => $query->orderByRaw("{$effectivePrice} asc"),
+            'price_desc' => $query->orderByRaw("{$effectivePrice} desc"),
+            'newest' => $query->latest('published_at'),
+            default => $query->orderByDesc('is_featured')->latest('published_at'),
+        };
+    }
+
+    public function getIsNewAttribute(): bool
+    {
+        if ($this->published_at === null) {
+            return false;
+        }
+
+        return $this->published_at->greaterThanOrEqualTo(now()->subDays(30));
+    }
 }

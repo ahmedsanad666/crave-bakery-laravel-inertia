@@ -14,7 +14,7 @@ const year = new Date().getFullYear();
 const email = ref('');
 
 const exploreLinks = [
-    { label: 'Catalogue', href: '/products' },
+    { label: 'Catalogue', href: route('products.index') },
     { label: 'About Us', href: '/#about' },
     { label: 'Locations', href: '/#contact' },
     { label: 'Careers', href: '/#contact' },

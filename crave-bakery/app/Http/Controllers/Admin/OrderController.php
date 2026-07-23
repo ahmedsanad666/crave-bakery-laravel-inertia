@@ -64,9 +64,13 @@ class OrderController extends Controller
         ]);
     }
 
-    public function invoice(Order $order): Response
+    public function invoice(Order $order): Response|RedirectResponse
     {
         $this->authorize('view', $order);
+
+        if ($order->status !== 'delivered') {
+            return back()->with('error', 'Invoice is only available for completed orders.');
+        }
 
         $order = $this->orderService->findForAdmin($order);
 

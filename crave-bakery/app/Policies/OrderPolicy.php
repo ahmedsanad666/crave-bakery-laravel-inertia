@@ -14,7 +14,8 @@ class OrderPolicy
 
     public function view(User $user, Order $order): bool
     {
-        return $user->hasPermission('orders', 'view');
+        return $order->user_id === $user->id
+            || $user->hasPermission('orders', 'view');
     }
 
     public function create(User $user): bool

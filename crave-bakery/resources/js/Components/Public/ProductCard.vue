@@ -34,7 +34,7 @@ const isOutOfStock = computed(
     () => props.product.stock_status === 'out_of_stock',
 );
 
-const productHref = computed(() => `/products/${props.product.slug}`);
+const productHref = computed(() => route('products.show', props.product.slug));
 </script>
 
 <template>

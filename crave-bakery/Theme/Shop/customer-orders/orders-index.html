@@ -1,0 +1,367 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>My Orders | Crave Bakery Artisanal Delights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Playfair+Display:wght@100..900&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#825343",
+                        "outline": "#84746f",
+                        "on-secondary-fixed-variant": "#862200",
+                        "surface": "#fcf9f8",
+                        "on-surface-variant": "#514440",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f6f3f2",
+                        "secondary-container": "#fc6537",
+                        "on-primary-container": "#b47e6d",
+                        "on-background": "#1c1b1b",
+                        "outline-variant": "#d6c2bd",
+                        "surface-variant": "#e5e2e1",
+                        "tertiary": "#110f0a",
+                        "on-tertiary-container": "#8f8b84",
+                        "secondary": "#b02f00",
+                        "on-tertiary-fixed-variant": "#4a4641",
+                        "background": "#fcf9f8",
+                        "tertiary-container": "#26241f",
+                        "surface-container-highest": "#e5e2e1",
+                        "primary-fixed": "#ffdbd0",
+                        "secondary-fixed-dim": "#ffb59f",
+                        "surface-dim": "#dcd9d9",
+                        "on-surface": "#1c1b1b",
+                        "on-secondary-container": "#5c1400",
+                        "inverse-on-surface": "#f3f0ef",
+                        "inverse-primary": "#f6b8a5",
+                        "tertiary-fixed": "#e8e1da",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#3b0a00",
+                        "tertiary-fixed-dim": "#ccc6be",
+                        "on-primary-fixed-variant": "#663c2d",
+                        "inverse-surface": "#313030",
+                        "on-primary-fixed": "#321207",
+                        "surface-container-high": "#eae7e7",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#ffdbd1",
+                        "primary": "#220601",
+                        "on-tertiary-fixed": "#1e1b17",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#f0eded",
+                        "primary-container": "#3d1a0e",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "primary-fixed-dim": "#f6b8a5",
+                        "surface-bright": "#fcf9f8",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "unit": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "container-margin": "24px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px"
+                    },
+                    "fontFamily": {
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "body-sm": ["Inter"],
+                        "display-lg-mobile": ["Playfair Display"],
+                        "label-caps": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                        "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .order-card-shadow {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .order-card-shadow:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        body {
+            background-color: #FDF6EE;
+        }
+    </style>
+</head>
+<body class="font-body-lg text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 bg-surface shadow-sm">
+<div class="flex justify-between items-center px-lg py-md w-full max-w-[1200px] mx-auto">
+<div class="font-headline-lg text-headline-lg text-secondary">Crave Bakery</div>
+<div class="hidden md:flex items-center space-x-lg">
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-[40px] pl-10 pr-4 rounded-full border border-outline-variant bg-surface-container-low focus:ring-secondary focus:border-secondary transition-all outline-none text-body-sm" placeholder="Search artisanal treats..." type="text">
+</div>
+<div class="flex items-center space-x-md">
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-secondary-container transition-colors" data-icon="shopping_basket">shopping_basket</span>
+<span class="material-symbols-outlined text-secondary cursor-pointer hover:text-secondary-container transition-colors" data-icon="notifications">notifications</span>
+<div class="w-10 h-10 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User profile avatar" data-alt="A professional and friendly portrait of a man in his late 20s, with short groomed hair and a kind expression. The lighting is soft and warm, reminiscent of a cozy morning in a modern artisanal bakery. The background is slightly blurred with hints of warm wooden textures and clean white tiles, creating a sophisticated and welcoming boutique atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjUYuSUiNFLaSExawnyAUU4wIfyqcMmbPx6KJVQczp6XkYsX108jM4MPorbyuC5gFF_AOuRtmjliTWZjroNw73nHGStl-I-cvzhYXO93ZdF4ATF1hZZogSpXLqihVY-HYfhHtiJDeTlqENCFfUFFGwdTm53o8f_Hi50k2dTZP_Dyl4lkdMFOnu0c-tycnZ_SYJLlR-2hDZ0ObLo31FWcFKgb30Ug67GFHRfha7oG1fK2GusvV7ta37mpq1G-3rw6_X3oGV-ik1gg">
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex max-w-[1200px] mx-auto min-h-screen">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col w-64 h-screen sticky top-16 p-md space-y-md bg-surface-container-low">
+<div class="flex items-center space-x-md pb-md border-b border-outline-variant">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed overflow-hidden flex items-center justify-center text-on-secondary-fixed font-bold">
+                    AT
+                </div>
+<div>
+<p class="font-title-lg text-title-lg leading-none">Alex Thompson</p>
+<p class="text-body-sm text-outline">Gold Member since 2023</p>
+</div>
+</div>
+<nav class="flex-1 space-y-xs pt-md">
+<a class="flex items-center space-x-md p-md rounded-lg text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-lg text-body-lg">Profile Details</span>
+</a>
+<a class="flex items-center space-x-md p-md rounded-lg text-secondary font-bold border-r-4 border-secondary bg-surface-variant/20 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-lg text-body-lg">Order History</span>
+</a>
+<a class="flex items-center space-x-md p-md rounded-lg text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-body-lg text-body-lg">Order Tracking</span>
+</a>
+<a class="flex items-center space-x-md p-md rounded-lg text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home_pin">home_pin</span>
+<span class="font-body-lg text-body-lg">Addresses</span>
+</a>
+</nav>
+<button class="w-full h-12 rounded-full bg-primary-container text-on-primary-container font-bold text-body-sm hover:opacity-90 transition-opacity">
+                Upgrade Membership
+            </button>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 px-lg py-xl bg-surface-bright">
+<header class="mb-xl">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-xs">My Orders</h1>
+<p class="text-body-lg text-on-surface-variant">Track and manage your purchases</p>
+</header>
+<!-- Filter Row -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-xl">
+<div class="relative w-full md:w-[280px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-12 pl-10 pr-4 rounded-xl border border-outline-variant bg-surface-container-lowest focus:ring-secondary focus:border-secondary transition-all outline-none" placeholder="Search orders..." type="text">
+</div>
+<div class="flex flex-wrap gap-sm">
+<button class="px-md py-2 rounded-full bg-secondary text-white font-bold text-body-sm shadow-sm">All</button>
+<button class="px-md py-2 rounded-full bg-white text-on-surface-variant font-semibold text-body-sm border border-outline-variant hover:bg-surface-container-low transition-colors">Pending</button>
+<button class="px-md py-2 rounded-full bg-white text-on-surface-variant font-semibold text-body-sm border border-outline-variant hover:bg-surface-container-low transition-colors">Processing</button>
+<button class="px-md py-2 rounded-full bg-white text-on-surface-variant font-semibold text-body-sm border border-outline-variant hover:bg-surface-container-low transition-colors">Delivered</button>
+<button class="px-md py-2 rounded-full bg-white text-on-surface-variant font-semibold text-body-sm border border-outline-variant hover:bg-surface-container-low transition-colors">Cancelled</button>
+</div>
+</div>
+<!-- Order List -->
+<div class="space-y-md">
+<!-- Order Card 1: Delivered -->
+<div class="bg-white rounded-xl p-lg order-card-shadow transition-all duration-300">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-outline-variant pb-md mb-md gap-md">
+<div>
+<div class="flex items-center gap-md">
+<span class="font-title-lg text-title-lg text-primary">Order #CB-8291</span>
+<span class="px-sm py-1 rounded-[6px] bg-emerald-100 text-emerald-800 font-bold text-[12px] uppercase tracking-wider">Delivered</span>
+</div>
+<p class="text-body-sm text-outline mt-1">Placed on Oct 24, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-body-sm text-outline">Total Amount</p>
+<p class="font-title-lg text-title-lg text-secondary">$54.00</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="flex items-center gap-md overflow-x-auto pb-2 w-full md:w-auto">
+<div class="flex -space-x-4">
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0">
+<img alt="Cinnamon Swirl" data-alt="A close-up, top-down shot of a golden-brown cinnamon swirl pastry, glistening with a light sugar glaze and dusting of aromatic cinnamon. The texture of the flaky, buttery layers is clearly visible, set against a clean white ceramic plate in a bright, airy bakery setting. The overall mood is warm, appetizing, and artisanal, capturing the refined essence of a premium boutique bakery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfwDDnc1A5v-_PRNcP-EDpgwQ5uQCzr_Dn6s8RXkGfPwcYZitiGNB3Pdl38VeBtUqq6_A6VqfG6raiJqT4FNR_MiqFGRcvS37oJgRlcj9O469Wxzi1bbW6TpSkuQfKdRZXOd7ccrYx5JT7q-5ig4BJUoha1HXKAzHBIUeLYbFHTVFCjuE9hZNqskANwhIgTAt9eHOihwkOo67IISW_Kl6Xj6oyV1ZR1G9z2bf0Vn4iR5RXAcs4lttkocbiOuzEfBNziVvdAZl7SA">
+</div>
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0">
+<img alt="Pain au Chocolat" data-alt="Three perfectly baked Pain au Chocolat pastries stacked elegantly on a rustic wooden board. The golden crust is incredibly flaky and delicate, with dark chocolate hints peeking through the edges. Soft morning sunlight streams from the side, creating long, gentle shadows and highlighting the rich textures of the artisanal pastry in a high-end bakery environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-CUVSJ6654eSDEAvwGDYAX9MxBh16TyVkAJ-qIOVVU7QhMx-35iJjHmLynZNQZCaiYCXdfR0Vnm9myVXvMVhyPSdjV_2NixvozBFAejjdbw1aHY9dOp65jiwfHFbId-dwlqToATq-2pjuilVDOU8oxqZU4h55alArv_OKaTJw6DWfebkWNaiSJc0k8Swk-ahmtVHRfDsuxtfthn4nRc_HXUZ7aKE0nSnQsb_nAhkPE1tN0GyEbeMcog-w8ZgUiaM7VkxY7Ax0kg">
+</div>
+<div class="w-16 h-16 rounded-lg border-2 border-white bg-surface-container-high flex items-center justify-center text-outline font-bold text-body-sm flex-shrink-0">
+                                    +1
+                                </div>
+</div>
+<span class="text-body-sm text-on-surface-variant font-semibold">3 Items</span>
+</div>
+<div class="flex gap-md w-full md:w-auto">
+<button class="flex-1 md:flex-none h-12 px-lg rounded-full border border-primary text-primary font-bold hover:bg-surface-variant/10 transition-colors text-body-sm">View Details</button>
+<button class="flex-1 md:flex-none h-12 px-xl rounded-full bg-secondary text-white font-bold hover:opacity-90 shadow-sm transition-all text-body-sm">Reorder</button>
+</div>
+</div>
+</div>
+<!-- Order Card 2: Processing -->
+<div class="bg-white rounded-xl p-lg order-card-shadow transition-all duration-300">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-outline-variant pb-md mb-md gap-md">
+<div>
+<div class="flex items-center gap-md">
+<span class="font-title-lg text-title-lg text-primary">Order #CB-9014</span>
+<span class="px-sm py-1 rounded-[6px] bg-orange-100 text-orange-800 font-bold text-[12px] uppercase tracking-wider">Processing</span>
+</div>
+<p class="text-body-sm text-outline mt-1">Placed on Oct 27, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-body-sm text-outline">Total Amount</p>
+<p class="font-title-lg text-title-lg text-secondary">$32.50</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="flex items-center gap-md overflow-x-auto pb-2 w-full md:w-auto">
+<div class="flex -space-x-4">
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0">
+<img alt="Blueberry Muffin" data-alt="A lush, moist blueberry muffin with a golden streusel topping, bursting with plump, juicy blueberries. The muffin is presented in a minimalist paper liner on a warm wooden countertop. The lighting is soft and natural, emphasizing the organic, handmade quality of the pastry in a sophisticated, contemporary bakery setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0M-bGdvDFOE1W3xR2V7qB24IFcUKW-rq__4YKC40s60Tesrge_P_PU_ehU600oMHEsuG0k2UysnarzSi-wU_gOu0eAK6yaHm2RbyFAWkxkbMAhPou4VFPE6D-L2ZINJjIh9VXYhgmdFB71szs-EpCqfGWXyXy_dRWnawMsnGS7Ycg5jY6JUsfwWDvXm0cbeuJXuDKnWBkmKO1hxWTQ_9cZoP5kJqUQwmx2ETlvRYqktC7UDNNUe-UYx5XWADTu4klUP33hKOzNQ">
+</div>
+</div>
+<span class="text-body-sm text-on-surface-variant font-semibold">1 Item</span>
+</div>
+<div class="flex gap-md w-full md:w-auto">
+<button class="flex-1 md:flex-none h-12 px-lg rounded-full border border-primary text-primary font-bold hover:bg-surface-variant/10 transition-colors text-body-sm">View Details</button>
+<button class="flex-1 md:flex-none h-12 px-xl rounded-full bg-secondary text-white font-bold hover:opacity-90 shadow-sm transition-all text-body-sm">Reorder</button>
+</div>
+</div>
+</div>
+<!-- Order Card 3: Pending -->
+<div class="bg-white rounded-xl p-lg order-card-shadow transition-all duration-300">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-outline-variant pb-md mb-md gap-md">
+<div>
+<div class="flex items-center gap-md">
+<span class="font-title-lg text-title-lg text-primary">Order #CB-9112</span>
+<span class="px-sm py-1 rounded-[6px] bg-primary-container text-on-primary-container font-bold text-[12px] uppercase tracking-wider">Pending</span>
+</div>
+<p class="text-body-sm text-outline mt-1">Placed on Oct 28, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-body-sm text-outline">Total Amount</p>
+<p class="font-title-lg text-title-lg text-secondary">$118.00</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="flex items-center gap-md overflow-x-auto pb-2 w-full md:w-auto">
+<div class="flex -space-x-4">
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0">
+<img alt="Artisan Bread" data-alt="A beautifully scored sourdough loaf with a perfectly crisp, dark brown crust and a light dusting of flour. The bread sits on a linen cloth inside a woven basket. The background is a clean, minimalist kitchen with warm neutral tones and high-key lighting that creates a peaceful, artisanal feel consistent with premium boutique branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQW5btCdO4F5pFsEefZu-0CdE6wPKNm8GWhUarzhfc6A-U26C-v2CkcSqaiegdDB_QGkzy7H8uUSG4FxoMLI75TM57I6WAqfN1RNUvQCoBO6qB3ut1Yrk0hVZa5JqjluKJcakjiFHNQaG289q6yYquIl1bzme0sgPGdMc1Nt8TiH1iiDLetAFIGvjy5LBtMZ8qAcMRWOqEqqEepUQyUgsY4UpqWxWs5q36AexUqgDWH3GhxIx9oC8DrOkAiGl4j5-4ONlCvBMhLg">
+</div>
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0">
+<img alt="Assorted Pastries" data-alt="A curated box of six artisanal macarons in soft pastel shades of lavender, pistachio, and rose. Each macaron is perfectly smooth with a delicate ruffled foot. The packaging is elegant white with gold foil accents, presented in a bright, modern studio setting that conveys luxury, quality, and a sweet, sophisticated indulgence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxa2H1Pb8fBRMND45ZVAUKZZodw5VibISy1zVYK-BUTyX2Br2t4T1OnPxE_RjyPFuQMOJ9WFc5XCWblYX1GSIXq_cAJpU2_si2yAfem872LeaNdfjT7mQQ39Qj_xMcHL2nN3TprO4hsk3d7I9_zBRvuXNQiX5EeaWR1KjbWg_NkuhLY0h1T-fpR0WRk5FxblKQJCzoZwTdDpgzKjA9EcAcO2xAy0Nr8TIdGdUwzftrwLR-f2mzGS-GUin1-Kppdzn-8DsisPGhrw">
+</div>
+<div class="w-16 h-16 rounded-lg border-2 border-white bg-surface-container-high flex items-center justify-center text-outline font-bold text-body-sm flex-shrink-0">
+                                    +4
+                                </div>
+</div>
+<span class="text-body-sm text-on-surface-variant font-semibold">6 Items</span>
+</div>
+<div class="flex gap-md w-full md:w-auto">
+<button class="flex-1 md:flex-none h-12 px-lg rounded-full border border-primary text-primary font-bold hover:bg-surface-variant/10 transition-colors text-body-sm">View Details</button>
+<button class="flex-1 md:flex-none h-12 px-xl rounded-full bg-secondary text-white font-bold hover:opacity-90 shadow-sm transition-all text-body-sm">Reorder</button>
+</div>
+</div>
+</div>
+<!-- Order Card 4: Cancelled -->
+<div class="bg-white rounded-xl p-lg order-card-shadow transition-all duration-300 opacity-80">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center border-b border-outline-variant pb-md mb-md gap-md">
+<div>
+<div class="flex items-center gap-md">
+<span class="font-title-lg text-title-lg text-primary">Order #CB-7552</span>
+<span class="px-sm py-1 rounded-[6px] bg-red-100 text-red-800 font-bold text-[12px] uppercase tracking-wider">Cancelled</span>
+</div>
+<p class="text-body-sm text-outline mt-1">Placed on Oct 12, 2023</p>
+</div>
+<div class="text-right">
+<p class="text-body-sm text-outline">Total Amount</p>
+<p class="font-title-lg text-title-lg text-secondary">$18.25</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-lg">
+<div class="flex items-center gap-md overflow-x-auto pb-2 w-full md:w-auto">
+<div class="flex -space-x-4">
+<div class="w-16 h-16 rounded-lg border-2 border-white overflow-hidden shadow-sm flex-shrink-0 grayscale">
+<img alt="Glazed Donut" data-alt="A minimalist shot of a single, perfectly glazed artisanal donut on a dark slate plate. The glaze is smooth and reflective, with a hint of vanilla bean specks. The overall composition is clean and centered, utilizing deep blacks and crisp highlights to create a sophisticated, dramatic visual that signals high-end culinary quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQfjc0rpKumYyqE9PFDYWUxK3f9ux9XCYKIAUrUdwNANxwmXF68Um6QsW70fScsJ6BdcuIZMNgM20z5G6E8BVKlzEygr63HMhKmjAmSe1nnNUQx3an65slTvjkjOhb3tD27v1gNGNHL4W5jCj5FdgvXltYx68zg1EF2qhdC2iUWrEki-Qz4lLaKzQdisZQB3Od6Bl5n7hhhMUXsux5kzOYzF-wPCit3GdwHOhsdcQ7QGgvYz_7I65B2swtHd1wlRdeseyFdmXQUQ">
+</div>
+</div>
+<span class="text-body-sm text-on-surface-variant font-semibold">1 Item</span>
+</div>
+<div class="flex gap-md w-full md:w-auto">
+<button class="flex-1 md:flex-none h-12 px-lg rounded-full border border-primary text-primary font-bold hover:bg-surface-variant/10 transition-colors text-body-sm">View Details</button>
+<button class="flex-1 md:flex-none h-12 px-xl rounded-full bg-secondary text-white font-bold hover:opacity-90 shadow-sm transition-all text-body-sm">Reorder</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full bg-tertiary-container border-t border-outline-variant mt-xxl">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg py-xl w-full max-w-[1200px] mx-auto gap-lg">
+<div class="font-headline-sm text-headline-sm text-tertiary-fixed">Crave Bakery</div>
+<p class="font-body-sm text-body-sm text-on-tertiary-container/80 order-3 md:order-2">© 2024 Crave Bakery Artisanal Delights</p>
+<div class="flex space-x-md order-2 md:order-3">
+<a class="font-body-sm text-body-sm text-on-tertiary-container/80 hover:text-secondary underline-offset-4 hover:underline transition-all" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-tertiary-container/80 hover:text-secondary underline-offset-4 hover:underline transition-all" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-tertiary-container/80 hover:text-secondary underline-offset-4 hover:underline transition-all" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+<script>
+        // Simple interactive micro-interactions
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('mousedown', () => {
+                button.classList.add('scale-95');
+            });
+            button.addEventListener('mouseup', () => {
+                button.classList.remove('scale-95');
+            });
+            button.addEventListener('mouseleave', () => {
+                button.classList.remove('scale-95');
+            });
+        });
+
+        // Search highlight simulation
+        const searchInput = document.querySelector('input[placeholder="Search orders..."]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+</body></html>

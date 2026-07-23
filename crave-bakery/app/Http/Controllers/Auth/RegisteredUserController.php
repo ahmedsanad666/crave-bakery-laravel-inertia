@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\CartService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, CartService $cartService): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -46,8 +47,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $guestSessionId = $request->session()->getId();
+
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $cartService->mergeGuestCartIntoUser($user, $guestSessionId);
+
+        return redirect(route($user->defaultRedirectRoute(), absolute: false));
     }
 }

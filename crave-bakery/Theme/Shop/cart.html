@@ -1,0 +1,352 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Your Cart | Artisan Bread Co.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#1e1b17",
+                    "surface-tint": "#825343",
+                    "on-secondary-container": "#5c1400",
+                    "surface-dim": "#dcd9d9",
+                    "inverse-surface": "#313030",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fcf9f8",
+                    "surface-variant": "#e5e2e1",
+                    "surface-container-highest": "#e5e2e1",
+                    "inverse-primary": "#f6b8a5",
+                    "tertiary-container": "#26241f",
+                    "surface": "#fcf9f8",
+                    "secondary-fixed": "#ffdbd1",
+                    "outline": "#84746f",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#d6c2bd",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#663c2d",
+                    "on-background": "#1c1b1b",
+                    "on-surface-variant": "#514440",
+                    "surface-container": "#f0eded",
+                    "primary-fixed-dim": "#f6b8a5",
+                    "secondary-container": "#fc6537",
+                    "tertiary-fixed": "#e8e1da",
+                    "surface-container-high": "#eae7e7",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#3b0a00",
+                    "tertiary": "#110f0a",
+                    "surface-container-low": "#f6f3f2",
+                    "primary-fixed": "#ffdbd0",
+                    "primary-container": "#3d1a0e",
+                    "on-primary-fixed": "#321207",
+                    "inverse-on-surface": "#f3f0ef",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1c1b1b",
+                    "on-tertiary-container": "#8f8b84",
+                    "on-secondary-fixed-variant": "#862200",
+                    "on-primary-container": "#b47e6d",
+                    "primary": "#220601",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#b02f00",
+                    "on-tertiary-fixed-variant": "#4a4641",
+                    "surface-bright": "#fcf9f8",
+                    "tertiary-fixed-dim": "#ccc6be",
+                    "secondary-fixed-dim": "#ffb59f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "gutter": "16px",
+                    "container-margin": "24px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "xxl": "48px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Playfair Display"],
+                    "label-caps": ["Inter"],
+                    "display-lg": ["Playfair Display"],
+                    "headline-md": ["Playfair Display"],
+                    "body-lg": ["Inter"],
+                    "display-lg-mobile": ["Playfair Display"],
+                    "headline-lg": ["Playfair Display"],
+                    "body-sm": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #FDF6EE;
+            color: #1c1b1b;
+        }
+        .card-shadow {
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .active-nav-border {
+            border-bottom: 2px solid #fc6537;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-primary-container text-on-primary-container flex justify-between items-center px-container-margin py-md w-full sticky top-0 z-50 shadow-md">
+<div class="flex items-center gap-xl">
+<span class="font-display-lg text-display-lg-mobile text-on-primary-container">Artisan Bread Co.</span>
+<nav class="hidden md:flex gap-lg items-center">
+<a class="text-on-primary-container opacity-80 font-body-lg text-body-lg hover:opacity-100 hover:text-secondary-fixed transition-all" href="#">Shop</a>
+<a class="text-on-primary-container opacity-80 font-body-lg text-body-lg hover:opacity-100 hover:text-secondary-fixed transition-all" href="#">Bundles</a>
+<a class="text-on-primary-container opacity-80 font-body-lg text-body-lg hover:opacity-100 hover:text-secondary-fixed transition-all" href="#">Wholesale</a>
+<a class="text-on-primary-container opacity-80 font-body-lg text-body-lg hover:opacity-100 hover:text-secondary-fixed transition-all" href="#">Our Story</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined p-sm hover:bg-white/10 rounded-full transition-colors">search</button>
+<button class="bg-secondary-container text-white px-lg py-sm rounded-full font-body-lg text-body-lg font-bold scale-95 active:scale-90 transition-transform">Order Now</button>
+<div class="relative">
+<button class="material-symbols-outlined p-sm hover:bg-white/10 rounded-full transition-colors active-nav-border">shopping_basket</button>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">3</span>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-[1200px] mx-auto w-full px-container-margin py-xxl">
+<!-- Title Section -->
+<div class="mb-xl">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary-container">Your Cart</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">3 items in your basket</p>
+</div>
+<div class="flex flex-col lg:flex-row gap-lg">
+<!-- Left Column: Cart Items -->
+<div class="lg:w-[65%] space-y-lg">
+<div class="bg-white rounded-xl card-shadow overflow-hidden">
+<!-- Item 1 -->
+<div class="p-lg flex flex-col md:flex-row gap-md items-center border-b border-outline-variant">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Almond Croissant" class="w-full h-full object-cover" data-alt="A macro photograph of two flaky, golden-brown almond croissants dusted with powdered sugar and topped with sliced almonds. The pastry sits on a rustic white ceramic plate in a bright, sunlit kitchen setting. The warm tones of the crust contrast beautifully with the soft, off-white background, evoking a cozy artisanal bakery atmosphere. High-end, food-magazine style lighting highlighting the delicate layers of dough." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpt8ZmS_8Hr8QpRMuXQU_swDPCZcjgzjPWCdOMg3LRu2fs2HxmVD6kWHW7BCneQVPVnQsghzd7_K7PfF2YtyZfBPFFdLsDOFMoi87I8fLRuqbCmsCRvkvH7DWLiifu0taqTIu772qikaw-Ab_OFxG4NHa0P77M2ZIUPjj0JYg_FDh_z6EaNpWWHdkqCNyC9_JUHKKS4vMzajO2CDkIIWb2tXIHtLH-9JIGcBQtPK4yUxnfmRjuWUsC6cAQDdMtekpdiELN7wLUCw">
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-xs block">Pastry</span>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Almond Croissant</h3>
+<p class="text-body-sm text-on-surface-variant">Size: Regular | Packaging: Gift Box</p>
+</div>
+<p class="font-title-lg text-title-lg text-primary-container">$8.50 <span class="text-body-sm font-normal text-on-surface-variant">/ unit</span></p>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex items-center border border-outline-variant rounded-full px-sm py-1">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">remove</button>
+<span class="px-md font-bold font-body-lg">2</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">add</button>
+</div>
+<div class="flex items-center gap-lg">
+<span class="font-title-lg text-title-lg text-primary-container font-bold">$17.00</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">delete</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-lg flex flex-col md:flex-row gap-md items-center border-b border-outline-variant">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Chocolate Fudge Cake" class="w-full h-full object-cover" data-alt="A decadent slice of rich chocolate fudge cake with multiple moist layers and glossy dark chocolate ganache frosting. The cake is positioned on a minimalist white surface with a few scattered chocolate shavings nearby. Soft, ambient lighting creates a moody yet inviting aesthetic, emphasizing the smooth texture of the frosting and the dense crumb of the cake. The color palette is dominated by deep browns and creamy whites, reflecting a premium boutique dessert experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7MQCHPwwoCXshgxINTQqki2DkONKh5-q-VhoDDXCgCm9tyQtM1BX6KQ8tfepCRsTMhHduz5prpLxqqmK075IqiSVdS1Rg2UG1rmVu2xhlWjQSsHlXIwGglltFGYXf1qcPKJ1IYHkcrJZ0tmKCjYJL4JpNLRUs91X2BD_9jmAoewVZqWisQxfOjCJWayzKjhiMVMDWpSItZIFniK9ywQaS3YV4hXN66BijX3s_vyHVBYXdh9Wd00N4OlhiDvu5-_svDSYtAkBSxA">
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-xs block">Cakes</span>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Chocolate Fudge Cake</h3>
+<p class="text-body-sm text-on-surface-variant">Size: Individual Slice | Packaging: Standard</p>
+</div>
+<p class="font-title-lg text-title-lg text-primary-container">$12.00 <span class="text-body-sm font-normal text-on-surface-variant">/ unit</span></p>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex items-center border border-outline-variant rounded-full px-sm py-1">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">remove</button>
+<span class="px-md font-bold font-body-lg">1</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">add</button>
+</div>
+<div class="flex items-center gap-lg">
+<span class="font-title-lg text-title-lg text-primary-container font-bold">$12.00</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">delete</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-lg flex flex-col md:flex-row gap-md items-center">
+<div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Blueberry Muffin" class="w-full h-full object-cover" data-alt="A group of three large, artisanal blueberry muffins with bursting berries and a crunchy golden streusel topping. They are arranged on a clean, light-toned stone countertop in a modern, airy bakery setting. The lighting is high-key and natural, pouring in from a nearby window, highlighting the texture of the blueberries and the crumbly top. The aesthetic is clean and tactile, focusing on the freshness and quality of the ingredients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKGGqI6_M6gxD0S9ujVI5CtlIFHtlpZjFEjO5F2m2GkiqXNaMvpnKCjs87ZduwXveC8_cDs9waY2DlqITXf7-UXQeQ7n5lsB0Ta4oty0l6ownwl-1r_-g0K-54_vrZnvLGNRSxamZ9QX1TANZGzoGzJlkEC5NtEFE5x8vDchDWr2Ln-wJISZQXD-lb-N33jwQuHLTIdzkLNGRcNhfIbJM8vNMgMflcWvADHD_ZeyhvlnoYASUSgWESqyZxmY7JW0dvcd5lsxRGiw">
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-caps text-label-caps text-secondary uppercase tracking-wider mb-xs block">Muffins</span>
+<h3 class="font-headline-sm text-headline-sm text-primary-container">Blueberry Muffin</h3>
+<p class="text-body-sm text-on-surface-variant">Size: Regular | Packaging: Eco-Wrap</p>
+</div>
+<p class="font-title-lg text-title-lg text-primary-container">$4.50 <span class="text-body-sm font-normal text-on-surface-variant">/ unit</span></p>
+</div>
+<div class="flex justify-between items-center mt-md">
+<div class="flex items-center border border-outline-variant rounded-full px-sm py-1">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">remove</button>
+<span class="px-md font-bold font-body-lg">3</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">add</button>
+</div>
+<div class="flex items-center gap-lg">
+<span class="font-title-lg text-title-lg text-primary-container font-bold">$13.50</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-error transition-colors">delete</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Links -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+<a class="flex items-center gap-sm text-primary-container font-bold hover:underline" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+                        Continue Shopping
+                    </a>
+<div class="w-full md:w-auto">
+<label class="block font-label-caps text-label-caps text-on-surface-variant mb-xs">Have a promo code?</label>
+<div class="flex gap-sm">
+<input class="h-12 px-md border border-outline-variant rounded-lg focus:outline-none focus:border-primary-container flex-grow md:w-48" placeholder="Enter code" type="text">
+<button class="h-12 px-lg bg-primary-container text-white rounded-full font-bold hover:opacity-90 transition-all">Apply</button>
+</div>
+<p class="mt-xs text-secondary font-bold text-body-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                            CRAVE20 applied — 20% off!
+                        </p>
+</div>
+</div>
+<!-- Empty State Inset -->
+<div class="mt-xxl p-xl border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center text-center bg-surface-container-lowest/50">
+<span class="material-symbols-outlined text-6xl text-outline-variant mb-md" style="font-variation-settings: 'opsz' 48;">shopping_cart_off</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface-variant">Looking for more treats?</h4>
+<p class="text-body-sm text-on-surface-variant mb-lg max-w-sm">Your basket is looking a bit lonely. Explore our freshly baked bundles and wholesale collections.</p>
+<button class="px-xl py-md border border-primary-container text-primary-container rounded-full font-bold hover:bg-primary-container hover:text-white transition-all">
+                        Browse Catalogue
+                    </button>
+</div>
+</div>
+<!-- Right Column: Summary -->
+<div class="lg:w-[35%]">
+<div class="bg-white rounded-xl card-shadow p-lg sticky top-28">
+<h2 class="font-headline-md text-headline-md text-primary-container mb-lg">Order Summary</h2>
+<div class="space-y-md border-b border-outline-variant pb-lg mb-lg">
+<div class="flex justify-between text-body-lg">
+<span class="text-on-surface-variant">Subtotal</span>
+<span class="text-on-surface font-bold">$42.50</span>
+</div>
+<div class="flex justify-between text-body-lg">
+<span class="text-on-surface-variant">Discount (20%)</span>
+<span class="text-secondary font-bold">-$8.50</span>
+</div>
+<div class="flex justify-between text-body-lg">
+<span class="text-on-surface-variant">Delivery</span>
+<span class="text-secondary font-bold">Free</span>
+</div>
+<div class="flex justify-between text-body-lg">
+<span class="text-on-surface-variant">Tax</span>
+<span class="text-on-surface font-bold">$2.72</span>
+</div>
+</div>
+<div class="flex justify-between items-center mb-xl">
+<span class="font-headline-sm text-headline-sm text-primary-container">Total</span>
+<span class="text-3xl font-bold text-secondary-container">$36.72</span>
+</div>
+<button class="w-full py-md bg-secondary-container text-white rounded-full font-bold flex items-center justify-center gap-sm hover:opacity-95 transition-all shadow-md active:scale-[0.98]">
+<span class="material-symbols-outlined">lock</span>
+                        Proceed to Checkout
+                    </button>
+<div class="mt-xl text-center">
+<div class="flex justify-center gap-md mb-sm opacity-50 grayscale hover:grayscale-0 transition-all cursor-default">
+<img alt="Visa" class="h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAx6upfBC5y6I7AnNGSyEgqqcTDg4KIFJp4MS5E-CfWGSkbjr7AyztLrXGegT1ngpihnNww3JD4IrTEXlat-BdTE8k6ZT-FOAcyeSJQkSGqMTWS1zTShQE_UWfYzLarY-EBTX50pjYZVznkDBXwN_QMpIl1VScTOYIC7UZ94OfOr-GwAy0gFI-a5A2q1tI1zIShwpg_h21S6Mpb4glVYI6YcLqHh-SomLARejGtrZj8eb25Cue-QhzUqZc3YijkIt1F_MyveQKezA">
+<img alt="Mastercard" class="h-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIIQWP4rHYDRWq4Wlj6zCnKZx-S6ErXoyYpbhLsgWd--9Ng8KvQG4ugN11mqwQKNipgUJaQUsYQbzgwt0j1DCTX9qQP_pvCSCwpNUwTsGmxapA7HUagon-tZmLEOlmFrM-ex04u1a2xB2UnCOfhh0uZT5mh-9Fmfws35bpoRp0Af3JORB_6OOmsWPlyUXM8v0rgiQFsjcz9hhm3pZNwScqnSsJG4iJF7KThk_J0YdVfKDa0FVAJ6FIeHjpj5DnGYNie4eXKUGiqQ">
+<img alt="PayPal" class="h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQNI0145OAYCv0surWgU8rC7MpPJnkj0ITiSiAru6v854mw6KRl0w0T7F2Pfoykam6GkvFOzyvfd3p8WTK9K0oXeCQL2EdNaP0-yYHIcf7oN-O4hA_KKLmMZ2jXD0DuD9W02oFK_tIF1_UNEFduFul0vou49o8km2kchqo1995VNHdsWSsD9Yk7kcxupshQTMM1RU9Y__g9hIwNKA8Q0AZvR2ErGjiSAXRRyV0MYTBjcC2Z4uh49RWg012o-mn7QG4e9YdA33dfw">
+</div>
+<div class="flex items-center justify-center gap-1 text-on-surface-variant text-body-sm">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+                            Secure checkout
+                        </div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-surface-container-lowest border-t border-outline-variant flex flex-col md:flex-row justify-between items-center px-container-margin py-xl w-full">
+<div class="mb-md md:mb-0">
+<span class="font-headline-sm text-headline-sm text-on-surface">Artisan Bread Co.</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">© 2024 Artisan Bread Co. All rights reserved.</p>
+</div>
+<div class="flex gap-lg">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Shipping Info</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Contact Us</a>
+</div>
+</footer>
+<script>
+        // Micro-interactions for quantity steppers
+        document.querySelectorAll('button.material-symbols-outlined').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.innerText;
+                const container = this.parentElement;
+                const countSpan = container.querySelector('span');
+                if (!countSpan) return;
+                
+                let count = parseInt(countSpan.innerText);
+                if (action === 'add') {
+                    countSpan.innerText = count + 1;
+                } else if (action === 'remove' && count > 1) {
+                    countSpan.innerText = count - 1;
+                }
+            });
+        });
+
+        // Simple cart removal animation
+        document.querySelectorAll('button.material-symbols-outlined[innerText="delete"]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const row = this.closest('.p-lg');
+                row.style.opacity = '0.5';
+                row.style.transition = 'all 0.3s ease';
+                row.style.transform = 'translateX(20px)';
+                setTimeout(() => {
+                    row.style.display = 'none';
+                }, 300);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,516 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Catalogue | Crave Bakery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Playfair+Display:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #E8572A;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-container": "#3d1a0e",
+                      "surface-container": "#f0eded",
+                      "on-tertiary-fixed-variant": "#4a4641",
+                      "surface-container-highest": "#e5e2e1",
+                      "primary-fixed-dim": "#f6b8a5",
+                      "surface-tint": "#825343",
+                      "on-tertiary-container": "#8f8b84",
+                      "on-secondary-fixed": "#3b0a00",
+                      "surface": "#fcf9f8",
+                      "on-primary-container": "#b47e6d",
+                      "surface-container-high": "#eae7e7",
+                      "on-secondary-container": "#5c1400",
+                      "inverse-on-surface": "#f3f0ef",
+                      "surface-bright": "#fcf9f8",
+                      "primary-fixed": "#ffdbd0",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed": "#1e1b17",
+                      "tertiary-container": "#26241f",
+                      "surface-container-lowest": "#ffffff",
+                      "on-background": "#1c1b1b",
+                      "background": "#fcf9f8",
+                      "secondary-container": "#fc6537",
+                      "secondary": "#b02f00",
+                      "inverse-primary": "#f6b8a5",
+                      "on-surface": "#1c1b1b",
+                      "surface-dim": "#dcd9d9",
+                      "tertiary-fixed-dim": "#ccc6be",
+                      "outline-variant": "#d6c2bd",
+                      "outline": "#84746f",
+                      "on-secondary-fixed-variant": "#862200",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "primary": "#220601",
+                      "tertiary-fixed": "#e8e1da",
+                      "tertiary": "#110f0a",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#663c2d",
+                      "secondary-fixed": "#ffdbd1",
+                      "on-primary-fixed": "#321207",
+                      "secondary-fixed-dim": "#ffb59f",
+                      "surface-container-low": "#f6f3f2",
+                      "on-surface-variant": "#514440",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "surface-variant": "#e5e2e1",
+                      "inverse-surface": "#313030"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "gutter": "16px",
+                      "xxl": "48px",
+                      "md": "16px",
+                      "container-margin": "24px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "label-caps": ["Inter"],
+                      "display-lg": ["Playfair Display"],
+                      "headline-md": ["Playfair Display"],
+                      "body-lg": ["Inter"],
+                      "headline-sm": ["Playfair Display"],
+                      "body-sm": ["Inter"],
+                      "headline-lg": ["Playfair Display"],
+                      "display-lg-mobile": ["Playfair Display"],
+                      "title-lg": ["Inter"]
+              },
+              "fontSize": {
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-lg overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed w-full top-0 z-50 bg-primary dark:bg-primary-container shadow-md">
+<nav class="flex justify-between items-center h-20 px-container-margin max-w-[1200px] mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-display-lg text-display-lg text-on-primary">Crave Bakery</span>
+<ul class="hidden md:flex gap-lg items-center">
+<li><a class="text-on-primary opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-colors duration-200 font-body-lg text-body-lg" href="#">Menu</a></li>
+<li><a class="text-secondary-fixed font-bold border-b-2 border-secondary-fixed pb-1 font-body-lg text-body-lg" href="#">Catalogue</a></li>
+<li><a class="text-on-primary opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-colors duration-200 font-body-lg text-body-lg" href="#">About Us</a></li>
+<li><a class="text-on-primary opacity-80 hover:opacity-100 hover:text-secondary-fixed transition-colors duration-200 font-body-lg text-body-lg" href="#">Contact</a></li>
+</ul>
+</div>
+<div class="flex items-center gap-md">
+<button class="text-on-primary material-symbols-outlined p-2 scale-95 active:scale-90 transition-transform">shopping_cart</button>
+<button class="bg-[#E8572A] text-white px-lg py-2 rounded-full font-bold text-body-sm hover:opacity-90 transition-opacity">Sign Up</button>
+</div>
+</nav>
+</header>
+<!-- Header Section -->
+<section class="mt-20 pt-xl pb-xxl bg-[#FDF6EE]">
+<div class="max-w-[1200px] mx-auto px-container-margin">
+<nav class="flex items-center gap-xs text-on-surface-variant font-body-sm mb-md">
+<a class="hover:text-primary" href="#">Home</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-semibold">Catalogue</span>
+</nav>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-xs">Our Catalogue</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant italic">Freshly baked every morning, made with love</p>
+</div>
+</section>
+<!-- Main Content -->
+<main class="max-w-[1200px] mx-auto px-container-margin py-xxl flex gap-xl relative">
+<!-- Left Sidebar (Filters) -->
+<aside class="hidden lg:block w-64 flex-shrink-0">
+<div class="sticky top-24 flex flex-col gap-lg">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-sm">Filters</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Refine your selection</p>
+</div>
+<!-- Search -->
+<div class="relative">
+<input class="w-full h-12 rounded-xl border-[#E5DDD4] bg-white px-md pr-xl focus:border-primary focus:ring-0 text-body-sm transition-all" placeholder="Search pastries..." type="text">
+<span class="material-symbols-outlined absolute right-3 top-3 text-outline">search</span>
+</div>
+<!-- Categories -->
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-sm">Categories</h3>
+<ul class="flex flex-col gap-xs">
+<li><button class="w-full flex justify-between items-center text-secondary font-bold hover:translate-x-1 transition-transform font-body-sm">All <span>(42)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Breads <span>(12)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Muffins <span>(8)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Brownies <span>(5)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Cookies <span>(6)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Desserts <span>(7)</span></button></li>
+<li><button class="w-full flex justify-between items-center text-on-surface-variant hover:bg-surface-container-high hover:translate-x-1 transition-all rounded px-xs py-1 font-body-sm">Pastries <span>(4)</span></button></li>
+</ul>
+</div>
+<!-- Price Range -->
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-sm">Price Range</h3>
+<input class="w-full h-1 bg-[#E5DDD4] rounded-lg appearance-none cursor-pointer accent-[#E8572A]" max="50" min="0" type="range" value="25">
+<div class="flex justify-between mt-sm text-body-sm text-on-surface-variant">
+<span>$0</span>
+<span>$50</span>
+</div>
+</div>
+<!-- Ratings -->
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-sm">Ratings</h3>
+<div class="flex flex-col gap-xs">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="rounded text-[#E8572A] focus:ring-[#E8572A] border-[#E5DDD4]" type="checkbox">
+<span class="flex gap-[2px] text-[#FCB001]">
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined filled-icon text-[18px]">star</span>
+<span class="material-symbols-outlined text-[18px]">star</span>
+</span>
+<span class="text-body-sm text-on-surface-variant">&amp; Up</span>
+</label>
+</div>
+</div>
+<!-- Availability -->
+<div>
+<h3 class="font-title-lg text-title-lg text-primary mb-sm">Availability</h3>
+<div class="flex flex-col gap-sm">
+<label class="flex items-center gap-sm cursor-pointer">
+<input checked="" class="rounded text-[#E8572A] focus:ring-[#E8572A] border-[#E5DDD4]" type="checkbox">
+<span class="text-body-sm text-on-surface">In Stock</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer">
+<input class="rounded text-[#E8572A] focus:ring-[#E8572A] border-[#E5DDD4]" type="checkbox">
+<span class="text-body-sm text-on-surface">Out of Stock</span>
+</label>
+</div>
+</div>
+<button class="text-[#E8572A] font-bold text-body-sm hover:underline text-left mt-sm">Clear all filters</button>
+</div>
+</aside>
+<!-- Right Grid Content -->
+<div class="flex-1">
+<!-- Sort & Results Header -->
+<div class="flex justify-between items-center mb-lg pb-sm border-b border-outline-variant">
+<p class="text-body-sm text-on-surface-variant">Showing 9 of 42 products</p>
+<div class="flex items-center gap-sm">
+<label class="text-body-sm text-on-surface-variant">Sort by:</label>
+<select class="bg-transparent border-none text-body-sm font-semibold text-primary focus:ring-0 py-0 cursor-pointer">
+<option>Recommended</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Newest Arrivals</option>
+</select>
+</div>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
+<!-- Card 1: Sourdough -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Sourdough Bread" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A rustic loaf of sourdough bread with a perfectly crisped, dark golden-brown crust and artistic wheat stalk scoring. The bread sits on a linen cloth in a sun-drenched, warm kitchen with soft, morning shadows. The aesthetic is artisanal, high-end, and earthy, emphasizing textures of flour-dusted crust. Warm, high-key lighting creates an inviting, premium bakery atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD93sN-_DR9Ih-PUz2pkuUg9WeQ9dyZ3ekicUnIEuFz82IFPHerC5YaOLZ45kn06lUAh23CY2e_edpI2cZqP7KWDOdBGScHIIhJg_X3DWNjOmDTgjDF9DgUWKHg_kMz0ZFYR_0y8HLTD1wJWiYWJzD900FNs4CxXAKKUjmhkQIxI9gDSyW5acwwA2blFcThRVtNwZYsTJBUmQm2kvyXJFjvJfSXw1Oz5dErt41SSLmJ1nNgAxiG8b9QKvAkg3f-ZjuFqjHdryxwWQ">
+<div class="absolute top-md left-md bg-primary-container text-on-primary-container px-sm py-1 rounded-md font-label-caps text-label-caps">BEST SELLER</div>
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BREADS</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Artisan Sourdough</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.9</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(128)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$8.50</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 2: Croissant (Active) -->
+<div class="group bg-white rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.1)] -translate-y-1 overflow-hidden ring-2 ring-secondary/20">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Croissant" class="w-full h-full object-cover" data-alt="Close up of a golden, flaky croissant showing hundreds of delicate, buttery layers. The lighting is warm and directional, highlighting the crisp texture and subtle sheen of the pastry. It rests on a minimalist white ceramic plate within a clean, modern bakery setting. The overall mood is sophisticated and indulgent with a palette of warm ambers and soft whites." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0QlD1ZlSHsAjVkJRTG6ouVOOo1Eb8fH67YPeXY_3weswnM-3Z78fPUob3SKMrxYOpUCRM3KU5DcX4Q3KMzWfPO1-LxhuXuGjHAJ7QsLbEc7pqh2fGRm5tuolb8s7xJo-96buO07NU0vV3RPpQqTQrIB0id-hv8oobuFjMdSpgHM54CCgulJ1Jx4nmalFMm6nmjS7QXBDTLxxRmYAOG3GHDy-45DEQPpbnJ8Yx-CnW_2pnuMUXV4MSwkt9BxNoqDFx-34Ftfw4Ww">
+<div class="absolute top-md left-md bg-[#E8572A] text-white px-sm py-1 rounded-md font-label-caps text-label-caps">NEW</div>
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">PASTRIES</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Butter Croissant</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">5.0</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(256)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$4.75</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 3: Blueberry Muffin -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Blueberry Muffin" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A moist, golden-topped blueberry muffin bursting with deep purple berries and topped with a light sugar crumble. The muffin is placed in a minimalist composition on a light wood surface. Natural, soft daylight from a nearby window creates a clean, airy feeling. The color palette features warm browns, deep blues, and creamy whites for a premium, artisanal presentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPmifpF9JVYHbOh6163KouKY1n6Pbii-Xwcg1mUoBwu5Uk0t7imjmhExXtSYdjS264dCjySO98JuGzS4K5ULzDLM6rdQQEmTtKlXhR8XNfby3oY8NqThNNadAib5u_Yj_5s6MhZAg46C4wvbcTbPL3akkvXrDfwt__PZGBm5DD0JmlP_NFIta0NkakdUzsGl5djAPeMQHuWd0IPjI9Y2dyhXrc6xv1m1C8jvKjPVUYxFKsSlQrv-3WMnbgzWKs9FMo6Dy66cTGLQ">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">MUFFINS</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Classic Blueberry</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.8</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(94)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$3.50</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 4: Chocolate Fudge Cake (Favorited) -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Chocolate Cake" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A rich, decadent slice of multi-layered chocolate fudge cake with smooth ganache icing and delicate chocolate curls on top. The cake is presented on an elegant black matte plate against a dark, moody background with subtle warm highlights. The lighting is sophisticated, creating a luxurious and indulgent aesthetic. Deep browns and hints of gold define the color story." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeZMfN09dmcHTZq-d3weR-TOpYhAdg4wKMSnWkcmF_7exJDELl4JRj71nBYTIICz50MqmkhprsWr8Qj2p1Rsriv27CzL_risP9CCgUZsfuBfxFzA2VxQlm2rtv9GC37BWgmzP1PPC5esjrrrp1uXm2x0b1sFwdK2bR5Mi5dhWM7iFKsyT0LUDWlFRoBHPRHsYvJXd-kyIuBuODIqDJWwdTqUN7Cpq2NegCtmW8c5TMN6pYFa8ucgZfX3HgqEMZ9T_U20WFpqwf4w">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white rounded-full text-secondary shadow-sm">
+<span class="material-symbols-outlined filled-icon text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">DESSERTS</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Fudge Layer Cake</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.9</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(112)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$42.00</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 5: Cinnamon Swirl Cookies -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Cinnamon Cookies" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A stack of soft, chewy cookies with a beautiful cinnamon swirl pattern and a light dusting of sparkling sugar. They are arranged on a rustic marble board with a few cinnamon sticks nearby. The lighting is soft and ambient, emphasizing the warmth and homely charm of artisanal baking. Creamy tones and warm spicy browns create a comforting visual palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtBM0goOJ1hiMFbma2zf9e1N-xnwRX9zPwEy3Sl71Rz4F_0ffv2vPP1kpTM9UvdHJP4MBaZrhzjURn39oM2iKpFYBfB2nzB2WO8ZZyXqC-7uRqX3mekHEy1U3hrJBhkip8OP_GXFmRrfPPF01y2Fw019yrsZKTszHOaSMw3I28AJJoD7XwSQ15tmpiAeFzwKBp0-UknnUqXmhopjdWe4vCQsQtDEhF_oIsdBbbTpESH6lPn9bRUkQ-TLIe8-gdsIK-9Q68TgBu5A">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">COOKIES</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Cinnamon Swirl</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.7</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(78)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$12.00 / Dozen</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 6: Fruit Tart (Hover State - Slight Lift) -->
+<div class="group bg-white rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.12)] -translate-y-2 overflow-hidden transition-all">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Fruit Tart" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="An exquisite French fruit tart with a crisp buttery crust, smooth vanilla pastry cream, and a jewel-like arrangement of fresh raspberries, blueberries, and kiwi slices. The tart has a glistening apricot glaze. Photographed in a high-key, modern minimalist setting with soft, clean lighting. Vibrant natural colors of the fruit contrast beautifully with the golden crust and white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRzudDgbJN8oDUL_IkzI8ZI_PvDGYfofKBuAVt1cqBs56qPQHiw6ZtqrDyKc4ALceZTqvS9T0yz0vZoiCMADg8bBSkW1g9SZtA5_T_FZv62BbrUdzFy1gzG0julBaQJ8GIcaIljjKFpfFUuXNDKYf77RBstukFYRswNKTG312yVmMVJDR6fORU8gCD92uRIdI87eF7zoBGdoHqUrcK4UuAU0xS6l44ejWo0SHZxpkbRd6uXzKPaMUzl-8-CvxuZbyDPWcUgUCPdg">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">PASTRIES</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Summer Fruit Tart</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.9</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(156)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$6.50</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 7: Almond Croissant -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Almond Croissant" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A twice-baked almond croissant topped with a generous layer of toasted flaked almonds and a snow-like dusting of powdered sugar. The pastry sits on a dark slate surface, emphasizing the light colors and textures of the topping. The aesthetic is refined and gourmet, with warm, focused lighting that creates depth and richness. A palette of creams, tans, and deep greys." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoQuhqomTc0DEyXJST4HoxemfoIeszLIe0uPuCm9rfHNTn0YKPYesVnOTIko33abANlLN1mwVlXsQtU08RVQPZD28oUtCkcr_EFJdUU2iTkLsM5BFdEbkqL653WKMUMJFKL-eC74UHITA4EEEysMf8ADVA7WbVqBXukT7r5qoPxVyFHXb6G8-tjp9wcrYOkIOpEX1bV2WnENnwSRo5dnA2jmD8cTR5uH1Zj6R2IRw69RUGijGpSbBVBlBytPACC_v1GaXU6-uB1Q">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">PASTRIES</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Almond Twice-Baked</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.8</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(210)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$5.50</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 8: Banana Bread -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Banana Bread" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A thick, moist slice of banana bread with visible chunks of walnuts and a caramelized top edge. It is presented in a cozy, rustic scene with a small pot of honey and a tea towel. The lighting is warm and golden, evoking a sense of homemade comfort and high-quality organic ingredients. The color palette is rich with ambers, mahoganies, and soft creams." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4F0_5Sq8wK3tadWqQTuDfk8V7xKYxrZNIQg2MAugEVK4DT7dNJNS69QVtlx1aoycW9xvsFQMld38ix-z9an2bEFbE9y8M9eHjklvk3QD6Y-8ebjghs-DbC6GfVRPQweWKlWngYBPdT_ZnVrA5fQUX6rGb7gnsTslRdfY512pUiJGYKbTPu-YcZMTjpJaYX-h1SA8gfeNu8O9BhDQIXfZZooXBiBqdhRsWadknvqYSFGuO-YPOGhhtroRbeY7iZKglCCEUx8cPTw">
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BREADS</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Walnut Banana Bread</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-[#FCB001]"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold">4.7</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(62)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-primary">$14.00 / Loaf</span>
+</div>
+<button class="w-full h-12 bg-[#E8572A] text-white rounded-full font-bold text-body-sm active:scale-95 transition-all">Add to Cart</button>
+</div>
+</div>
+<!-- Card 9: Chocolate Brownie (Out of Stock) -->
+<div class="group bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden opacity-80">
+<div class="relative aspect-square overflow-hidden grayscale">
+<img alt="Brownie" class="w-full h-full object-cover" data-alt="A dense, fudgy chocolate brownie with a perfectly crackled top, showcasing a deep dark cocoa richness. The image is presented with a desaturated, slightly artistic finish to indicate unavailability. The composition is clean and minimalist on a neutral grey background. The lighting is soft and diffused, maintaining a premium and appetizing feel despite the color treatment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvhO-lEBthu4JynG8bB6lE9ZmcDFrhWy96tfzoYvLCX16jmapQ3aHtQGJgQfxx8oLIN5zseXR5J8dhTKqwqwRrtroksF_DwKauCuYyA7hSbesyzgCBRD9X6f6obyBtPbfW_KId7twRbzfuqGBPrl6BAZ6X7uSjiPpjg8Y0bQJFuamgCPqkcHCsITkuDGrw07ut-nWGVBKrak_VVDD3ZDLp_KQprRlaK_Dq2YWmPVj8poSJKOs9y5Ym98DO477fv-S32Ft_QWF-4w">
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<span class="bg-white/90 px-lg py-sm rounded-lg font-bold text-primary tracking-widest text-body-sm">OUT OF STOCK</span>
+</div>
+<button class="absolute top-md right-md w-8 h-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-primary opacity-50">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+</div>
+<div class="p-md">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">BROWNIES</span>
+<h4 class="font-headline-sm text-headline-sm text-primary mb-xs">Double Fudge Brownie</h4>
+<div class="flex items-center gap-1 mb-sm">
+<span class="flex text-outline"><span class="material-symbols-outlined filled-icon text-[16px]">star</span></span>
+<span class="text-body-sm font-semibold text-on-surface-variant">4.9</span>
+<span class="text-body-sm text-on-surface-variant ml-1">(342)</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-title-lg text-title-lg text-outline">$4.50</span>
+</div>
+<button class="w-full h-12 border-2 border-primary text-primary rounded-full font-bold text-body-sm hover:bg-primary hover:text-white transition-all">Notify Me</button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-xxl flex justify-center items-center gap-md">
+<button class="px-md py-2 border border-[#E5DDD4] rounded-full text-on-surface-variant flex items-center gap-xs hover:bg-surface-container-high transition-colors font-body-sm">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                    Previous
+                </button>
+<div class="flex items-center gap-sm">
+<button class="w-10 h-10 rounded-full bg-primary-container text-white font-bold text-body-sm">1</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high transition-colors font-body-sm">2</button>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high transition-colors font-body-sm">3</button>
+<span class="text-on-surface-variant">...</span>
+<button class="w-10 h-10 rounded-full hover:bg-surface-container-high transition-colors font-body-sm">5</button>
+</div>
+<button class="px-md py-2 border border-[#E5DDD4] rounded-full text-on-surface-variant flex items-center gap-xs hover:bg-surface-container-high transition-colors font-body-sm">
+                    Next
+                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<!-- Empty State -->
+<div class="mt-xxl pt-xxl border-t border-outline-variant flex flex-col items-center text-center opacity-50 grayscale select-none">
+<div class="w-24 h-24 mb-md flex items-center justify-center rounded-full border-4 border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-[48px] text-outline-variant">shopping_basket</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-xs">No products found</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-lg">Try adjusting your filters or search keywords.</p>
+<button class="bg-[#E8572A] text-white px-xl py-3 rounded-full font-bold text-body-sm hover:opacity-90">Clear Filters</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-xl bg-surface-container-highest dark:bg-inverse-surface mt-xxl">
+<div class="flex flex-col md:flex-row justify-between items-center px-container-margin max-w-[1200px] mx-auto gap-lg">
+<div class="flex flex-col gap-xs items-center md:items-start">
+<span class="font-headline-md text-headline-md text-primary">Crave Bakery</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 Crave Bakery. Artisanal Warmth in Every Bite.</p>
+</div>
+<div class="flex gap-lg">
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Shipping Info</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Wholesale</a>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions and UI Logic
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                if(this.classList.contains('material-symbols-outlined') && this.innerHTML === 'favorite') {
+                    this.classList.toggle('filled-icon');
+                    this.classList.toggle('text-secondary');
+                }
+            });
+        });
+
+        // Sticky Navbar Scroll Effect
+        const header = document.querySelector('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-lg');
+                header.classList.add('h-16');
+                header.classList.remove('h-20');
+            } else {
+                header.classList.remove('shadow-lg');
+                header.classList.add('h-20');
+                header.classList.remove('h-16');
+            }
+        });
+    </script>
+</body></html>

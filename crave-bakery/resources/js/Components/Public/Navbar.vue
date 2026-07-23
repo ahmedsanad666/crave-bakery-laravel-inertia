@@ -17,9 +17,23 @@ const cartCount = computed(() => page.props.cart?.count ?? 0);
 const user = computed(() => page.props.auth?.user ?? null);
 const currentUrl = computed(() => page.url.split('?')[0]);
 
+const isAdminUser = computed(() =>
+    ['admin', 'super_admin'].includes(user.value?.role),
+);
+
+const accountHref = computed(() =>
+    isAdminUser.value
+        ? route('admin.dashboard')
+        : route('profile.edit'),
+);
+
+const accountLabel = computed(() =>
+    isAdminUser.value ? 'Admin Dashboard' : 'My Profile',
+);
+
 const navLinks = [
     { label: 'Home', href: route('home'), match: '/' },
-    { label: 'Catalogue', href: '/products', match: '/products' },
+    { label: 'Catalogue', href: route('products.index'), match: '/products' },
     { label: 'About Us', href: '/#about', match: null },
     { label: 'Contact Us', href: '/#contact', match: null },
 ];
@@ -106,7 +120,7 @@ onUnmounted(() => {
 
             <div class="flex items-center gap-lg">
                 <Link
-                    href="/cart"
+                    :href="route('cart.index')"
                     class="hidden items-center gap-sm font-sans text-body-sm text-on-primary transition-all duration-150 hover:opacity-90 active:scale-95 sm:flex"
                 >
                     <IconShoppingBag :size="22" stroke-width="1.5" />
@@ -115,7 +129,7 @@ onUnmounted(() => {
 
                 <Link
                     v-if="user"
-                    :href="route('profile.edit')"
+                    :href="accountHref"
                     class="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-on-primary/90 transition-colors hover:bg-white/10 sm:flex"
                 >
                     <IconUser :size="18" stroke-width="1.5" />
@@ -157,11 +171,19 @@ onUnmounted(() => {
                     {{ link.label }}
                 </Link>
                 <Link
-                    href="/cart"
+                    :href="route('cart.index')"
                     class="rounded-lg px-4 py-3 text-sm font-medium text-on-primary/90 transition-colors hover:bg-white/10 sm:hidden"
                     @click="closeMobile"
                 >
                     {{ cartLabel }}
+                </Link>
+                <Link
+                    v-if="user"
+                    :href="accountHref"
+                    class="rounded-lg px-4 py-3 text-sm font-medium text-on-primary/90 transition-colors hover:bg-white/10"
+                    @click="closeMobile"
+                >
+                    {{ accountLabel }}
                 </Link>
                 <Link
                     v-if="!user"

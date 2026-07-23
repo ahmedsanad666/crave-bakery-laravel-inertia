@@ -1,0 +1,1056 @@
+<!doctype html>
+<html class="scroll-smooth" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Almond Croissant | Crave Bakery</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "secondary-fixed": "#ffdbd1",
+                            "surface-container-high": "#eae7e7",
+                            "surface-bright": "#fcf9f8",
+                            "tertiary-fixed-dim": "#ccc6be",
+                            "on-primary-fixed-variant": "#663c2d",
+                            "secondary-container": "#fc6537",
+                            "inverse-surface": "#313030",
+                            "inverse-on-surface": "#f3f0ef",
+                            "surface-container-highest": "#e5e2e1",
+                            "on-surface": "#1c1b1b",
+                            "surface-container-lowest": "#ffffff",
+                            "error-container": "#ffdad6",
+                            background: "#fcf9f8",
+                            "on-tertiary-fixed": "#1e1b17",
+                            "on-primary-container": "#b47e6d",
+                            tertiary: "#110f0a",
+                            secondary: "#b02f00",
+                            "on-secondary": "#ffffff",
+                            "on-error": "#ffffff",
+                            "outline-variant": "#d6c2bd",
+                            "on-background": "#1c1b1b",
+                            "on-primary-fixed": "#321207",
+                            "surface-tint": "#825343",
+                            outline: "#84746f",
+                            "on-secondary-fixed": "#3b0a00",
+                            "primary-container": "#3d1a0e",
+                            "primary-fixed": "#ffdbd0",
+                            primary: "#220601",
+                            "tertiary-container": "#26241f",
+                            "surface-container-low": "#f6f3f2",
+                            "surface-variant": "#e5e2e1",
+                            "inverse-primary": "#f6b8a5",
+                            error: "#ba1a1a",
+                            "surface-container": "#f0eded",
+                            "on-tertiary": "#ffffff",
+                            "on-primary": "#ffffff",
+                            "on-tertiary-container": "#8f8b84",
+                            "on-tertiary-fixed-variant": "#4a4641",
+                            "on-error-container": "#93000a",
+                            "on-secondary-container": "#5c1400",
+                            "on-secondary-fixed-variant": "#862200",
+                            surface: "#fcf9f8",
+                            "on-surface-variant": "#514440",
+                            "primary-fixed-dim": "#f6b8a5",
+                            "surface-dim": "#dcd9d9",
+                            "tertiary-fixed": "#e8e1da",
+                            "secondary-fixed-dim": "#ffb59f",
+                            "accent-orange": "#E8572A",
+                            espresso: "#3D1A0E",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            sm: "8px",
+                            md: "16px",
+                            "container-margin": "24px",
+                            xxl: "48px",
+                            lg: "24px",
+                            unit: "4px",
+                            xl: "32px",
+                            xs: "4px",
+                            gutter: "16px",
+                        },
+                        fontFamily: {
+                            "display-lg": ["Playfair Display"],
+                            "body-sm": ["Inter"],
+                            "headline-sm": ["Playfair Display"],
+                            "headline-md": ["Playfair Display"],
+                            "headline-lg": ["Playfair Display"],
+                            "body-lg": ["Inter"],
+                            "label-caps": ["Inter"],
+                            "title-lg": ["Inter"],
+                        },
+                        fontSize: {
+                            "display-lg": [
+                                "48px",
+                                {
+                                    lineHeight: "1.2",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "1.5", fontWeight: "400" },
+                            ],
+                            "headline-sm": [
+                                "22px",
+                                { lineHeight: "1.3", fontWeight: "600" },
+                            ],
+                            "headline-md": [
+                                "28px",
+                                { lineHeight: "1.3", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "36px",
+                                { lineHeight: "1.2", fontWeight: "700" },
+                            ],
+                            "body-lg": [
+                                "16px",
+                                { lineHeight: "1.6", fontWeight: "400" },
+                            ],
+                            "label-caps": [
+                                "12px",
+                                {
+                                    lineHeight: "1",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                            "title-lg": [
+                                "18px",
+                                { lineHeight: "1.5", fontWeight: "600" },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            .active-tab {
+                border-bottom: 2px solid #e8572a;
+                color: #3d1a0e;
+            }
+            .shadow-soft {
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            }
+            .shadow-hover {
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </head>
+    <body class="bg-[#FDF6EE] font-body-lg text-on-surface">
+        <!-- TopNavBar -->
+        <nav
+            class="flex justify-between items-center px-container-margin py-md w-full sticky top-0 z-50 bg-primary-container shadow-md"
+        >
+            <div class="flex items-center gap-xl">
+                <span
+                    class="font-display-lg text-headline-sm md:text-display-lg text-secondary-fixed"
+                    >Crave Bakery</span
+                >
+                <div class="hidden md:flex gap-lg">
+                    <a
+                        class="font-body-lg text-body-lg text-on-primary-fixed-variant hover:text-secondary-fixed transition-colors"
+                        href="#"
+                        >Home</a
+                    >
+                    <a
+                        class="font-body-lg text-body-lg text-secondary-fixed border-b-2 border-secondary-fixed pb-1"
+                        href="#"
+                        >Catalogue</a
+                    >
+                    <a
+                        class="font-body-lg text-body-lg text-on-primary-fixed-variant hover:text-secondary-fixed transition-colors"
+                        href="#"
+                        >About Us</a
+                    >
+                    <a
+                        class="font-body-lg text-body-lg text-on-primary-fixed-variant hover:text-secondary-fixed transition-colors"
+                        href="#"
+                        >Contact Us</a
+                    >
+                    <a
+                        class="font-body-lg text-body-lg text-on-primary-fixed-variant hover:text-secondary-fixed transition-colors"
+                        href="#"
+                        >Blog</a
+                    >
+                </div>
+            </div>
+            <div class="flex items-center gap-md">
+                <button
+                    class="material-symbols-outlined text-secondary-fixed hover:opacity-90 transition-opacity"
+                >
+                    shopping_cart
+                </button>
+                <button
+                    class="bg-secondary px-lg py-sm rounded-full text-white font-label-caps text-label-caps hover:opacity-90 transition-opacity active:scale-95 duration-150"
+                >
+                    Sign Up
+                </button>
+            </div>
+        </nav>
+        <!-- Breadcrumb -->
+        <div class="bg-surface-container-low px-container-margin py-md">
+            <div
+                class="max-w-7xl mx-auto flex items-center gap-xs font-label-caps text-label-caps text-on-surface-variant"
+            >
+                <a class="hover:text-espresso" href="#">Home</a>
+                <span class="material-symbols-outlined text-[14px]"
+                    >chevron_right</span
+                >
+                <a class="hover:text-espresso" href="#">Catalogue</a>
+                <span class="material-symbols-outlined text-[14px]"
+                    >chevron_right</span
+                >
+                <a class="hover:text-espresso" href="#">Pastries</a>
+                <span class="material-symbols-outlined text-[14px]"
+                    >chevron_right</span
+                >
+                <span class="text-espresso">Almond Croissant</span>
+            </div>
+        </div>
+        <!-- Main Product Section -->
+        <main
+            class="max-w-7xl mx-auto px-container-margin py-xxl grid grid-cols-1 md:grid-cols-12 gap-xxl"
+        >
+            <!-- Left Column: Media -->
+            <div class="md:col-span-7 flex flex-col gap-lg">
+                <div
+                    class="bg-white rounded-xl overflow-hidden shadow-soft border border-outline-variant/30"
+                >
+                    <img
+                        alt="Almond Croissant"
+                        class="w-full h-auto aspect-[1.1] object-cover"
+                        src="https://lh3.googleusercontent.com/aida/AP1WRLtJQ_2XVOLD8X28zVl96VBJy4ZB95Z5p2Z61EGxlcxh97iLO0r0XduywrKj72OQgqHOT8fAGX1gV8aolhySGhtzoeAL2DhavC8OP7X89fUhJPI-pSVdJ3H6mwDrD46-jvpIuEHmSm90lYPVyZ_fVY0gLYr1PW-NTF5l3z6KVt0mQTrtrdQCsIoZa5sjTwisRW1jGiBqFsfyz83rQclZyIC0bR5IWEm1VgP8yCbc6xTHR2BLEnCUtEQ5qg"
+                    />
+                </div>
+                <div class="grid grid-cols-4 gap-md">
+                    <button
+                        class="rounded-lg overflow-hidden border-2 border-accent-orange ring-2 ring-accent-orange/10"
+                    >
+                        <img
+                            alt="Thumbnail 1"
+                            class="w-full h-24 object-cover"
+                            data-alt="A macro shot of an artisanal almond croissant with visible flaky layers and a dusting of powdered sugar, presented on a minimalist ceramic plate in a warm sunlit bakery setting."
+                            src="https://lh3.googleusercontent.com/aida/AP1WRLtJQ_2XVOLD8X28zVl96VBJy4ZB95Z5p2Z61EGxlcxh97iLO0r0XduywrKj72OQgqHOT8fAGX1gV8aolhySGhtzoeAL2DhavC8OP7X89fUhJPI-pSVdJ3H6mwDrD46-jvpIuEHmSm90lYPVyZ_fVY0gLYr1PW-NTF5l3z6KVt0mQTrtrdQCsIoZa5sjTwisRW1jGiBqFsfyz83rQclZyIC0bR5IWEm1VgP8yCbc6xTHR2BLEnCUtEQ5qg"
+                        />
+                    </button>
+                    <button
+                        class="rounded-lg overflow-hidden border border-outline-variant hover:border-accent-orange transition-colors"
+                    >
+                        <img
+                            alt="Thumbnail 2"
+                            class="w-full h-24 object-cover"
+                            data-alt="Close up of sliced almond croissant revealing the rich, creamy almond filling nestled within multiple golden-brown pastry layers, soft warm ambient lighting."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFCxZyxox2HBeAL1aDw_60WDAWx9awzBVQhssstiihUqIfeGGKd248jwbmko162Y8Kv5qh5C9w-zSC_FG7owqXXpoPBwOmtD8f8soBlarakMcNew9YeE77SpN6gQONETlBpnZ6aVYp0jtBii341jnCKsbxTPxc24yg-2pbGgsfngcmUyswnUgCFAim5LNOfckxyP5PH8DyqrkcjulqXReNAZyfClxp6_n9lXaOFiriOHLtQxVwb6pGJOcy_KcwInv7xrsqb5GIIQ"
+                        />
+                    </button>
+                    <button
+                        class="rounded-lg overflow-hidden border border-outline-variant hover:border-accent-orange transition-colors"
+                    >
+                        <img
+                            alt="Thumbnail 3"
+                            class="w-full h-24 object-cover"
+                            data-alt="A wider shot showing a fresh tray of almond croissants being dusted with powdered sugar, steam rising in the background of a rustic boutique bakery."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyO2rYnIypWt6xWzpILI6OFT8AmKFQ8yhdbzozblqI_qj0HLSzQFO8uD6Wv_4P6zRN58qa9pEkCAOcl_M2WvfHSNOJVxpCe3AlpLFMNKvu4oVZw4-Y5i85tDdazX-cWv1939TxbzST0uI0w2JglWrUkCmatIJFJ8F_MHs7inIS8-Uw_95nyR2c_YXGgs_GJ3-MutKeMt3x4hY9x4MtccqPsGV0y0Vfagb9d2HUsS-IoDs4o7_5EqBWGSfGq9oxM5JbMbMqAuyK4g"
+                        />
+                    </button>
+                    <button
+                        class="rounded-lg overflow-hidden border border-outline-variant hover:border-accent-orange transition-colors"
+                    >
+                        <img
+                            alt="Thumbnail 4"
+                            class="w-full h-24 object-cover"
+                            data-alt="Ingredients for an almond croissant including raw whole almonds, a dusting of flour, and a jar of almond cream on a dark wooden countertop."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCswWIbJ-dHJtqjPOLwjATF86xXAV9ZS3f3DYIme-BpItNqqqNYhNJi1UC4H8cdAY-M59Oa7aWdnzb79yGfUTfgkdfH1_nsIigOGwygIeYoxEN69NGX8ajvFEgRHpNHNeKNUMajrQ8dQn_NCW0tSK8k7fz2cCe3Fcm12weLswGH6KFkW2s-uJPC7ETdtqVCxBiWKEwtQahFnoy475MZmu0ZwVOa6jm9yIBbVsaYLNMqH0KxV7ulaxe7QU4w93HtkFvYyJshPDgwaA"
+                        />
+                    </button>
+                </div>
+            </div>
+            <!-- Right Column: Details -->
+            <div class="md:col-span-5 flex flex-col gap-xl">
+                <div class="flex flex-col gap-md">
+                    <span
+                        class="inline-block self-start px-md py-xs bg-espresso text-white rounded-full font-label-caps text-label-caps"
+                        >Pastries</span
+                    >
+                    <h1 class="font-headline-lg text-headline-lg text-espresso">
+                        Almond Croissant
+                    </h1>
+                    <div class="flex items-center gap-md">
+                        <div class="flex text-accent-orange">
+                            <span
+                                class="material-symbols-outlined"
+                                style="
+                                    font-variation-settings: &quot;FILL&quot; 1;
+                                "
+                                >star</span
+                            >
+                            <span
+                                class="material-symbols-outlined"
+                                style="
+                                    font-variation-settings: &quot;FILL&quot; 1;
+                                "
+                                >star</span
+                            >
+                            <span
+                                class="material-symbols-outlined"
+                                style="
+                                    font-variation-settings: &quot;FILL&quot; 1;
+                                "
+                                >star</span
+                            >
+                            <span
+                                class="material-symbols-outlined"
+                                style="
+                                    font-variation-settings: &quot;FILL&quot; 1;
+                                "
+                                >star</span
+                            >
+                            <span
+                                class="material-symbols-outlined"
+                                style="
+                                    font-variation-settings: &quot;FILL&quot; 1;
+                                "
+                                >star_half</span
+                            >
+                        </div>
+                        <span
+                            class="font-body-sm text-body-sm text-on-surface-variant"
+                            >(4.9 / 238 Reviews)</span
+                        >
+                    </div>
+                    <p
+                        class="font-display-lg text-headline-md text-accent-orange"
+                    >
+                        $8.50
+                    </p>
+                    <p
+                        class="font-body-lg text-body-lg text-on-surface-variant"
+                    >
+                        Experience the perfect morning indulgence with our
+                        signature croissant. Featuring over 80 layers of
+                        buttery, flaky pastry, filled with a rich, house-made
+                        almond cream and topped with toasted almond slivers.
+                    </p>
+                </div>
+                <div
+                    class="flex flex-col gap-lg border-y border-outline-variant py-lg"
+                >
+                    <!-- Size -->
+                    <div class="flex flex-col gap-sm">
+                        <span
+                            class="font-label-caps text-label-caps text-espresso"
+                            >Select Size</span
+                        >
+                        <div class="flex gap-sm">
+                            <button
+                                class="px-lg py-sm rounded-full border border-outline text-on-surface font-label-caps text-label-caps hover:bg-espresso/5"
+                            >
+                                Small
+                            </button>
+                            <button
+                                class="px-lg py-sm rounded-full bg-espresso text-white font-label-caps text-label-caps"
+                            >
+                                Regular
+                            </button>
+                            <button
+                                class="px-lg py-sm rounded-full border border-outline text-on-surface font-label-caps text-label-caps hover:bg-espresso/5"
+                            >
+                                Large
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Quantity & Packaging -->
+                    <div class="flex flex-wrap gap-lg items-end">
+                        <div class="flex flex-col gap-sm">
+                            <span
+                                class="font-label-caps text-label-caps text-espresso"
+                                >Quantity</span
+                            >
+                            <div
+                                class="flex items-center border border-outline rounded-full h-[48px]"
+                            >
+                                <button
+                                    class="px-md text-espresso hover:text-accent-orange transition-colors"
+                                >
+                                    <span class="material-symbols-outlined"
+                                        >remove</span
+                                    >
+                                </button>
+                                <span class="px-md font-body-lg font-bold"
+                                    >1</span
+                                >
+                                <button
+                                    class="px-md text-espresso hover:text-accent-orange transition-colors"
+                                >
+                                    <span class="material-symbols-outlined"
+                                        >add</span
+                                    >
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-sm flex-1 min-w-[200px]">
+                            <span
+                                class="font-label-caps text-label-caps text-espresso"
+                                >Packaging</span
+                            >
+                            <div class="flex gap-sm">
+                                <button
+                                    class="flex-1 px-lg py-sm rounded-full bg-espresso text-white font-label-caps text-label-caps text-center"
+                                >
+                                    Standard
+                                </button>
+                                <button
+                                    class="flex-1 px-lg py-sm rounded-full border border-outline text-on-surface font-label-caps text-label-caps hover:bg-espresso/5 text-center"
+                                >
+                                    Gift Box
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-md">
+                    <button
+                        class="w-full bg-accent-orange text-white h-[48px] rounded-full flex items-center justify-center gap-md font-title-lg shadow-soft hover:opacity-90 active:scale-95 transition-all"
+                    >
+                        <span class="material-symbols-outlined"
+                            >shopping_cart</span
+                        >
+                        Add to Cart
+                    </button>
+                    <button
+                        class="w-full border border-espresso text-espresso h-[48px] rounded-full flex items-center justify-center gap-md font-title-lg hover:bg-espresso hover:text-white transition-all"
+                    >
+                        <span class="material-symbols-outlined">favorite</span>
+                        Add to Favourites
+                    </button>
+                </div>
+                <!-- Info Strip -->
+                <div
+                    class="grid grid-cols-3 gap-md py-md bg-white rounded-xl shadow-soft border border-outline-variant/30"
+                >
+                    <div class="flex flex-col items-center text-center gap-xs">
+                        <span
+                            class="material-symbols-outlined text-accent-orange"
+                            >local_shipping</span
+                        >
+                        <span class="font-label-caps text-[10px] leading-tight"
+                            >Free over $35</span
+                        >
+                    </div>
+                    <div
+                        class="flex flex-col items-center text-center gap-xs border-x border-outline-variant"
+                    >
+                        <span
+                            class="material-symbols-outlined text-accent-orange"
+                            >schedule</span
+                        >
+                        <span class="font-label-caps text-[10px] leading-tight"
+                            >Fresh Daily</span
+                        >
+                    </div>
+                    <div class="flex flex-col items-center text-center gap-xs">
+                        <span
+                            class="material-symbols-outlined text-accent-orange"
+                            >verified_user</span
+                        >
+                        <span class="font-label-caps text-[10px] leading-tight"
+                            >Secure Checkout</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </main>
+        <!-- Tabs Section -->
+        <section class="max-w-7xl mx-auto px-container-margin py-xxl">
+            <div class="flex border-b border-outline-variant mb-xl">
+                <button
+                    class="px-xl py-md font-title-lg text-title-lg active-tab"
+                    onclick="switchTab('description', this)"
+                >
+                    Description
+                </button>
+                <button
+                    class="px-xl py-md font-title-lg text-title-lg text-on-surface-variant hover:text-espresso transition-colors"
+                    onclick="switchTab('reviews', this)"
+                >
+                    Reviews (238)
+                </button>
+                <button
+                    class="px-xl py-md font-title-lg text-title-lg text-on-surface-variant hover:text-espresso transition-colors"
+                    onclick="switchTab('ingredients', this)"
+                >
+                    Ingredients
+                </button>
+            </div>
+            <!-- Description Content -->
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-xxl animate-in fade-in duration-500"
+                id="description-content"
+            >
+                <div class="flex flex-col gap-lg">
+                    <h3 class="font-headline-sm text-headline-sm text-espresso">
+                        Artisanal Craftsmanship
+                    </h3>
+                    <p class="text-on-surface-variant leading-relaxed">
+                        Our Almond Croissants are a labor of love, requiring 48
+                        hours of preparation to achieve the perfect texture and
+                        flavor profile. Each pastry starts with premium French
+                        cultured butter, laminated carefully by hand into our
+                        sourdough-enhanced dough.
+                    </p>
+                    <p class="text-on-surface-variant leading-relaxed">
+                        The filling is a traditional Frangipane, crafted from
+                        stone-ground California almonds, pure vanilla bean, and
+                        a hint of dark rum for complexity. Double-baked to
+                        ensure the crust remains remarkably crisp while the
+                        interior stays moist and tender.
+                    </p>
+                </div>
+                <div
+                    class="bg-white p-xl rounded-xl shadow-soft border border-outline-variant/30 flex flex-col gap-lg"
+                >
+                    <h4 class="font-title-lg text-espresso">
+                        Product Highlights
+                    </h4>
+                    <ul class="flex flex-col gap-md">
+                        <li class="flex items-center gap-md">
+                            <span
+                                class="material-symbols-outlined text-accent-orange"
+                                >check_circle</span
+                            >
+                            <span>Hand-laminated with 84 precise layers</span>
+                        </li>
+                        <li class="flex items-center gap-md">
+                            <span
+                                class="material-symbols-outlined text-accent-orange"
+                                >check_circle</span
+                            >
+                            <span>100% house-made Almond Frangipane</span>
+                        </li>
+                        <li class="flex items-center gap-md">
+                            <span
+                                class="material-symbols-outlined text-accent-orange"
+                                >check_circle</span
+                            >
+                            <span>Toasted Marcona almond topping</span>
+                        </li>
+                        <li class="flex items-center gap-md">
+                            <span
+                                class="material-symbols-outlined text-accent-orange"
+                                >check_circle</span
+                            >
+                            <span
+                                >No artificial preservatives or colorants</span
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Reviews Content (Hidden by default) -->
+            <div
+                class="hidden animate-in fade-in duration-500"
+                id="reviews-content"
+            >
+                <div class="flex flex-col md:flex-row gap-xxl items-start">
+                    <!-- Summary -->
+                    <div
+                        class="w-full md:w-1/3 flex flex-col gap-lg sticky top-32"
+                    >
+                        <div
+                            class="bg-white p-xl rounded-xl shadow-soft border border-outline-variant/30 text-center"
+                        >
+                            <p
+                                class="text-display-lg font-display-lg text-espresso"
+                            >
+                                4.9
+                            </p>
+                            <div
+                                class="flex justify-center text-accent-orange my-sm"
+                            >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                            </div>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Based on 238 verified reviews
+                            </p>
+                            <div class="mt-xl flex flex-col gap-sm">
+                                <div class="flex items-center gap-md">
+                                    <span class="w-4 font-body-sm">5</span>
+                                    <div
+                                        class="flex-1 h-2 bg-surface-container-highest rounded-full overflow-hidden"
+                                    >
+                                        <div
+                                            class="h-full bg-accent-orange w-[92%]"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-md">
+                                    <span class="w-4 font-body-sm">4</span>
+                                    <div
+                                        class="flex-1 h-2 bg-surface-container-highest rounded-full overflow-hidden"
+                                    >
+                                        <div
+                                            class="h-full bg-accent-orange w-[6%]"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-md text-on-surface-variant"
+                                >
+                                    <span class="w-4 font-body-sm">3</span>
+                                    <div
+                                        class="flex-1 h-2 bg-surface-container-highest rounded-full"
+                                    ></div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-md text-on-surface-variant"
+                                >
+                                    <span class="w-4 font-body-sm">2</span>
+                                    <div
+                                        class="flex-1 h-2 bg-surface-container-highest rounded-full"
+                                    ></div>
+                                </div>
+                                <div
+                                    class="flex items-center gap-md text-on-surface-variant"
+                                >
+                                    <span class="w-4 font-body-sm">1</span>
+                                    <div
+                                        class="flex-1 h-2 bg-surface-container-highest rounded-full"
+                                    ></div>
+                                </div>
+                            </div>
+                            <button
+                                class="w-full mt-xl py-sm rounded-full border border-espresso text-espresso font-title-lg hover:bg-espresso hover:text-white transition-all"
+                            >
+                                Write a Review
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Review List -->
+                    <div class="w-full md:w-2/3 flex flex-col gap-lg">
+                        <!-- Review Card 1 -->
+                        <div
+                            class="bg-white p-xl rounded-xl shadow-soft border border-outline-variant/30"
+                        >
+                            <div class="flex justify-between items-start mb-md">
+                                <div class="flex gap-md items-center">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center text-espresso font-bold"
+                                    >
+                                        EM
+                                    </div>
+                                    <div>
+                                        <h5 class="font-title-lg text-espresso">
+                                            Eleanor M.
+                                        </h5>
+                                        <span
+                                            class="inline-flex items-center gap-xs px-sm py-xs bg-green-50 text-green-700 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-green-200"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-[14px]"
+                                                >verified</span
+                                            >
+                                            Verified Purchase
+                                        </span>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-on-surface-variant text-body-sm"
+                                    >2 days ago</span
+                                >
+                            </div>
+                            <div class="flex text-accent-orange mb-sm">
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                            </div>
+                            <p class="text-on-surface-variant leading-relaxed">
+                                Best almond croissant outside of Paris. The
+                                frangipane is so rich and flavorful without
+                                being overly sweet. It arrived still slightly
+                                warm!
+                            </p>
+                        </div>
+                        <!-- Review Card 2 -->
+                        <div
+                            class="bg-white p-xl rounded-xl shadow-soft border border-outline-variant/30"
+                        >
+                            <div class="flex justify-between items-start mb-md">
+                                <div class="flex gap-md items-center">
+                                    <div
+                                        class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-espresso font-bold"
+                                    >
+                                        JH
+                                    </div>
+                                    <div>
+                                        <h5 class="font-title-lg text-espresso">
+                                            James H.
+                                        </h5>
+                                        <span
+                                            class="inline-flex items-center gap-xs px-sm py-xs bg-green-50 text-green-700 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-green-200"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-[14px]"
+                                                >verified</span
+                                            >
+                                            Verified Purchase
+                                        </span>
+                                    </div>
+                                </div>
+                                <span
+                                    class="text-on-surface-variant text-body-sm"
+                                    >1 week ago</span
+                                >
+                            </div>
+                            <div class="flex text-accent-orange mb-sm">
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="
+                                        font-variation-settings: &quot;FILL&quot;
+                                            1;
+                                    "
+                                    >star</span
+                                >
+                            </div>
+                            <p class="text-on-surface-variant leading-relaxed">
+                                Unbelievably flaky. I love how they don't skimp
+                                on the almond slivers on top. Perfect with a
+                                double espresso.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Related Products -->
+        <section class="bg-surface-container-low py-xxl">
+            <div class="max-w-7xl mx-auto px-container-margin">
+                <h2
+                    class="font-headline-lg text-headline-lg text-espresso mb-xxl"
+                >
+                    You might also like
+                </h2>
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg"
+                >
+                    <!-- Related Card 1 -->
+                    <div
+                        class="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-hover transition-all group"
+                    >
+                        <div class="aspect-square overflow-hidden">
+                            <img
+                                alt="Pain au Chocolat"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="A golden-brown pain au chocolat on a white marble surface, two dark chocolate bars peeking through the flaky puff pastry, soft morning light."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVKRsVyV72fFMDlXUWxNsQxX2ox9feX7O_CiGcbGuVMRokgrmdQhk7WuH-REKS6ik9QEe1UO1Ff4C7nEU4-CgjTyQu53GY-RZYTW2PbgfLXDL8KsaLueIL0CcYz7__5TojzArk3aMlnM7NKwimsD_ww8edpOiRntBMjZO8ocwscEMXlKIyHM20vT9-5Qx3PbeCfRONQ-DUuLEDq7-ho4uuDZ65u78FOnwyNEtgED2QYlEiVQ7qrMuSJoF4-SuulAVSZVaIMDD7cw"
+                            />
+                        </div>
+                        <div class="p-lg flex flex-col gap-sm">
+                            <span
+                                class="font-label-caps text-label-caps text-on-surface-variant"
+                                >Pastries</span
+                            >
+                            <h4
+                                class="font-headline-sm text-title-lg text-espresso"
+                            >
+                                Pain au Chocolat
+                            </h4>
+                            <p class="font-title-lg text-accent-orange">
+                                $7.50
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Related Card 2 -->
+                    <div
+                        class="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-hover transition-all group"
+                    >
+                        <div class="aspect-square overflow-hidden">
+                            <img
+                                alt="Classic Croissant"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="A perfectly curved classic French butter croissant with high contrast lighting emphasizing the thin golden crust and airy interior."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsHgQaPjLBXorM4IFTrc7RsLVjzQ2mDCtaIa_t35c0nQPQpkr9YDul1ZBoulmxvXWjWwWZIuBkkWdvRrF4xRDXG_JoPyY396Z9n3H21uJK3GQlTD4qNRIGT7H2z_6hTjTS1sV2qXJLBkZ-6kdh40EmYZF3qvjqFcM3_bMWLabyNzae_vr4L82ouvg34lSMuKzlfFtJ4Jw1plmxDZ4gNzapHwqwu_1Fh65tfpEK9-GrZSNY4XxXgzgDcA6L6Gsh_Zk6XoCD1uRfJQ"
+                            />
+                        </div>
+                        <div class="p-lg flex flex-col gap-sm">
+                            <span
+                                class="font-label-caps text-label-caps text-on-surface-variant"
+                                >Pastries</span
+                            >
+                            <h4
+                                class="font-headline-sm text-title-lg text-espresso"
+                            >
+                                Classic Croissant
+                            </h4>
+                            <p class="font-title-lg text-accent-orange">
+                                $6.00
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Related Card 3 -->
+                    <div
+                        class="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-hover transition-all group"
+                    >
+                        <div class="aspect-square overflow-hidden">
+                            <img
+                                alt="Almond Tart"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="A delicate French almond tart topped with sliced pears and glazed with apricot jam, presented on a dark wooden board."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkrEHblV-APHH7GALmT2kOtw3WewrEQTeJ19yfUB0ZpbA5wbT3a-5tUkbOs1y8XOn4yK994UPHJcnAWn4aUjUSfWrAMDu4EOf5nm5oxtEuX45UPFanZpF4qGAZ-MdSrFGGQNvppnDgkbKodoZ88Cqqw3ReIEgvf4V5LPvV0Kx0wfAUYhSiK32okkHD9n2R2pQdBhP0uTXMlrGAISBo0Tf66Qc4DFI2ry09_BNqMSiPJEClNjlxIeinv89tIBlAJWHp5mB7oW_YmQ"
+                            />
+                        </div>
+                        <div class="p-lg flex flex-col gap-sm">
+                            <span
+                                class="font-label-caps text-label-caps text-on-surface-variant"
+                                >Tarts</span
+                            >
+                            <h4
+                                class="font-headline-sm text-title-lg text-espresso"
+                            >
+                                Pear Almond Tart
+                            </h4>
+                            <p class="font-title-lg text-accent-orange">
+                                $9.50
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Related Card 4 -->
+                    <div
+                        class="bg-white rounded-xl overflow-hidden shadow-soft hover:shadow-hover transition-all group"
+                    >
+                        <div class="aspect-square overflow-hidden">
+                            <img
+                                alt="Danish Pastry"
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                data-alt="A vibrant cherry danish with white icing drizzle and a centerpiece of glossy red cherry compote, high-end pastry photography."
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM9X5WFUmszIkZyS_kJXWt3yd_lM7tEaYzX4WRTupWZHsm_YjSUxhTnQ2CqpJuB8cT9iHA67syTlEHzdAAkTIV5PPYmh0OJDD8s9FwFDOmvvu763_030Uf-EW5jVmMBFmS5zIKcIwT7a9fUi4k_rdh6a27SudvHWaGGWgETc63SkR7vaE4UUsmeDGXERfjALvX90uYwOMR4J3GXfGp9JqNPz8acma2UeKGiSbfxcYHmSmX9iGuWAf7C7Jo_ARFq1dH-uBfclZiTA"
+                            />
+                        </div>
+                        <div class="p-lg flex flex-col gap-sm">
+                            <span
+                                class="font-label-caps text-label-caps text-on-surface-variant"
+                                >Pastries</span
+                            >
+                            <h4
+                                class="font-headline-sm text-title-lg text-espresso"
+                            >
+                                Cherry Danish
+                            </h4>
+                            <p class="font-title-lg text-accent-orange">
+                                $8.00
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-surface-container-highest">
+            <div
+                class="flex flex-col md:flex-row justify-between items-center px-container-margin py-xxl w-full max-w-7xl mx-auto border-t border-outline-variant"
+            >
+                <div
+                    class="flex flex-col gap-sm items-center md:items-start mb-lg md:mb-0"
+                >
+                    <span class="font-display-lg text-headline-sm text-primary"
+                        >Crave Bakery</span
+                    >
+                    <p
+                        class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left"
+                    >
+                        © 2024 Crave Bakery. Artisanal Warmth in Every Bite.
+                    </p>
+                </div>
+                <div class="flex gap-lg flex-wrap justify-center">
+                    <a
+                        class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors"
+                        href="#"
+                        >Privacy Policy</a
+                    >
+                    <a
+                        class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors"
+                        href="#"
+                        >Terms of Service</a
+                    >
+                    <a
+                        class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors"
+                        href="#"
+                        >Contact</a
+                    >
+                    <a
+                        class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors"
+                        href="#"
+                        >Instagram</a
+                    >
+                    <a
+                        class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors"
+                        href="#"
+                        >Facebook</a
+                    >
+                </div>
+            </div>
+        </footer>
+        <script>
+            function switchTab(tabId, el) {
+                // Update Tab Styling
+                const buttons = el.parentElement.querySelectorAll("button");
+                buttons.forEach((btn) => {
+                    btn.classList.remove("active-tab");
+                    btn.classList.add("text-on-surface-variant");
+                });
+                el.classList.add("active-tab");
+                el.classList.remove("text-on-surface-variant");
+
+                // Toggle Content
+                const contents = ["description", "reviews", "ingredients"];
+                contents.forEach((id) => {
+                    const element = document.getElementById(id + "-content");
+                    if (element) element.classList.add("hidden");
+                });
+
+                const activeContent = document.getElementById(
+                    tabId + "-content",
+                );
+                if (activeContent) activeContent.classList.remove("hidden");
+            }
+        </script>
+    </body>
+</html>

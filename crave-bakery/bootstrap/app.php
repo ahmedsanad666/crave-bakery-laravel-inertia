@@ -26,7 +26,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'super-admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
         ]);
 
-        //
+        $middleware->redirectUsersTo(fn (Request $request) =>
+            route($request->user()->defaultRedirectRoute())
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

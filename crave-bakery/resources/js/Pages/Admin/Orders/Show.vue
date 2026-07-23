@@ -184,6 +184,8 @@ const isExpress = computed(() => props.order.delivery_method === 'express');
 
 const isCancelled = computed(() => props.order.status === 'cancelled');
 
+const isCompleted = computed(() => props.order.status === 'delivered');
+
 const paymentConfirmed = computed(
     () =>
         ['paid', 'refunded'].includes(props.order.payment_status) ||
@@ -475,6 +477,7 @@ const refundOrder = () => {
                         Print
                     </button>
                     <Link
+                        v-if="isCompleted"
                         :href="route('admin.orders.invoice', order.id)"
                         class="px-5 py-2 border border-outline-variant rounded-full text-sm font-bold hover:bg-surface-variant transition-colors flex items-center gap-2"
                     >

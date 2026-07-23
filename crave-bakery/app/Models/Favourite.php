@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Database\Factories\FavouriteFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\User;
-use App\Models\Product;
+
 class Favourite extends Model
 {
+    /** @use HasFactory<FavouriteFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'product_id',

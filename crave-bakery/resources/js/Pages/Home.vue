@@ -12,6 +12,7 @@ import {
     IconStarFilled,
     IconStarHalfFilled,
 } from '@tabler/icons-vue';
+import { useCart } from '@/Composables/useCart';
 
 const props = defineProps({
     canLogin: {
@@ -33,6 +34,8 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+const { add } = useCart();
 
 const activeCategory = ref('all');
 
@@ -107,8 +110,12 @@ const testimonials = [
     },
 ];
 
-const handleAddToCart = () => {
-    // Cart wiring comes in Phase 4
+const handleAddToCart = (product) => {
+    if (!product?.slug) {
+        return;
+    }
+
+    add(product.slug, { quantity: 1 });
 };
 
 const starIcons = (rating) => {
@@ -147,7 +154,7 @@ const starIcons = (rating) => {
                     </div>
 
                     <Link
-                        href="/products"
+                        :href="route('products.index')"
                         class="inline-flex rounded-full bg-accent px-xxl py-md font-sans text-body-lg font-bold text-on-primary shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
                     >
                         See Our Menu
@@ -340,7 +347,7 @@ const starIcons = (rating) => {
                     title="Products coming soon"
                     description="Featured products will appear here once they are added in the admin panel."
                 >
-                    <Link href="/products" class="btn-primary">
+                    <Link :href="route('products.index')" class="btn-primary">
                         Browse Products
                     </Link>
                 </EmptyState>

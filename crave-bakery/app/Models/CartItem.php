@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Cart;
+
 class CartItem extends Model
 {
     protected $fillable = [
@@ -14,10 +14,19 @@ class CartItem extends Model
         'quantity',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'selected_attributes' => 'array',
+            'quantity' => 'integer',
+        ];
+    }
+
     public function cart(): BelongsTo
     {
         return $this->belongsTo(Cart::class);
     }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

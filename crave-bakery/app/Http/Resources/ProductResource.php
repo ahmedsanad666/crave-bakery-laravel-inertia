@@ -13,12 +13,16 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $isFavourited = false;
+        $favouritedIds = $request->attributes->get('favourited_product_ids');
 
-        if ($request->user()) {
+        if (is_array($favouritedIds)) {
+            $isFavourited = in_array($this->id, $favouritedIds, true);
+        } elseif ($request->user()) {
             $isFavourited = $this->favourites()
                 ->where('user_id', $request->user()->id)
                 ->exists();
+        } else {
+            $isFavourited = false;
         }
 
         return [
@@ -29,8 +33,8 @@ class ProductResource extends JsonResource
             'regular_price' => (float) $this->regular_price,
             'sale_price' => $this->sale_price !== null ? (float) $this->sale_price : null,
             'thumbnail' => Product::toPublicUrl($this->thumbnail ?? $this->og_image),
-            'average_rating' => 0,
-            'reviews_count' => 0,
+            'average_rating' => round((float) ($this->average_rating ?? 0), 1),
+            'reviews_count' => (int) ($this->reviews_count ?? 0),
             'is_featured' => $this->is_featured,
             'stock_status' => $this->stock_status,
             'badge' => $this->resolveBadge(),
@@ -39,6 +43,7 @@ class ProductResource extends JsonResource
                 fn () => $this->categories->map(fn ($category) => [
                     'id' => $category->id,
                     'name' => $category->name,
+                    'slug' => $category->slug,
                 ])->values(),
             ),
             'is_favourited' => $isFavourited,
@@ -47,14 +52,18 @@ class ProductResource extends JsonResource
 
     private function resolveBadge(): ?string
     {
-        if ($this->is_on_sale && $this->regular_price > 0) {
-            $discount = (int) round((1 - ($this->sale_price / $this->regular_price)) * 100);
-
-            return "{$discount}% Off";
+        if ($this->is_new) {
+            return 'New';
         }
 
         if ($this->is_featured) {
             return 'Best Seller';
+        }
+
+        if ($this->is_on_sale && $this->regular_price > 0) {
+            $discount = (int) round((1 - ($this->sale_price / $this->regular_price)) * 100);
+
+            return "{$discount}% Off";
         }
 
         return null;

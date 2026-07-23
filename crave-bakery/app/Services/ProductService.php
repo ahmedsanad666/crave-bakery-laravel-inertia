@@ -2,10 +2,15 @@
 
 namespace App\Services;
 
+use App\Models\Category;
+use App\Models\Favourite;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Review;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,6 +46,341 @@ class ProductService
             ->latest()
             ->paginate(max(1, min($perPage, 100)))
             ->withQueryString();
+    }
+
+    /**
+     * Public shop catalogue: published products only + shop filters/facets.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array{
+     *     products: LengthAwarePaginator,
+     *     categoryOptions: list<array{id: int|null, name: string, products_count: int}>,
+     *     priceBounds: array{min: float, max: float},
+     *     filters: array<string, mixed>,
+     *     favourited_product_ids: list<int>
+     * }
+     */
+    public function paginateForShop(array $filters = []): array
+    {
+        $normalized = $this->normalizeShopFilters($filters);
+        $perPage = (int) $normalized['per_page'];
+
+        $approvedReviews = fn ($query) => $query->where('status', 'approved');
+
+        $products = Product::query()
+            ->published()
+            ->with('categories')
+            ->withAvg(['reviews as average_rating' => $approvedReviews], 'rating')
+            ->withCount(['reviews as reviews_count' => $approvedReviews])
+            ->search($normalized['search'])
+            ->inCategory($normalized['category_id'])
+            ->priceRange($normalized['price_min'], $normalized['price_max'])
+            ->availability($normalized['in_stock'], $normalized['out_of_stock'])
+            ->minRating($normalized['min_rating'])
+            ->sorted($normalized['sort'])
+            ->paginate(max(1, min($perPage, 48)))
+            ->withQueryString();
+
+        $favouritedIds = [];
+        $userId = auth()->id();
+
+        if ($userId) {
+            $favouritedIds = Favourite::query()
+                ->where('user_id', $userId)
+                ->whereIn('product_id', $products->getCollection()->pluck('id'))
+                ->pluck('product_id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+        }
+
+        return [
+            'products' => $products,
+            'categoryOptions' => $this->shopCategoryOptions(),
+            'priceBounds' => $this->shopPriceBounds(),
+            'filters' => $normalized,
+            'favourited_product_ids' => $favouritedIds,
+        ];
+    }
+
+    /**
+     * Public product detail: published product + gallery, attributes, related, reviews.
+     *
+     * @return array{
+     *     product: Product,
+     *     attributes: list<array<string, mixed>>,
+     *     gallery: list<array{id: int|null, url: string}>,
+     *     relatedProducts: EloquentCollection<int, Product>,
+     *     reviews: array{
+     *         average_rating: float,
+     *         reviews_count: int,
+     *         rating_breakdown: array<int, int>,
+     *         items: EloquentCollection<int, Review>
+     *     },
+     *     is_favourited: bool
+     * }
+     */
+    public function findForShop(Product $product): array
+    {
+        $approvedReviews = fn ($query) => $query->where('status', 'approved');
+
+        $product = Product::query()
+            ->published()
+            ->whereKey($product->id)
+            ->with([
+                'categories',
+                'images',
+                'attributeValues.attribute',
+            ])
+            ->withAvg(['reviews as average_rating' => $approvedReviews], 'rating')
+            ->withCount(['reviews as reviews_count' => $approvedReviews])
+            ->firstOrFail();
+
+        $isFavourited = false;
+        $userId = auth()->id();
+
+        if ($userId) {
+            $isFavourited = Favourite::query()
+                ->where('user_id', $userId)
+                ->where('product_id', $product->id)
+                ->exists();
+        }
+
+        return [
+            'product' => $product,
+            'attributes' => $this->shopProductAttributes($product),
+            'gallery' => $this->shopProductGallery($product),
+            'relatedProducts' => $this->shopRelatedProducts($product),
+            'reviews' => $this->shopProductReviews($product),
+            'is_favourited' => $isFavourited,
+        ];
+    }
+
+    /**
+     * @return list<array{id: int|null, url: string}>
+     */
+    private function shopProductGallery(Product $product): array
+    {
+        $gallery = [];
+        $seen = [];
+
+        $push = function (?string $path, ?int $id = null) use (&$gallery, &$seen): void {
+            $url = Product::toPublicUrl($path);
+
+            if (! $url || isset($seen[$url])) {
+                return;
+            }
+
+            $seen[$url] = true;
+            $gallery[] = [
+                'id' => $id,
+                'url' => $url,
+            ];
+        };
+
+        $push($product->thumbnail ?? $product->og_image);
+
+        foreach ($product->images as $image) {
+            $push($image->path, (int) $image->id);
+        }
+
+        return $gallery;
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function shopProductAttributes(Product $product): array
+    {
+        return $product->attributeValues
+            ->groupBy('attribute_id')
+            ->map(function (Collection $values) {
+                /** @var \App\Models\AttributeValue $first */
+                $first = $values->first();
+                $attribute = $first->attribute;
+
+                if (! $attribute) {
+                    return null;
+                }
+
+                $sortedValues = $values
+                    ->sortBy([
+                        ['sort_order', 'asc'],
+                        ['value', 'asc'],
+                    ])
+                    ->values()
+                    ->map(fn ($value) => [
+                        'id' => $value->id,
+                        'value' => $value->value,
+                        'color_swatch' => $value->color_swatch,
+                        'sort_order' => (int) $value->sort_order,
+                    ])
+                    ->all();
+
+                return [
+                    'id' => $attribute->id,
+                    'name' => $attribute->name,
+                    'type' => $attribute->type,
+                    'display_type' => $attribute->display_type,
+                    'sort_order' => (int) $attribute->sort_order,
+                    'values' => $sortedValues,
+                ];
+            })
+            ->filter()
+            ->sortBy('sort_order')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return EloquentCollection<int, Product>
+     */
+    private function shopRelatedProducts(Product $product): EloquentCollection
+    {
+        $categoryIds = $product->categories->pluck('id');
+
+        if ($categoryIds->isEmpty()) {
+            return new EloquentCollection;
+        }
+
+        $approvedReviews = fn ($query) => $query->where('status', 'approved');
+
+        return Product::query()
+            ->published()
+            ->whereKeyNot($product->id)
+            ->whereHas(
+                'categories',
+                fn ($query) => $query->whereIn('categories.id', $categoryIds),
+            )
+            ->with('categories')
+            ->withAvg(['reviews as average_rating' => $approvedReviews], 'rating')
+            ->withCount(['reviews as reviews_count' => $approvedReviews])
+            ->latest('published_at')
+            ->limit(4)
+            ->get();
+    }
+
+    /**
+     * @return array{
+     *     average_rating: float,
+     *     reviews_count: int,
+     *     rating_breakdown: array<int, int>,
+     *     items: EloquentCollection<int, Review>
+     * }
+     */
+    private function shopProductReviews(Product $product): array
+    {
+        $breakdownRows = Review::query()
+            ->where('product_id', $product->id)
+            ->where('status', 'approved')
+            ->selectRaw('rating, COUNT(*) as aggregate')
+            ->groupBy('rating')
+            ->pluck('aggregate', 'rating');
+
+        $ratingBreakdown = [];
+        for ($star = 5; $star >= 1; $star--) {
+            $ratingBreakdown[$star] = (int) ($breakdownRows[$star] ?? 0);
+        }
+
+        $items = Review::query()
+            ->where('product_id', $product->id)
+            ->where('status', 'approved')
+            ->with('user:id,name,avatar')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        return [
+            'average_rating' => round((float) ($product->average_rating ?? 0), 1),
+            'reviews_count' => (int) ($product->reviews_count ?? 0),
+            'rating_breakdown' => $ratingBreakdown,
+            'items' => $items,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function normalizeShopFilters(array $filters): array
+    {
+        $categoryId = $filters['category_id'] ?? null;
+
+        return [
+            'search' => filled($filters['search'] ?? null) ? (string) $filters['search'] : null,
+            'category_id' => filled($categoryId) ? (int) $categoryId : null,
+            'price_min' => isset($filters['price_min']) && $filters['price_min'] !== ''
+                ? (float) $filters['price_min']
+                : null,
+            'price_max' => isset($filters['price_max']) && $filters['price_max'] !== ''
+                ? (float) $filters['price_max']
+                : null,
+            'min_rating' => isset($filters['min_rating']) && $filters['min_rating'] !== ''
+                ? (float) $filters['min_rating']
+                : null,
+            'in_stock' => array_key_exists('in_stock', $filters)
+                ? filter_var($filters['in_stock'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
+                : null,
+            'out_of_stock' => array_key_exists('out_of_stock', $filters)
+                ? filter_var($filters['out_of_stock'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)
+                : null,
+            'sort' => filled($filters['sort'] ?? null) ? (string) $filters['sort'] : 'recommended',
+            'per_page' => (int) ($filters['per_page'] ?? 9),
+        ];
+    }
+
+    /**
+     * @return list<array{id: int|null, name: string, products_count: int}>
+     */
+    private function shopCategoryOptions(): array
+    {
+        $publishedConstraint = fn ($query) => $query->published();
+
+        $total = Product::query()->published()->count();
+
+        $categories = Category::query()
+            ->status('active')
+            ->ordered()
+            ->withCount(['products' => $publishedConstraint])
+            ->get()
+            ->map(fn (Category $category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'products_count' => (int) $category->products_count,
+            ])
+            ->values()
+            ->all();
+
+        return array_merge([
+            [
+                'id' => null,
+                'name' => 'All',
+                'products_count' => $total,
+            ],
+        ], $categories);
+    }
+
+    /**
+     * @return array{min: float, max: float}
+     */
+    private function shopPriceBounds(): array
+    {
+        $row = Product::query()
+            ->published()
+            ->selectRaw('MIN(COALESCE(sale_price, regular_price)) as min_price')
+            ->selectRaw('MAX(COALESCE(sale_price, regular_price)) as max_price')
+            ->first();
+
+        $min = (float) ($row?->min_price ?? 0);
+        $max = (float) ($row?->max_price ?? 0);
+
+        if ($max < $min) {
+            $max = $min;
+        }
+
+        return [
+            'min' => round($min, 2),
+            'max' => round(max($max, $min), 2),
+        ];
     }
 
     /**

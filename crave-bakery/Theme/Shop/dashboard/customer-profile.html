@@ -1,0 +1,314 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>My Profile | Crave Bakery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .password-strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        body {
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#825343",
+                      "outline": "#84746f",
+                      "on-secondary-fixed-variant": "#862200",
+                      "surface": "#fcf9f8",
+                      "on-surface-variant": "#514440",
+                      "error-container": "#ffdad6",
+                      "surface-container-low": "#f6f3f2",
+                      "secondary-container": "#fc6537",
+                      "on-primary-container": "#b47e6d",
+                      "on-background": "#1c1b1b",
+                      "outline-variant": "#d6c2bd",
+                      "surface-variant": "#e5e2e1",
+                      "tertiary": "#110f0a",
+                      "on-tertiary-container": "#8f8b84",
+                      "secondary": "#b02f00",
+                      "on-tertiary-fixed-variant": "#4a4641",
+                      "background": "#fcf9f8",
+                      "tertiary-container": "#26241f",
+                      "surface-container-highest": "#e5e2e1",
+                      "primary-fixed": "#ffdbd0",
+                      "secondary-fixed-dim": "#ffb59f",
+                      "surface-dim": "#dcd9d9",
+                      "on-surface": "#1c1b1b",
+                      "on-secondary-container": "#5c1400",
+                      "inverse-on-surface": "#f3f0ef",
+                      "inverse-primary": "#f6b8a5",
+                      "tertiary-fixed": "#e8e1da",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#3b0a00",
+                      "tertiary-fixed-dim": "#ccc6be",
+                      "on-primary-fixed-variant": "#663c2d",
+                      "inverse-surface": "#313030",
+                      "on-primary-fixed": "#321207",
+                      "surface-container-high": "#eae7e7",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed": "#ffdbd1",
+                      "primary": "#220601",
+                      "on-tertiary-fixed": "#1e1b17",
+                      "on-secondary": "#ffffff",
+                      "surface-container": "#f0eded",
+                      "primary-container": "#3d1a0e",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "primary-fixed-dim": "#f6b8a5",
+                      "surface-bright": "#fcf9f8",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xxl": "48px",
+                      "unit": "4px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "gutter": "16px",
+                      "container-margin": "24px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "xs": "4px"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "headline-md": ["Playfair Display"],
+                      "headline-lg": ["Playfair Display"],
+                      "headline-sm": ["Playfair Display"],
+                      "body-sm": ["Inter"],
+                      "display-lg-mobile": ["Playfair Display"],
+                      "label-caps": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Playfair Display"]
+              },
+              "fontSize": {
+                      "title-lg": ["18px", {"lineHeight": "1.5", "fontWeight": "600"}],
+                      "headline-md": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "headline-lg": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-sm": ["22px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "display-lg-mobile": ["36px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-lg text-on-surface">
+<!-- Top AppBar -->
+<header class="w-full top-0 sticky bg-surface shadow-sm z-50">
+<div class="flex justify-between items-center px-lg py-md w-full max-w-[1200px] mx-auto">
+<div class="font-headline-lg text-headline-lg text-secondary">Crave Bakery</div>
+<div class="flex items-center gap-md">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="h-10 pl-10 pr-4 rounded-full border border-outline-variant bg-surface-container-lowest focus:border-secondary outline-none text-body-sm w-64" placeholder="Search pastries..." type="text">
+</div>
+<button class="material-symbols-outlined text-secondary cursor-pointer active:opacity-80">shopping_basket</button>
+<button class="material-symbols-outlined text-secondary cursor-pointer active:opacity-80">notifications</button>
+<img alt="User profile avatar" class="w-10 h-10 rounded-full border-2 border-secondary-fixed-dim" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBm-CIh8ToanuvPKH4GRdjsgS7BmqfijdRBKamD6MgM6hP1ieA1uH-1p1LJULccW9xf8rVgsqQDpUR6SSdkBgsx9MatxR0Jf5OItL-aZ37l-WkKZ49PTUokViiKplRkxY3j8VP-jeRUaTkhaYSH8GrjZ-ioBvJ8f3FbrcFxBL3S8vkBjuScCNL2fS94UFkOHHmIfBIKn92yi07RQu1-eZrMkaqXzidWKGKRamfCcB_Miuhzl2zA9-nPqEzfWctl7Nl7BMc5nntklQ">
+</div>
+</div>
+</header>
+<div class="flex max-w-[1200px] mx-auto min-h-[calc(100vh-80px)]">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full w-64 p-md space-y-md bg-surface-container-low border-r border-outline-variant/30">
+<div class="flex flex-col items-center py-lg border-b border-outline-variant/30 mb-md">
+<img alt="Premium Member Avatar" class="w-16 h-16 rounded-full mb-md shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxYQ1XhPozYVKhV2tFZJRQMXCeJ1IKUGK3kNjBgPn547F2J6wfysTM9xKgT_46s6nNsPVFpo7dBc8_roPT_dV58lfSIbt3WJPkiEI8Hf_6wya_iaLttbDw1woUVjJVk3tzUQpakNyM2h7070sW3KwNVH_lfKTFyf-LpOBcXDjpdRMhhO7p5BZG0JKcUGywwqU7nftIS0ZozoJ_4_Xrn2-HMWpPpp7_bAfto_rLn-hifYl4Lnfy2uyiOs1bFv59LwXK_Fjowtam1A">
+<h3 class="font-headline-sm text-headline-sm text-primary">Sarah Johnson</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Gold Member since 2023</p>
+<button class="mt-md px-md py-xs bg-secondary-container text-on-secondary-container rounded-full font-label-caps text-label-caps hover:bg-secondary transition-colors">Upgrade Membership</button>
+</div>
+<nav class="flex flex-col space-y-unit">
+<a class="flex items-center gap-md px-md py-md text-secondary font-bold border-r-4 border-secondary bg-surface-variant/20 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-body-lg text-body-lg">Profile Details</span>
+</a>
+<a class="flex items-center gap-md px-md py-md text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-lg text-body-lg">Order History</span>
+</a>
+<a class="flex items-center gap-md px-md py-md text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-body-lg text-body-lg">Order Tracking</span>
+</a>
+<a class="flex items-center gap-md px-md py-md text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home_pin">home_pin</span>
+<span class="font-body-lg text-body-lg">Addresses</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-lg md:p-xl space-y-xl">
+<!-- Header -->
+<section class="space-y-xs">
+<h1 class="font-headline-md text-headline-md text-primary">My Profile</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Keep your details up to date</p>
+</section>
+<!-- Grid Layout for Cards -->
+<div class="grid grid-cols-1 gap-xl">
+<!-- Personal Information Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-surface-container-low">
+<h2 class="font-title-lg text-title-lg text-primary">Personal Information</h2>
+</div>
+<div class="p-lg">
+<form class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">First Name</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none transition-colors" type="text" value="Sarah">
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Last Name</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none transition-colors" type="text" value="Johnson">
+</div>
+<div class="space-y-unit md:col-span-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant flex items-center justify-between">
+                                    Email
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Verified</span>
+</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-low text-on-surface-variant outline-none" readonly="" type="email" value="sarah@example.com">
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Phone Number</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none transition-colors" placeholder="+1 (555) 000-0000" type="tel">
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Date of Birth</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none transition-colors" type="date">
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Gender</label>
+<select class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none transition-colors">
+<option>Select Gender</option>
+<option>Female</option>
+<option>Male</option>
+<option>Non-binary</option>
+<option>Prefer not to say</option>
+</select>
+</div>
+<div class="md:col-span-2 flex gap-md pt-md">
+<button class="px-xl py-3 bg-[#E8572A] text-white rounded-full font-title-lg text-body-lg hover:shadow-[0_4px_16px_rgba(0,0,0,0.1)] transition-all active:scale-95" type="submit">Save Changes</button>
+<button class="px-xl py-3 border border-primary text-primary rounded-full font-title-lg text-body-lg hover:bg-surface-variant/10 transition-all" type="button">Cancel</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Change Password Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.07)] overflow-hidden">
+<div class="px-lg py-md border-b border-outline-variant bg-surface-container-low">
+<h2 class="font-title-lg text-title-lg text-primary">Security</h2>
+</div>
+<div class="p-lg max-w-2xl">
+<form class="space-y-lg">
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Current Password</label>
+<div class="relative">
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none" placeholder="••••••••" type="password">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer">visibility</span>
+</div>
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">New Password</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none" id="new-password" placeholder="Enter new password" type="password">
+<div class="w-full bg-surface-variant rounded-full mt-2 h-1 overflow-hidden">
+<div class="h-full bg-secondary w-1/3 transition-all" id="strength-meter"></div>
+</div>
+<p class="text-[10px] text-on-surface-variant font-medium">Password strength: Weak</p>
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Confirm New Password</label>
+<input class="w-full h-12 px-md rounded-lg border border-outline-variant bg-surface-container-lowest focus:border-primary outline-none" placeholder="Re-enter new password" type="password">
+</div>
+<button class="px-xl py-3 border border-primary text-primary rounded-full font-title-lg text-body-lg hover:bg-surface-variant/10 transition-all">Update Password</button>
+</form>
+</div>
+</div>
+<!-- Danger Zone Card -->
+<div class="bg-error-container/20 border border-error/20 rounded-xl overflow-hidden mb-xl">
+<div class="px-lg py-md border-b border-error/10 bg-error-container/30">
+<h2 class="font-title-lg text-title-lg text-error">Danger Zone</h2>
+</div>
+<div class="p-lg flex flex-col md:flex-row md:items-center justify-between gap-lg">
+<div>
+<p class="font-body-lg text-body-lg text-primary font-bold">Delete Account</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Once you delete your account, there is no going back. Please be certain.</p>
+</div>
+<button class="px-xl py-3 border border-error text-error rounded-full font-title-lg text-body-lg hover:bg-error/10 transition-all text-center">Delete My Account</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full bg-tertiary-container border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center px-lg py-xl w-full max-w-[1200px] mx-auto">
+<div class="font-headline-sm text-headline-sm text-tertiary-fixed mb-md md:mb-0">Crave Bakery</div>
+<div class="flex flex-col items-center md:items-end gap-sm">
+<div class="flex gap-lg font-body-sm text-body-sm text-on-tertiary-container/80">
+<a class="hover:text-secondary underline-offset-4 hover:underline" href="#">Privacy Policy</a>
+<a class="hover:text-secondary underline-offset-4 hover:underline" href="#">Terms of Service</a>
+<a class="hover:text-secondary underline-offset-4 hover:underline" href="#">Contact Support</a>
+</div>
+<p class="font-body-sm text-body-sm text-on-tertiary-container/80 mt-2">© 2024 Crave Bakery Artisanal Delights</p>
+</div>
+</div>
+</footer>
+<!-- Interactive Scripts -->
+<script>
+        document.getElementById('new-password')?.addEventListener('input', function(e) {
+            const meter = document.getElementById('strength-meter');
+            const val = e.target.value;
+            if (val.length === 0) {
+                meter.style.width = '0%';
+                meter.style.backgroundColor = '#e5e2e1';
+            } else if (val.length < 6) {
+                meter.style.width = '25%';
+                meter.style.backgroundColor = '#ba1a1a';
+            } else if (val.length < 10) {
+                meter.style.width = '60%';
+                meter.style.backgroundColor = '#b02f00';
+            } else {
+                meter.style.width = '100%';
+                meter.style.backgroundColor = '#16a34a';
+            }
+        });
+
+        // Simple tab hover interaction simulation
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if(link.getAttribute('href') === '#') e.preventDefault();
+                navLinks.forEach(l => {
+                    l.className = "flex items-center gap-md px-md py-md text-on-surface-variant hover:bg-surface-variant/10 hover:text-secondary transition-all duration-200";
+                    l.querySelector('span:last-child').className = "font-body-lg text-body-lg";
+                });
+                link.className = "flex items-center gap-md px-md py-md text-secondary font-bold border-r-4 border-secondary bg-surface-variant/20 transition-all duration-200";
+            });
+        });
+    </script>
+</body></html>

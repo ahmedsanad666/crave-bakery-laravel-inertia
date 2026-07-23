@@ -58,8 +58,8 @@ class HandleInertiaRequests extends Middleware
                 'address' => SiteSettingService::get('address'),
             ],
             'cart' => [
-                'count' => CartService::getCount($request),
-            ]
+                'count' => app(CartService::class)->getCount($request),
+            ],
 
         ];
     }
