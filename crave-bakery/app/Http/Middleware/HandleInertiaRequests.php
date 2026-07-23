@@ -48,15 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
-            'siteSettings' => [
-                'site_name' => SiteSettingService::get('name') ?? 'Crave Bakery',
-                'about' => SiteSettingService::get('about'),
-                'logo' => SiteSettingService::get('logo'),
-                'favicon' => SiteSettingService::get('favicon'),
-                'email' => SiteSettingService::get('email'),
-                'phone' => SiteSettingService::get('phone'),
-                'address' => SiteSettingService::get('address'),
-            ],
+            'siteSettings' => app(SiteSettingService::class)->publicPayload(),
             'cart' => [
                 'count' => app(CartService::class)->getCount($request),
             ],

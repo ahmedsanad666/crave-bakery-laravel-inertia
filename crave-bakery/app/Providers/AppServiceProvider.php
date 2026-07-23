@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\AdminUser;
+use App\Models\SiteSetting;
 use App\Models\User;
 use App\Policies\AdminUserPolicy;
 use App\Policies\CustomerPolicy;
+use App\Policies\SiteSettingPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
@@ -30,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(User::class, CustomerPolicy::class);
         Gate::policy(AdminUser::class, AdminUserPolicy::class);
+        Gate::policy(SiteSetting::class, SiteSettingPolicy::class);
 
         Route::bind('customer', function (string $value) {
             return User::query()

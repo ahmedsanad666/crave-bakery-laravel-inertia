@@ -1,6 +1,17 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
+/** @param {string} variable */
+function withOpacity(variable) {
+    return ({ opacityValue }) => {
+        if (opacityValue === undefined) {
+            return `var(${variable})`;
+        }
+
+        return `color-mix(in srgb, var(${variable}) calc(${opacityValue} * 100%), transparent)`;
+    };
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -13,69 +24,69 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Crave Bakery semantic aliases (used in components & brief)
-                primary: '#3D1A0E',
-                accent: '#E8572A',
-                surface: '#FDF6EE',
-                card: '#FFFFFF',
-                'text-primary': '#1A1A1A',
-                'text-muted': '#6B6B6B',
-                'border-base': '#E5DDD4',
-                success: '#2E7D32',
-                error: '#C62828',
-                warning: '#EF9F27',
-                info: '#185FA5',
+                // Semantic aliases — runtime via CSS variables
+                primary: withOpacity('--color-primary'),
+                accent: withOpacity('--color-accent'),
+                surface: withOpacity('--color-surface'),
+                card: withOpacity('--color-card'),
+                'text-primary': withOpacity('--color-text-primary'),
+                'text-muted': withOpacity('--color-text-muted'),
+                'border-base': withOpacity('--color-border-base'),
+                success: withOpacity('--color-success'),
+                error: withOpacity('--color-error'),
+                warning: withOpacity('--color-warning'),
+                info: withOpacity('--color-info'),
 
-                // Artisanal Warmth — Material-style tokens
-                'surface-dim': '#dcd9d9',
-                'surface-bright': '#fcf9f8',
-                'surface-container-lowest': '#ffffff',
-                'surface-container-low': '#f6f3f2',
-                'surface-container': '#f0eded',
-                'surface-container-high': '#eae7e7',
-                'surface-container-highest': '#e5e2e1',
-                'on-surface': '#1c1b1b',
-                'on-surface-variant': '#514440',
-                'inverse-surface': '#313030',
-                'inverse-on-surface': '#f3f0ef',
-                outline: '#84746f',
-                'outline-variant': '#d6c2bd',
-                'surface-tint': '#825343',
-                'on-primary': '#ffffff',
-                'primary-container': '#3d1a0e',
-                'on-primary-container': '#b47e6d',
-                'inverse-primary': '#f6b8a5',
-                secondary: '#b02f00',
-                'on-secondary': '#ffffff',
-                'secondary-container': '#fc6537',
-                'on-secondary-container': '#5c1400',
-                tertiary: '#110f0a',
-                'on-tertiary': '#ffffff',
-                'tertiary-container': '#26241f',
-                'on-tertiary-container': '#8f8b84',
-                'on-error': '#ffffff',
-                'error-container': '#ffdad6',
-                'on-error-container': '#93000a',
-                'primary-fixed': '#ffdbd0',
-                'primary-fixed-dim': '#f6b8a5',
-                'on-primary-fixed': '#321207',
-                'on-primary-fixed-variant': '#663c2d',
-                'secondary-fixed': '#ffdbd1',
-                'secondary-fixed-dim': '#ffb59f',
-                'on-secondary-fixed': '#3b0a00',
-                'on-secondary-fixed-variant': '#862200',
-                'tertiary-fixed': '#e8e1da',
-                'tertiary-fixed-dim': '#ccc6be',
-                'on-tertiary-fixed': '#1e1b17',
-                'on-tertiary-fixed-variant': '#4a4641',
-                background: '#fcf9f8',
-                'on-background': '#1c1b1b',
-                'surface-variant': '#e5e2e1',
+                // Material-style tokens
+                'surface-dim': withOpacity('--color-surface-dim'),
+                'surface-bright': withOpacity('--color-surface-bright'),
+                'surface-container-lowest': withOpacity('--color-surface-container-lowest'),
+                'surface-container-low': withOpacity('--color-surface-container-low'),
+                'surface-container': withOpacity('--color-surface-container'),
+                'surface-container-high': withOpacity('--color-surface-container-high'),
+                'surface-container-highest': withOpacity('--color-surface-container-highest'),
+                'on-surface': withOpacity('--color-on-surface'),
+                'on-surface-variant': withOpacity('--color-on-surface-variant'),
+                'inverse-surface': withOpacity('--color-inverse-surface'),
+                'inverse-on-surface': withOpacity('--color-inverse-on-surface'),
+                outline: withOpacity('--color-outline'),
+                'outline-variant': withOpacity('--color-outline-variant'),
+                'surface-tint': withOpacity('--color-surface-tint'),
+                'on-primary': withOpacity('--color-on-primary'),
+                'primary-container': withOpacity('--color-primary-container'),
+                'on-primary-container': withOpacity('--color-on-primary-container'),
+                'inverse-primary': withOpacity('--color-inverse-primary'),
+                secondary: withOpacity('--color-secondary'),
+                'on-secondary': withOpacity('--color-on-secondary'),
+                'secondary-container': withOpacity('--color-secondary-container'),
+                'on-secondary-container': withOpacity('--color-on-secondary-container'),
+                tertiary: withOpacity('--color-tertiary'),
+                'on-tertiary': withOpacity('--color-on-tertiary'),
+                'tertiary-container': withOpacity('--color-tertiary-container'),
+                'on-tertiary-container': withOpacity('--color-on-tertiary-container'),
+                'on-error': withOpacity('--color-on-error'),
+                'error-container': withOpacity('--color-error-container'),
+                'on-error-container': withOpacity('--color-on-error-container'),
+                'primary-fixed': withOpacity('--color-primary-fixed'),
+                'primary-fixed-dim': withOpacity('--color-primary-fixed-dim'),
+                'on-primary-fixed': withOpacity('--color-on-primary-fixed'),
+                'on-primary-fixed-variant': withOpacity('--color-on-primary-fixed-variant'),
+                'secondary-fixed': withOpacity('--color-secondary-fixed'),
+                'secondary-fixed-dim': withOpacity('--color-secondary-fixed-dim'),
+                'on-secondary-fixed': withOpacity('--color-on-secondary-fixed'),
+                'on-secondary-fixed-variant': withOpacity('--color-on-secondary-fixed-variant'),
+                'tertiary-fixed': withOpacity('--color-tertiary-fixed'),
+                'tertiary-fixed-dim': withOpacity('--color-tertiary-fixed-dim'),
+                'on-tertiary-fixed': withOpacity('--color-on-tertiary-fixed'),
+                'on-tertiary-fixed-variant': withOpacity('--color-on-tertiary-fixed-variant'),
+                background: withOpacity('--color-background'),
+                'on-background': withOpacity('--color-on-background'),
+                'surface-variant': withOpacity('--color-surface-variant'),
             },
 
             fontFamily: {
-                serif: ['Playfair Display', 'Georgia', 'serif'],
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                serif: ['var(--font-heading)', 'Georgia', 'serif'],
+                sans: ['var(--font-body)', ...defaultTheme.fontFamily.sans],
             },
 
             fontSize: {

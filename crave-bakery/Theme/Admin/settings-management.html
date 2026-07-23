@@ -1,0 +1,1473 @@
+<!doctype html>
+<html class="light" lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Crave Bakery Admin - Site Configuration</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            .code-editor {
+                font-family: "Courier New", Courier, monospace;
+                background: #1e1e1e;
+                color: #d4d4d4;
+            }
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #d6c2bd;
+                border-radius: 10px;
+            }
+            .sticky-nav-active {
+                border-left: 4px solid #b02f00;
+                background-color: #ffdbd1;
+                color: #3b0a00;
+            }
+        </style>
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            tertiary: "#110f0a",
+                            "on-tertiary-container": "#8f8b84",
+                            "inverse-surface": "#313030",
+                            "secondary-fixed-dim": "#ffb59f",
+                            "on-primary": "#ffffff",
+                            "inverse-primary": "#f6b8a5",
+                            "surface-container-low": "#f6f3f2",
+                            "on-secondary-fixed": "#3b0a00",
+                            "on-error-container": "#93000a",
+                            "on-primary-fixed-variant": "#663c2d",
+                            "primary-fixed-dim": "#f6b8a5",
+                            primary: "#220601",
+                            "on-surface-variant": "#514440",
+                            "on-primary-container": "#b47e6d",
+                            surface: "#fcf9f8",
+                            "on-tertiary-fixed": "#1e1b17",
+                            "surface-dim": "#dcd9d9",
+                            "on-secondary-fixed-variant": "#862200",
+                            "error-container": "#ffdad6",
+                            "secondary-container": "#fc6537",
+                            "inverse-on-surface": "#f3f0ef",
+                            "on-surface": "#1c1b1b",
+                            outline: "#84746f",
+                            background: "#fcf9f8",
+                            "on-error": "#ffffff",
+                            "surface-tint": "#825343",
+                            "on-background": "#1c1b1b",
+                            "primary-container": "#3d1a0e",
+                            "on-tertiary-fixed-variant": "#4a4641",
+                            "tertiary-fixed": "#e8e1da",
+                            "primary-fixed": "#ffdbd0",
+                            "on-secondary-container": "#5c1400",
+                            "surface-variant": "#e5e2e1",
+                            "surface-container-high": "#eae7e7",
+                            secondary: "#b02f00",
+                            error: "#ba1a1a",
+                            "surface-bright": "#fcf9f8",
+                            "surface-container": "#f0eded",
+                            "outline-variant": "#d6c2bd",
+                            "tertiary-fixed-dim": "#ccc6be",
+                            "on-tertiary": "#ffffff",
+                            "on-secondary": "#ffffff",
+                            "surface-container-highest": "#e5e2e1",
+                            "secondary-fixed": "#ffdbd1",
+                            "surface-container-lowest": "#ffffff",
+                            "tertiary-container": "#26241f",
+                            "on-primary-fixed": "#321207",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        spacing: {
+                            xl: "32px",
+                            md: "16px",
+                            sm: "8px",
+                            "container-margin": "24px",
+                            gutter: "16px",
+                            unit: "4px",
+                            xxl: "48px",
+                            xs: "4px",
+                            lg: "24px",
+                        },
+                        fontFamily: {
+                            "body-lg": ["Inter"],
+                            "headline-md": ["Playfair Display"],
+                            "body-sm": ["Inter"],
+                            "label-caps": ["Inter"],
+                            "title-lg": ["Inter"],
+                            "display-lg": ["Playfair Display"],
+                            "headline-sm": ["Playfair Display"],
+                            "headline-lg": ["Playfair Display"],
+                        },
+                        fontSize: {
+                            "body-lg": [
+                                "16px",
+                                { lineHeight: "1.6", fontWeight: "400" },
+                            ],
+                            "headline-md": [
+                                "28px",
+                                { lineHeight: "1.3", fontWeight: "600" },
+                            ],
+                            "body-sm": [
+                                "14px",
+                                { lineHeight: "1.5", fontWeight: "400" },
+                            ],
+                            "label-caps": [
+                                "12px",
+                                {
+                                    lineHeight: "1",
+                                    letterSpacing: "0.05em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                            "title-lg": [
+                                "18px",
+                                { lineHeight: "1.5", fontWeight: "600" },
+                            ],
+                            "display-lg": [
+                                "48px",
+                                {
+                                    lineHeight: "1.2",
+                                    letterSpacing: "-0.02em",
+                                    fontWeight: "700",
+                                },
+                            ],
+                            "headline-sm": [
+                                "22px",
+                                { lineHeight: "1.3", fontWeight: "600" },
+                            ],
+                            "headline-lg": [
+                                "36px",
+                                { lineHeight: "1.2", fontWeight: "700" },
+                            ],
+                        },
+                    },
+                },
+            };
+        </script>
+    </head>
+    <body
+        class="bg-background font-body-lg text-on-background selection:bg-secondary-fixed selection:text-on-secondary-fixed"
+    >
+        <!-- Admin Side Bar (Shared Component Anchor) -->
+        <aside
+            class="h-screen w-64 fixed left-0 top-0 overflow-y-auto bg-primary-container shadow-md flex flex-col py-md z-50"
+        >
+            <div class="px-md mb-xl">
+                <h1
+                    class="font-headline-md text-headline-md font-bold text-on-primary-container"
+                >
+                    Crave Bakery
+                </h1>
+                <p
+                    class="font-label-caps text-label-caps text-on-primary-fixed-variant opacity-80"
+                >
+                    Artisanal Admin
+                </p>
+            </div>
+            <nav class="flex-1 space-y-1">
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span
+                        class="material-symbols-outlined"
+                        data-icon="dashboard"
+                        >dashboard</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Dashboard</span
+                    >
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span
+                        class="material-symbols-outlined"
+                        data-icon="bakery_dining"
+                        >bakery_dining</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Products</span
+                    >
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span
+                        class="material-symbols-outlined"
+                        data-icon="shopping_cart"
+                        >shopping_cart</span
+                    >
+                    <span class="font-label-caps text-label-caps">Orders</span>
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span
+                        class="material-symbols-outlined"
+                        data-icon="format_list_bulleted"
+                        >format_list_bulleted</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Attributes</span
+                    >
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span class="material-symbols-outlined" data-icon="group"
+                        >group</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Customers</span
+                    >
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2 transition-all hover:bg-primary-fixed-dim hover:text-on-primary-fixed"
+                    href="#"
+                >
+                    <span
+                        class="material-symbols-outlined"
+                        data-icon="leaderboard"
+                        >leaderboard</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Analytics</span
+                    >
+                </a>
+            </nav>
+            <div
+                class="mt-auto border-t border-on-primary-fixed-variant/20 pt-md"
+            >
+                <a
+                    class="flex items-center gap-3 px-4 py-3 bg-secondary text-on-secondary rounded-lg mx-2 transition-all scale-95"
+                    href="#"
+                >
+                    <span class="material-symbols-outlined" data-icon="settings"
+                        >settings</span
+                    >
+                    <span class="font-label-caps text-label-caps"
+                        >Settings</span
+                    >
+                </a>
+                <a
+                    class="flex items-center gap-3 px-4 py-3 text-on-primary-container opacity-80 hover:opacity-100 mx-2"
+                    href="#"
+                >
+                    <span class="material-symbols-outlined" data-icon="logout"
+                        >logout</span
+                    >
+                    <span class="font-label-caps text-label-caps">Logout</span>
+                </a>
+            </div>
+        </aside>
+        <!-- Top Navigation Bar -->
+        <header
+            class="fixed top-0 right-0 w-[calc(100%-16rem)] h-16 bg-surface-container-lowest border-b border-outline-variant z-40 flex items-center justify-between px-lg shadow-sm"
+        >
+            <div class="flex items-center gap-md">
+                <span
+                    class="font-headline-sm text-headline-sm font-bold text-primary"
+                    >Crave Bakery Admin</span
+                >
+                <div class="h-6 w-[1px] bg-outline-variant mx-sm"></div>
+                <span class="text-on-surface-variant font-medium font-body-sm"
+                    >Configuration &amp; SEO</span
+                >
+            </div>
+            <div class="flex items-center gap-md">
+                <nav class="hidden md:flex gap-md mr-md">
+                    <a
+                        class="text-on-surface-variant font-medium font-body-sm hover:text-secondary transition-all"
+                        href="#"
+                        >View Site</a
+                    >
+                    <a
+                        class="text-on-surface-variant font-medium font-body-sm hover:text-secondary transition-all"
+                        href="#"
+                        >Documentation</a
+                    >
+                </nav>
+                <button
+                    class="bg-secondary text-on-secondary px-md py-xs rounded-full font-label-caps text-label-caps hover:bg-secondary-container transition-colors"
+                >
+                    Publish Changes
+                </button>
+                <div class="flex gap-sm ml-md">
+                    <span
+                        class="material-symbols-outlined cursor-pointer hover:text-secondary"
+                        data-icon="notifications"
+                        >notifications</span
+                    >
+                    <span
+                        class="material-symbols-outlined cursor-pointer hover:text-secondary"
+                        data-icon="help_outline"
+                        >help_outline</span
+                    >
+                </div>
+                <img
+                    alt="Admin Profile"
+                    class="w-8 h-8 rounded-full border border-outline-variant ml-sm"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBy_Lc5CUmvhO04Um6RM93F3C2oZ0GSyNiQzwnkP8i7HMBfsDjWNhpKThABf3EANEXOYIlHcgQKD9O4kkCaOEzo2I_YVsHLGAUxHRI7P-rfrfciicVq2hkjYvnXMSB0XNT9KNeZXFtWudLsqokM61idcxvKAWYNV43O_0vucypqA8NkdrA3fiY9eD6PFa53XMmS7ZA4n02DvHQfKI6iNpCI7xVRsuvCDGD6gRtCIHNLFQsGadRPInqdpLy782sPD0Il90113LSgUQ"
+                />
+            </div>
+        </header>
+        <!-- Unsaved Changes Banner -->
+        <div
+            class="fixed top-16 right-0 w-[calc(100%-16rem)] bg-secondary-fixed text-on-secondary-fixed py-2 px-lg flex items-center justify-center gap-2 z-30 animate-pulse"
+        >
+            <span
+                class="material-symbols-outlined text-[20px]"
+                data-icon="warning"
+                >warning</span
+            >
+            <span class="font-label-caps text-[11px]"
+                >You have unsaved changes in SEO and Appearance settings.</span
+            >
+        </div>
+        <!-- Main Content Area -->
+        <main class="ml-64 pt-28 pb-32 px-xl">
+            <div class="max-w-[1200px] mx-auto flex gap-xl relative">
+                <!-- Left Sticky Navigation -->
+                <nav
+                    class="w-[240px] shrink-0 sticky top-28 h-fit space-y-xl pb-10"
+                >
+                    <div>
+                        <h3
+                            class="font-label-caps text-label-caps text-on-surface-variant/60 mb-md px-4"
+                        >
+                            General
+                        </h3>
+                        <ul class="space-y-1">
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all sticky-nav-active"
+                                    href="#general"
+                                    >General Settings</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#appearance"
+                                    >Appearance</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#homepage"
+                                    >Homepage</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3
+                            class="font-label-caps text-label-caps text-on-surface-variant/60 mb-md px-4"
+                        >
+                            SEO
+                        </h3>
+                        <ul class="space-y-1">
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#global-seo"
+                                    >Global SEO</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#social-og"
+                                    >Social &amp; OG</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#sitemap"
+                                    >Sitemap &amp; Robots</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3
+                            class="font-label-caps text-label-caps text-on-surface-variant/60 mb-md px-4"
+                        >
+                            Store
+                        </h3>
+                        <ul class="space-y-1">
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#delivery"
+                                    >Delivery &amp; Shipping</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#taxes"
+                                    >Taxes &amp; Pricing</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#payment"
+                                    >Payment Methods</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3
+                            class="font-label-caps text-label-caps text-on-surface-variant/60 mb-md px-4"
+                        >
+                            Advanced
+                        </h3>
+                        <ul class="space-y-1">
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#scripts"
+                                    >Scripts &amp; Integrations</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="block px-4 py-2 text-body-sm rounded-lg transition-all hover:bg-surface-variant/50"
+                                    href="#maintenance"
+                                    >Maintenance Mode</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <!-- Content Column -->
+                <div class="flex-1 space-y-xl max-w-[800px]">
+                    <!-- Section: General Settings -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="general"
+                    >
+                        <div class="p-lg border-b border-outline-variant">
+                            <h2
+                                class="font-headline-sm text-headline-sm text-primary"
+                            >
+                                General Settings
+                            </h2>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Manage your site identity and core business
+                                information.
+                            </p>
+                        </div>
+                        <div class="p-lg space-y-lg">
+                            <div class="grid grid-cols-2 gap-lg">
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Site Name</label
+                                    >
+                                    <input
+                                        class="w-full h-12 px-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
+                                        type="text"
+                                        value="Crave Bakery"
+                                    />
+                                </div>
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Tagline</label
+                                    >
+                                    <input
+                                        class="w-full h-12 px-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary focus:border-secondary outline-none transition-all"
+                                        type="text"
+                                        value="Artisanal warmth in every bite"
+                                    />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-lg">
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Logo</label
+                                    >
+                                    <div
+                                        class="border-2 border-dashed border-outline-variant rounded-xl p-md flex items-center justify-center gap-md"
+                                    >
+                                        <div
+                                            class="w-12 h-12 bg-primary-container rounded flex items-center justify-center text-on-primary-container font-bold text-xl"
+                                        >
+                                            CB
+                                        </div>
+                                        <button
+                                            class="bg-surface-variant text-on-surface-variant px-md py-xs rounded font-label-caps text-[10px]"
+                                        >
+                                            Change Logo
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Favicon</label
+                                    >
+                                    <div
+                                        class="border-2 border-dashed border-outline-variant rounded-xl p-md flex items-center justify-center gap-md"
+                                    >
+                                        <div
+                                            class="w-8 h-8 bg-white border border-outline-variant rounded p-1"
+                                        >
+                                            <div
+                                                class="w-full h-full bg-secondary rounded-sm"
+                                            ></div>
+                                        </div>
+                                        <button
+                                            class="bg-surface-variant text-on-surface-variant px-md py-xs rounded font-label-caps text-[10px]"
+                                        >
+                                            Upload
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="border-outline-variant opacity-50" />
+                            <div class="space-y-md">
+                                <label
+                                    class="font-label-caps text-label-caps text-on-surface-variant"
+                                    >Business Hours</label
+                                >
+                                <div class="grid grid-cols-7 gap-sm">
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >MON</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="07:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >TUE</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="07:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >WED</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="07:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >THU</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="07:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >FRI</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="07:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >SAT</span
+                                        >
+                                        <input
+                                            checked=""
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <input
+                                            class="w-full text-[10px] p-1 border-none bg-transparent text-center focus:ring-0"
+                                            type="text"
+                                            value="09:00"
+                                        />
+                                    </div>
+                                    <div
+                                        class="text-center space-y-sm bg-surface-container-low p-sm rounded-lg border border-outline-variant"
+                                    >
+                                        <span
+                                            class="font-label-caps text-[10px]"
+                                            >SUN</span
+                                        >
+                                        <input
+                                            class="block mx-auto rounded text-secondary focus:ring-secondary"
+                                            type="checkbox"
+                                        />
+                                        <span
+                                            class="text-[10px] text-error font-medium uppercase py-1 block"
+                                            >Closed</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Appearance -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="appearance"
+                    >
+                        <div
+                            class="bg-primary-container text-on-primary-container py-3 px-lg flex items-center justify-between"
+                        >
+                            <span
+                                class="font-label-caps text-[11px] tracking-widest"
+                                >LIVE PREVIEW ACTIVE</span
+                            >
+                            <span
+                                class="material-symbols-outlined text-[18px]"
+                                data-icon="visibility"
+                                >visibility</span
+                            >
+                        </div>
+                        <div class="p-lg border-b border-outline-variant">
+                            <h2
+                                class="font-headline-sm text-headline-sm text-primary"
+                            >
+                                Appearance
+                            </h2>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Fine-tune your brand's visual identity on the
+                                web.
+                            </p>
+                        </div>
+                        <div class="p-lg space-y-lg">
+                            <div class="space-y-md">
+                                <label
+                                    class="font-label-caps text-label-caps text-on-surface-variant"
+                                    >Brand Colors</label
+                                >
+                                <div class="grid grid-cols-5 gap-sm">
+                                    <div class="group relative">
+                                        <div
+                                            class="w-full h-12 bg-secondary rounded-lg border border-outline-variant shadow-sm cursor-pointer"
+                                        ></div>
+                                        <span
+                                            class="text-[10px] font-bold block mt-1 text-center"
+                                            >Primary</span
+                                        >
+                                    </div>
+                                    <div class="group relative">
+                                        <div
+                                            class="w-full h-12 bg-primary-container rounded-lg border border-outline-variant shadow-sm cursor-pointer"
+                                        ></div>
+                                        <span
+                                            class="text-[10px] font-bold block mt-1 text-center"
+                                            >Accent</span
+                                        >
+                                    </div>
+                                    <div class="group relative">
+                                        <div
+                                            class="w-full h-12 bg-background rounded-lg border border-outline-variant shadow-sm cursor-pointer"
+                                        ></div>
+                                        <span
+                                            class="text-[10px] font-bold block mt-1 text-center"
+                                            >Page BG</span
+                                        >
+                                    </div>
+                                    <div class="group relative">
+                                        <div
+                                            class="w-full h-12 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-sm cursor-pointer"
+                                        ></div>
+                                        <span
+                                            class="text-[10px] font-bold block mt-1 text-center"
+                                            >Cards</span
+                                        >
+                                    </div>
+                                    <div class="group relative">
+                                        <div
+                                            class="w-full h-12 bg-primary rounded-lg border border-outline-variant shadow-sm cursor-pointer"
+                                        ></div>
+                                        <span
+                                            class="text-[10px] font-bold block mt-1 text-center"
+                                            >Text</span
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-lg pt-md">
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Typography Selection</label
+                                    >
+                                    <select
+                                        class="w-full h-12 px-md border border-outline-variant rounded-lg font-headline-sm focus:ring-1 focus:ring-secondary transition-all"
+                                    >
+                                        <option>Playfair Display</option>
+                                        <option>Lora</option>
+                                        <option>Cormorant Garamond</option>
+                                    </select>
+                                    <select
+                                        class="w-full h-12 px-md border border-outline-variant rounded-lg font-body-lg focus:ring-1 focus:ring-secondary transition-all mt-sm"
+                                    >
+                                        <option>Inter (Sans Serif)</option>
+                                        <option>Roboto</option>
+                                        <option>Open Sans</option>
+                                    </select>
+                                </div>
+                                <div
+                                    class="bg-surface-container-low p-md rounded-xl border border-outline-variant flex flex-col justify-center"
+                                >
+                                    <h4
+                                        class="font-headline-sm text-primary mb-1"
+                                    >
+                                        Headline Preview
+                                    </h4>
+                                    <p
+                                        class="font-body-sm text-on-surface-variant"
+                                    >
+                                        This is how your paragraph and interface
+                                        text will appear.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="space-y-sm pt-md">
+                                <div class="flex justify-between items-center">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Custom CSS Editor</label
+                                    >
+                                    <span
+                                        class="text-[10px] bg-secondary-fixed text-on-secondary-fixed px-2 py-1 rounded"
+                                        >SCSS ENABLED</span
+                                    >
+                                </div>
+                                <div
+                                    class="code-editor rounded-xl p-4 min-h-[160px] text-[13px] leading-relaxed"
+                                >
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >1</span
+                                        >
+                                        <span class="text-blue-400"
+                                            >.hero-banner</span
+                                        >
+                                        {
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >2</span
+                                        >
+                                        &nbsp;&nbsp;<span
+                                            class="text-yellow-200"
+                                            >padding</span
+                                        >:
+                                        <span class="text-green-400"
+                                            >4rem 2rem</span
+                                        >;
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >3</span
+                                        >
+                                        &nbsp;&nbsp;<span
+                                            class="text-yellow-200"
+                                            >backdrop-filter</span
+                                        >:
+                                        <span class="text-green-400"
+                                            >blur(10px)</span
+                                        >;
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >4</span
+                                        >
+                                        }
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >5</span
+                                        >
+                                        <span class="text-blue-400"
+                                            >.button-primary</span
+                                        >:hover {
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >6</span
+                                        >
+                                        &nbsp;&nbsp;<span
+                                            class="text-yellow-200"
+                                            >transform</span
+                                        >:
+                                        <span class="text-green-400"
+                                            >translateY(-2px)</span
+                                        >;
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500 mr-4"
+                                            >7</span
+                                        >
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Homepage Settings -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="homepage"
+                    >
+                        <div class="p-lg border-b border-outline-variant">
+                            <h2
+                                class="font-headline-sm text-headline-sm text-primary"
+                            >
+                                Homepage Builder
+                            </h2>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Curate the first impression for your customers.
+                            </p>
+                        </div>
+                        <div class="p-lg space-y-xl">
+                            <!-- Hero Module -->
+                            <div
+                                class="flex items-start gap-lg border-l-4 border-secondary pl-lg"
+                            >
+                                <div class="flex-1 space-y-md">
+                                    <div
+                                        class="flex justify-between items-center"
+                                    >
+                                        <h3 class="font-title-lg text-primary">
+                                            Hero Banner
+                                        </h3>
+                                        <div
+                                            class="relative inline-flex items-center cursor-pointer"
+                                        >
+                                            <input
+                                                checked=""
+                                                class="sr-only peer"
+                                                type="checkbox"
+                                            />
+                                            <div
+                                                class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-md">
+                                        <input
+                                            class="w-full h-12 px-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary transition-all"
+                                            placeholder="Headline"
+                                            type="text"
+                                            value="Baking Moments of Joy"
+                                        />
+                                        <textarea
+                                            class="w-full p-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary transition-all h-24"
+                                            placeholder="Subtext"
+                                        >
+Handcrafted treats made with organic ingredients and traditional techniques.</textarea
+                                        >
+                                    </div>
+                                </div>
+                                <div
+                                    class="w-48 h-48 bg-surface-container-low rounded-xl border-2 border-dashed border-outline-variant overflow-hidden flex items-center justify-center relative"
+                                >
+                                    <img
+                                        alt="Hero Preview"
+                                        class="object-cover w-full h-full opacity-60"
+                                        data-alt="A warm, atmospheric photo of freshly baked artisanal sourdough bread on a wooden table, illuminated by soft golden morning light from a nearby window, creating a cozy and high-end bakery aesthetic with deep shadows and warm highlights."
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpILz3FHGWLptdRIO8yxxiw-PrUnD-V8vLwZcZM3I0xWLKcWU30vIuJyq_XvUjDrkpZcfHVpAbQkzFT3fPOrSTP79MfMvt_fQVWTXfjnNJFwiXE7Sec1jIFT9XNvWJ_RPl29Mo7a7SA7X1gbQDjo4iFSq33QpF3ewg1P51tT1owz8K6nYd8y5R64mGGMPZ4J1xOS3h3wj1YyRBXI2g43u9LyDdvdNaBPWhTxW35vLrgEfPu47Nn6rUz9dU4Um7E8jDZGbv0WiFiQ"
+                                    />
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center"
+                                    >
+                                        <button
+                                            class="bg-primary/80 text-white px-md py-xs rounded-full font-label-caps text-[10px]"
+                                        >
+                                            Change BG
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Featured Products -->
+                            <div class="space-y-md">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-title-lg text-primary">
+                                        Featured Products
+                                    </h3>
+                                    <div
+                                        class="flex bg-surface-container p-1 rounded-lg border border-outline-variant"
+                                    >
+                                        <button
+                                            class="px-md py-1 text-[11px] font-bold rounded bg-white shadow-sm text-secondary"
+                                        >
+                                            Manual
+                                        </button>
+                                        <button
+                                            class="px-md py-1 text-[11px] font-bold rounded text-on-surface-variant"
+                                        >
+                                            Auto (Newest)
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-md">
+                                    <div
+                                        class="bg-surface-container-low p-2 rounded-lg border border-outline-variant flex flex-col gap-2 relative"
+                                    >
+                                        <img
+                                            class="w-full h-24 object-cover rounded"
+                                            data-alt="Close up of a perfect, golden-brown flaky croissant sitting on a minimalist white ceramic plate, professional studio lighting, warm high-end aesthetic."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz67v5Chf8Y8hs07XJIcG0QZNG8WvGuh03EBS618MViE7Iv2ksiSnOWRmQ6ifrpA9xICuFr6FU6D42H8D3oQu8DUOVlLqsK7v-NJaJWXZEW3wBKBqRLxzYj_mpxw5A1dX5wTO2vzw2dp4JvV914Uk7IeQwV4K0ifN2RnZ937SCclz84172t3SFdDN0KjuoJnrd7dbKSnr27CDVRdUCfTt-1r5I9yV8ZqPgokqomfDRHLe6ILlxmQy4Adry90tXbMR292W-r7HBYQ"
+                                        />
+                                        <span
+                                            class="text-[10px] font-bold truncate"
+                                            >Croissant Royale</span
+                                        >
+                                        <button
+                                            class="absolute top-1 right-1 bg-white/80 rounded-full p-1"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-[14px]"
+                                                data-icon="close"
+                                                >close</span
+                                            >
+                                        </button>
+                                    </div>
+                                    <div
+                                        class="bg-surface-container-low p-2 rounded-lg border border-outline-variant flex flex-col gap-2 relative"
+                                    >
+                                        <img
+                                            class="w-full h-24 object-cover rounded"
+                                            data-alt="A tall, elegant loaf of rustic sourdough bread with a beautifully scored crust, set against a dark, warm-toned bakery background with soft lighting."
+                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Gcvyha6_W4ilp5sYn0qAPAuogtwVSDh_BJkKvcC_APJTUkB9pj0NgWKXs00ZwzKr6lfVVkdCrPyGL56QFdPT7xUF74XXGEp4kvsSeeAv5EgyF_R3A0LqQONmpjSvd76cNkWuTXh-CEpiKIbW_p8Mm0iXjF6OP6UdKy9QaOKpyim3qtoB_4fspJq7ye3eUR1qw0k_dWAleE-J2w2vxZa5xt_9I9Ejy1rZyA52EuwrBtCwebiKASF02w7rKCH__-Tfw77m6H12bg"
+                                        />
+                                        <span
+                                            class="text-[10px] font-bold truncate"
+                                            >House Sourdough</span
+                                        >
+                                        <button
+                                            class="absolute top-1 right-1 bg-white/80 rounded-full p-1"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-[14px]"
+                                                data-icon="close"
+                                                >close</span
+                                            >
+                                        </button>
+                                    </div>
+                                    <button
+                                        class="border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center gap-1 hover:bg-surface-variant/30 transition-colors"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined text-outline"
+                                            data-icon="add_circle"
+                                            >add_circle</span
+                                        >
+                                        <span
+                                            class="text-[10px] font-bold text-on-surface-variant"
+                                            >Pick Product</span
+                                        >
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Promotional Strip -->
+                            <div
+                                class="p-lg bg-secondary-fixed/30 rounded-xl border border-secondary/20 space-y-md"
+                            >
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-title-lg text-secondary">
+                                        Promotional Strip
+                                    </h3>
+                                    <div
+                                        class="relative inline-flex items-center cursor-pointer"
+                                    >
+                                        <input
+                                            checked=""
+                                            class="sr-only peer"
+                                            type="checkbox"
+                                        />
+                                        <div
+                                            class="w-11 h-6 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"
+                                        ></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-md items-center">
+                                    <input
+                                        class="flex-1 h-12 px-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary transition-all"
+                                        type="text"
+                                        value="Free delivery on orders over $50 this weekend! 🥐"
+                                    />
+                                    <div
+                                        class="w-12 h-12 bg-secondary rounded-lg border border-outline-variant flex items-center justify-center cursor-pointer"
+                                        title="Select Color"
+                                    >
+                                        <div
+                                            class="w-6 h-6 rounded-full border border-white"
+                                            style="background-color: #b02f00"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Global SEO -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="global-seo"
+                    >
+                        <div class="p-lg border-b border-outline-variant">
+                            <h2
+                                class="font-headline-sm text-headline-sm text-primary"
+                            >
+                                Global SEO
+                            </h2>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Optimise how search engines index and display
+                                your store.
+                            </p>
+                        </div>
+                        <div class="p-lg space-y-lg">
+                            <div class="space-y-sm">
+                                <label
+                                    class="font-label-caps text-label-caps text-on-surface-variant"
+                                    >Site Title Template</label
+                                >
+                                <input
+                                    class="w-full h-12 px-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary transition-all"
+                                    type="text"
+                                    value="%site_name% | %tagline%"
+                                />
+                                <p
+                                    class="text-[10px] text-on-surface-variant italic"
+                                >
+                                    Available tags: %site_name%, %tagline%,
+                                    %category%, %product%
+                                </p>
+                            </div>
+                            <div class="space-y-sm">
+                                <div class="flex justify-between">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Meta Description</label
+                                    >
+                                    <span
+                                        class="text-[10px] font-bold text-secondary"
+                                        >156 / 160 characters</span
+                                    >
+                                </div>
+                                <textarea
+                                    class="w-full p-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-secondary transition-all h-24"
+                                >
+Crave Bakery offers the finest artisanal breads, decadent pastries, and custom cakes in the city. Freshly baked every morning with locally sourced ingredients.</textarea
+                                >
+                            </div>
+                            <!-- Google Preview -->
+                            <div class="space-y-sm">
+                                <label
+                                    class="font-label-caps text-label-caps text-on-surface-variant"
+                                    >Search Result Preview</label
+                                >
+                                <div
+                                    class="bg-white border border-outline-variant rounded-xl p-lg shadow-sm"
+                                >
+                                    <div
+                                        class="text-[14px] text-[#202124] mb-1"
+                                    >
+                                        https://cravebakery.com
+                                    </div>
+                                    <div
+                                        class="text-[20px] text-[#1a0dab] hover:underline cursor-pointer font-medium mb-1"
+                                    >
+                                        Crave Bakery | Artisanal warmth in every
+                                        bite
+                                    </div>
+                                    <div
+                                        class="text-[14px] text-[#4d5156] leading-snug"
+                                    >
+                                        Crave Bakery offers the finest artisanal
+                                        breads, decadent pastries, and custom
+                                        cakes in the city. Freshly baked every
+                                        morning with locally sourced
+                                        ingredients...
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-lg pt-md">
+                                <div class="flex items-center gap-md">
+                                    <input
+                                        checked=""
+                                        class="w-5 h-5 rounded text-secondary focus:ring-secondary"
+                                        type="checkbox"
+                                    />
+                                    <span class="font-body-sm"
+                                        >Index Homepage</span
+                                    >
+                                </div>
+                                <div class="flex items-center gap-md">
+                                    <input
+                                        checked=""
+                                        class="w-5 h-5 rounded text-secondary focus:ring-secondary"
+                                        type="checkbox"
+                                    />
+                                    <span class="font-body-sm"
+                                        >Include in Sitemap</span
+                                    >
+                                </div>
+                                <div class="flex items-center gap-md">
+                                    <input
+                                        class="w-5 h-5 rounded text-secondary focus:ring-secondary"
+                                        type="checkbox"
+                                    />
+                                    <span class="font-body-sm"
+                                        >Follow All Links</span
+                                    >
+                                </div>
+                                <div class="flex items-center gap-md">
+                                    <input
+                                        checked=""
+                                        class="w-5 h-5 rounded text-secondary focus:ring-secondary"
+                                        type="checkbox"
+                                    />
+                                    <span class="font-body-sm"
+                                        >Enable Schema Markup</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Scripts & Integrations -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="scripts"
+                    >
+                        <div class="p-lg border-b border-outline-variant">
+                            <h2
+                                class="font-headline-sm text-headline-sm text-primary"
+                            >
+                                Scripts &amp; Integrations
+                            </h2>
+                            <p class="font-body-sm text-on-surface-variant">
+                                Connect your favorite marketing and analytics
+                                tools.
+                            </p>
+                        </div>
+                        <div class="p-lg space-y-xl">
+                            <div class="grid grid-cols-3 gap-md">
+                                <div
+                                    class="p-md bg-surface border border-outline-variant rounded-xl flex items-center justify-between"
+                                >
+                                    <div class="flex items-center gap-md">
+                                        <div
+                                            class="w-8 h-8 rounded bg-blue-100 flex items-center justify-center text-blue-600 font-bold"
+                                        >
+                                            G
+                                        </div>
+                                        <span class="text-[11px] font-bold"
+                                            >Analytics</span
+                                        >
+                                    </div>
+                                    <span
+                                        class="text-[10px] text-green-600 font-bold flex items-center gap-1"
+                                        ><span
+                                            class="w-2 h-2 rounded-full bg-green-500"
+                                        ></span>
+                                        Live</span
+                                    >
+                                </div>
+                                <div
+                                    class="p-md bg-surface border border-outline-variant rounded-xl flex items-center justify-between opacity-50"
+                                >
+                                    <div class="flex items-center gap-md">
+                                        <div
+                                            class="w-8 h-8 rounded bg-pink-100 flex items-center justify-center text-pink-600 font-bold"
+                                        >
+                                            F
+                                        </div>
+                                        <span class="text-[11px] font-bold"
+                                            >Pixel</span
+                                        >
+                                    </div>
+                                    <button
+                                        class="text-[10px] text-secondary font-bold"
+                                    >
+                                        Connect
+                                    </button>
+                                </div>
+                                <div
+                                    class="p-md bg-surface border border-outline-variant rounded-xl flex items-center justify-between"
+                                >
+                                    <div class="flex items-center gap-md">
+                                        <div
+                                            class="w-8 h-8 rounded bg-purple-100 flex items-center justify-center text-purple-600 font-bold"
+                                        >
+                                            S
+                                        </div>
+                                        <span class="text-[11px] font-bold"
+                                            >Stripe</span
+                                        >
+                                    </div>
+                                    <span
+                                        class="text-[10px] text-green-600 font-bold flex items-center gap-1"
+                                        >Connected</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="space-y-sm">
+                                <label
+                                    class="font-label-caps text-label-caps text-on-surface-variant"
+                                    >Head Script &lt;head&gt;</label
+                                >
+                                <div
+                                    class="code-editor rounded-xl p-4 min-h-[120px] text-[13px]"
+                                >
+                                    <div class="text-gray-500">
+                                        &lt;!-- Google Tag Manager --&gt;
+                                    </div>
+                                    <div>
+                                        &lt;<span class="text-blue-400"
+                                            >script</span
+                                        >&gt;(function(w,d,s,l,i){w[l]=w[l]||[];...})&lt;/<span
+                                            class="text-blue-400"
+                                            >script</span
+                                        >&gt;
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Section: Maintenance Mode -->
+                    <section
+                        class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden"
+                        id="maintenance"
+                    >
+                        <div
+                            class="p-lg bg-error-container/10 border-b border-error-container/20 flex justify-between items-center"
+                        >
+                            <div>
+                                <h2
+                                    class="font-headline-sm text-headline-sm text-error"
+                                >
+                                    Maintenance Mode
+                                </h2>
+                                <p class="font-body-sm text-on-surface-variant">
+                                    Temporarily disable the public storefront.
+                                </p>
+                            </div>
+                            <div
+                                class="relative inline-flex items-center cursor-pointer"
+                            >
+                                <input class="sr-only peer" type="checkbox" />
+                                <div
+                                    class="w-14 h-7 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-error"
+                                ></div>
+                            </div>
+                        </div>
+                        <div class="p-lg space-y-lg">
+                            <div
+                                class="p-md bg-error-container/20 rounded-xl border border-error/20 flex gap-md items-center"
+                            >
+                                <span
+                                    class="material-symbols-outlined text-error"
+                                    data-icon="report"
+                                    >report</span
+                                >
+                                <span
+                                    class="text-[12px] font-medium text-on-error-container"
+                                    >Warning: Enabling this will prevent
+                                    customers from placing orders. Only admins
+                                    will see the store.</span
+                                >
+                            </div>
+                            <div class="grid grid-cols-2 gap-lg">
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Custom Message</label
+                                    >
+                                    <textarea
+                                        class="w-full p-md border border-outline-variant rounded-lg focus:ring-1 focus:ring-error transition-all h-32"
+                                    >
+We're currently baking something new! Our store will be back online in approximately 2 hours. Thank you for your patience.</textarea
+                                    >
+                                </div>
+                                <div class="space-y-sm">
+                                    <label
+                                        class="font-label-caps text-label-caps text-on-surface-variant"
+                                        >Maintenance Preview</label
+                                    >
+                                    <div
+                                        class="h-32 bg-white border border-outline-variant rounded-xl flex flex-col items-center justify-center text-center p-md"
+                                    >
+                                        <div
+                                            class="w-8 h-8 bg-primary-container rounded mb-2 flex items-center justify-center text-on-primary-container font-bold text-[10px]"
+                                        >
+                                            CB
+                                        </div>
+                                        <div
+                                            class="h-2 w-24 bg-surface-variant rounded-full mb-1"
+                                        ></div>
+                                        <div
+                                            class="h-1.5 w-32 bg-surface-variant/40 rounded-full"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+        <!-- Sticky Footer Actions -->
+        <footer
+            class="fixed bottom-0 right-0 w-[calc(100%-16rem)] bg-white/90 backdrop-blur-md border-t border-outline-variant py-md px-xl flex items-center justify-between z-50"
+        >
+            <div class="flex items-center gap-md">
+                <span
+                    class="text-[12px] font-medium text-on-surface-variant italic"
+                    >Last saved: 12 minutes ago</span
+                >
+            </div>
+            <div class="flex items-center gap-md">
+                <button
+                    class="bg-surface-variant text-on-surface-variant px-xl py-2.5 rounded-full font-label-caps text-label-caps hover:bg-outline-variant transition-colors"
+                >
+                    Discard Changes
+                </button>
+                <button
+                    class="bg-secondary text-on-secondary px-xl py-2.5 rounded-full font-label-caps text-label-caps hover:bg-secondary-container shadow-lg shadow-secondary/20 transition-all active:scale-95"
+                >
+                    Save All Settings
+                </button>
+            </div>
+        </footer>
+        <script>
+            // Simple smooth scroll for sticky nav
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute("href");
+                    const targetElement = document.querySelector(targetId);
+
+                    // Clear active states
+                    document
+                        .querySelectorAll("nav ul li a")
+                        .forEach((el) =>
+                            el.classList.remove("sticky-nav-active"),
+                        );
+                    document
+                        .querySelectorAll("nav ul li a")
+                        .forEach((el) =>
+                            el.classList.add("hover:bg-surface-variant/50"),
+                        );
+
+                    // Add active state to clicked
+                    this.classList.add("sticky-nav-active");
+                    this.classList.remove("hover:bg-surface-variant/50");
+
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 120,
+                        behavior: "smooth",
+                    });
+                });
+            });
+
+            // Toggle handling for micro-interactions
+            const switches = document.querySelectorAll(".peer");
+            switches.forEach((sw) => {
+                sw.addEventListener("change", function () {
+                    // Potential state change logic here
+                });
+            });
+        </script>
+    </body>
+</html>

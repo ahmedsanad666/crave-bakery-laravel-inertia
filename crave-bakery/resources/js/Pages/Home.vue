@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ProductCard from '@/Components/Public/ProductCard.vue';
 import LatestOvenCard from '@/Components/Public/LatestOvenCard.vue';
@@ -9,10 +9,14 @@ import EmptyState from '@/Components/Shared/EmptyState.vue';
 import {
     IconArrowLeft,
     IconArrowRight,
+    IconStar,
     IconStarFilled,
     IconStarHalfFilled,
 } from '@tabler/icons-vue';
 import { useCart } from '@/Composables/useCart';
+
+const DEFAULT_HERO_IMAGE =
+    'https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg';
 
 const props = defineProps({
     canLogin: {
@@ -36,6 +40,65 @@ const props = defineProps({
 });
 
 const { add } = useCart();
+const page = usePage();
+const site = computed(() => page.props.siteSettings ?? {});
+
+const heroTitle = computed(
+    () =>
+        site.value.hero_title?.trim() ||
+        'Baking Smiles, One Pastry At A Time',
+);
+const heroDescription = computed(
+    () =>
+        site.value.hero_description?.trim() ||
+        'Experience the warmth of our ovens delivered straight to your heart. Artisanal craftsmanship meets neighborhood comfort.',
+);
+const heroImage = computed(
+    () => site.value.hero_image?.trim() || DEFAULT_HERO_IMAGE,
+);
+const heroRating = computed(() => {
+    const rating = Number(site.value.hero_rating);
+    if (!Number.isFinite(rating)) {
+        return 3.5;
+    }
+    return Math.min(5, Math.max(0, rating));
+});
+const heroRatingLabel = computed(() => {
+    const value = heroRating.value;
+    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+});
+const heroRatingDescription = computed(
+    () =>
+        site.value.hero_rating_description?.trim() ||
+        'The best croissant in the city, hands down!',
+);
+const heroRatingStars = computed(() => {
+    const rating = heroRating.value;
+    const full = Math.floor(rating);
+    const fraction = rating - full;
+    const half = fraction >= 0.25 && fraction < 0.75;
+    const roundedFull = fraction >= 0.75 ? full + 1 : full;
+    const filled = half ? full : roundedFull;
+    const empty = Math.max(0, 5 - filled - (half ? 1 : 0));
+
+    return {
+        full: Math.min(5, filled),
+        half,
+        empty,
+    };
+});
+const storyTitle = computed(
+    () => site.value.story_title?.trim() || 'The Heart of Our Bakery',
+);
+const storyContent = computed(
+    () =>
+        site.value.story_content?.trim() ||
+        'For over three decades, Crave Bakery has been the aromatic heartbeat of our neighborhood. What started as a small family dream has blossomed into a destination for those who appreciate the patient art of slow-fermented dough and the golden crunch of a perfect crust.\n\nWe believe that good bread takes time. Our bakers arrive when the city still sleeps, hand-shaping every loaf and tempering every batch of chocolate to ensure that the warmth you feel in every bite is as authentic as the ingredients we source from local artisans.',
+);
+const sinceYear = computed(() => {
+    const year = Number(site.value.since_year);
+    return Number.isFinite(year) && year > 0 ? year : 1999;
+});
 
 const activeCategory = ref('all');
 
@@ -140,16 +203,12 @@ const starIcons = (rating) => {
                 <div class="animate-fade-in z-10 space-y-xl">
                     <div class="space-y-md">
                         <h1
-                            class="font-serif text-display-lg-mobile leading-tight text-on-primary md:text-display-lg"
+                            class="whitespace-pre-line font-serif text-display-lg-mobile leading-tight text-on-primary md:text-display-lg"
                         >
-                            Baking Smiles,
-                            <br />
-                            One Pastry At A Time
+                            {{ heroTitle }}
                         </h1>
-                        <p class="max-w-md font-sans text-body-lg text-on-primary/70">
-                            Experience the warmth of our ovens delivered straight
-                            to your heart. Artisanal craftsmanship meets
-                            neighborhood comfort.
+                        <p class="max-w-md whitespace-pre-line font-sans text-body-lg text-on-primary/70">
+                            {{ heroDescription }}
                         </p>
                     </div>
 
@@ -160,14 +219,14 @@ const starIcons = (rating) => {
                         See Our Menu
                     </Link>
 
-                    <div class="border-t border-white/10 pt-xl">
+                    <!-- <div class="border-t border-white/10 pt-xl">
                         <p class="font-sans text-body-lg text-on-primary">
                             Bringing Joy With
                             <span class="font-bold text-accent">
                                 Homemade Baked Delights
                             </span>
                         </p>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="relative z-10 flex items-center justify-center">
@@ -176,17 +235,25 @@ const starIcons = (rating) => {
                     >
                         <div class="mb-xs flex gap-xs text-accent">
                             <IconStarFilled
-                                v-for="i in 4"
-                                :key="i"
+                                v-for="i in heroRatingStars.full"
+                                :key="`full-${i}`"
                                 :size="18"
                             />
-                            <IconStarHalfFilled :size="18" />
+                            <IconStarHalfFilled
+                                v-if="heroRatingStars.half"
+                                :size="18"
+                            />
+                            <IconStar
+                                v-for="i in heroRatingStars.empty"
+                                :key="`empty-${i}`"
+                                :size="18"
+                            />
                         </div>
                         <p class="text-title-lg font-bold text-on-primary">
-                            4.8 Stars
+                            {{ heroRatingLabel }} Stars
                         </p>
                         <p class="text-body-sm italic text-on-primary/60">
-                            "The best croissant in the city, hands down!"
+                            "{{ heroRatingDescription }}"
                         </p>
                     </div>
 
@@ -194,9 +261,9 @@ const starIcons = (rating) => {
                         class="animate-float relative aspect-square w-full max-w-md overflow-hidden rounded-full border-8 border-white/5 shadow-2xl"
                     >
                         <img
-                            alt="Gourmet Croissant"
+                            alt="Hero"
                             class="h-full w-full object-cover"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg"
+                            :src="heroImage"
                         />
                     </div>
 
@@ -228,7 +295,7 @@ const starIcons = (rating) => {
                         <p
                             class="font-serif text-headline-md italic text-on-primary"
                         >
-                            Since 1994
+                            Since {{ sinceYear }}
                         </p>
                     </div>
                 </div>
@@ -238,30 +305,16 @@ const starIcons = (rating) => {
                         <h2
                             class="font-serif text-headline-lg leading-tight text-primary"
                         >
-                            The Heart of Our Bakery
+                            {{ storyTitle }}
                         </h2>
                         <div class="h-1 w-24 rounded-full bg-accent" />
                     </div>
                     <div
-                        class="space-y-lg font-sans text-body-lg leading-relaxed text-on-surface-variant"
+                        class="whitespace-pre-line font-sans text-body-lg leading-relaxed text-on-surface-variant"
                     >
-                        <p>
-                            For over three decades, Crave Bakery has been the
-                            aromatic heartbeat of our neighborhood. What started
-                            as a small family dream has blossomed into a
-                            destination for those who appreciate the patient art
-                            of slow-fermented dough and the golden crunch of a
-                            perfect crust.
-                        </p>
-                        <p>
-                            We believe that good bread takes time. Our bakers
-                            arrive when the city still sleeps, hand-shaping every
-                            loaf and tempering every batch of chocolate to ensure
-                            that the warmth you feel in every bite is as authentic
-                            as the ingredients we source from local artisans.
-                        </p>
+                        {{ storyContent }}
                     </div>
-                    <Link
+                    <!-- <Link
                         href="/#about"
                         class="group flex items-center gap-md font-bold text-primary transition-colors hover:text-accent"
                     >
@@ -271,7 +324,7 @@ const starIcons = (rating) => {
                             stroke-width="1.5"
                             class="transition-transform group-hover:translate-x-2"
                         />
-                    </Link>
+                    </Link> -->
                 </div>
             </div>
         </section>

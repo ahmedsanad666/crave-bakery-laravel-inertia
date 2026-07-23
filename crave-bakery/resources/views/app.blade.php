@@ -6,9 +6,23 @@
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        @php
+            $themeService = app(\App\Services\SiteSettingService::class);
+            $themeCss = $themeService->themeCssProperties();
+            $themeFontsHref = $themeService->googleFontsHref();
+        @endphp
+
+        <style>
+            :root {
+                @foreach ($themeCss as $property => $value)
+                    {{ $property }}: {{ $value }};
+                @endforeach
+            }
+        </style>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link id="app-theme-fonts" href="{{ $themeFontsHref }}" rel="stylesheet" />
 
         <!-- Scripts -->
         @routes
