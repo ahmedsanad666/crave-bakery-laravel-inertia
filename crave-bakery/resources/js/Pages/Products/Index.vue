@@ -14,8 +14,10 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import CatalogueProductCard from '@/Components/Public/CatalogueProductCard.vue';
 import ProductFiltersSidebar from '@/Components/Public/ProductFiltersSidebar.vue';
 import ShopPagination from '@/Components/Public/ShopPagination.vue';
+import AppSelect from '@/Components/Shared/AppSelect.vue';
 import { useCart } from '@/Composables/useCart';
 import { useFavourite } from '@/Composables/useFavourite';
+import { useSiteSeo } from '@/Composables/useSiteSeo';
 
 const props = defineProps({
     products: {
@@ -39,6 +41,12 @@ const props = defineProps({
 const page = usePage();
 const { add } = useCart();
 const { toggle } = useFavourite();
+const {
+    headTitle: seoHeadTitle,
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+} = useSiteSeo({ pageTitle: 'Catalogue' });
 
 const search = ref(props.filters.search ?? '');
 const categoryId = ref(props.filters.category_id ?? null);
@@ -170,9 +178,9 @@ const onOutOfStockUpdate = (value) => {
     applyFilters({ out_of_stock: value });
 };
 
-const onSortChange = (event) => {
-    sort.value = event.target.value;
-    applyFilters({ sort: sort.value });
+const onSortChange = (value) => {
+    sort.value = value;
+    applyFilters({ sort: value });
 };
 
 const clearFilters = () => {
@@ -225,7 +233,33 @@ const handleNotifyMe = () => {
 
 <template>
     <AppLayout>
-        <Head title="Catalogue" />
+        <Head>
+            <title>{{ seoHeadTitle }}</title>
+            <meta
+                v-if="seoDescription"
+                head-key="description"
+                name="description"
+                :content="seoDescription"
+            />
+            <meta
+                v-if="seoKeywords"
+                head-key="keywords"
+                name="keywords"
+                :content="seoKeywords"
+            />
+            <meta head-key="og:type" property="og:type" content="website" />
+            <meta
+                head-key="og:title"
+                property="og:title"
+                :content="seoTitle"
+            />
+            <meta
+                v-if="seoDescription"
+                head-key="og:description"
+                property="og:description"
+                :content="seoDescription"
+            />
+        </Head>
 
         <section class="bg-surface pb-xxl pt-xl">
             <div class="container-page">
@@ -299,27 +333,22 @@ const handleNotifyMe = () => {
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-sm">
-                        <label
-                            class="font-sans text-body-sm text-on-surface-variant"
-                            for="catalogue-sort"
+                    <div class="flex min-w-0 items-center gap-sm">
+                        <span
+                            class="shrink-0 font-sans text-body-sm text-on-surface-variant"
                         >
                             Sort by:
-                        </label>
-                        <select
-                            id="catalogue-sort"
-                            :value="sort"
-                            class="cursor-pointer border-none bg-transparent py-0 font-sans text-body-sm font-semibold text-primary focus:ring-0"
-                            @change="onSortChange"
-                        >
-                            <option
-                                v-for="option in sortOptions"
-                                :key="option.value"
-                                :value="option.value"
-                            >
-                                {{ option.label }}
-                            </option>
-                        </select>
+                        </span>
+                        <div class="w-full min-w-[11rem] sm:w-56">
+                            <AppSelect
+                                :model-value="sort"
+                                :options="sortOptions"
+                                value-key="value"
+                                label-key="label"
+                                size="sm"
+                                @update:model-value="onSortChange"
+                            />
+                        </div>
                     </div>
                 </div>
 

@@ -33,7 +33,7 @@ trait ValidatesCategory
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'default_sort' => ['nullable', 'string', 'max:50'],
             'show_in_navigation' => ['sometimes', 'boolean'],
-            'show_in_homepage' => ['sometimes', 'boolean'],
+            'show_in_footer' => ['sometimes', 'boolean'],
             // SEO / media — nullable for v1
             'image' => ['nullable', 'string', 'max:255'],
             'banner_image' => ['nullable', 'string', 'max:255'],

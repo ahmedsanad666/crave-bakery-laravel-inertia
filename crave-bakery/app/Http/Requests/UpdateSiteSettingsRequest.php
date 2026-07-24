@@ -32,6 +32,7 @@ class UpdateSiteSettingsRequest extends FormRequest
             'hero_rating_description' => ['nullable', 'string', 'max:500'],
             'story_title' => ['nullable', 'string', 'max:255'],
             'story_content' => ['nullable', 'string', 'max:10000'],
+            'story_image' => ['nullable', 'image', 'max:4096'],
             'since_year' => ['nullable', 'integer', 'min:1800', 'max:'.date('Y')],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
@@ -80,6 +81,6 @@ class UpdateSiteSettingsRequest extends FormRequest
      */
     public function settingsPayload(): array
     {
-        return $this->safe()->except(['logo', 'favicon', 'hero_image']);
+        return $this->safe()->except(['logo', 'favicon', 'hero_image', 'story_image']);
     }
 }

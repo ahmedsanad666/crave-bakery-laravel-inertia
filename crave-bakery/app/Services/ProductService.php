@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
+    public function __construct(
+        private readonly ReviewService $reviewService,
+    ) {
+    }
+
     /**
      * @return array{total: int, active: int, out_of_stock: int, featured: int}
      */
@@ -54,7 +59,7 @@ class ProductService
      * @param  array<string, mixed>  $filters
      * @return array{
      *     products: LengthAwarePaginator,
-     *     categoryOptions: list<array{id: int|null, name: string, products_count: int}>,
+     *     categoryOptions: list<array{id: int|null, name: string, products_count: int, image: string|null, children: list<array<string, mixed>>}>,
      *     priceBounds: array{min: float, max: float},
      *     filters: array<string, mixed>,
      *     favourited_product_ids: list<int>
@@ -116,7 +121,8 @@ class ProductService
      *         rating_breakdown: array<int, int>,
      *         items: EloquentCollection<int, Review>
      *     },
-     *     is_favourited: bool
+     *     is_favourited: bool,
+     *     can_review: bool
      * }
      */
     public function findForShop(Product $product): array
@@ -136,13 +142,16 @@ class ProductService
             ->firstOrFail();
 
         $isFavourited = false;
-        $userId = auth()->id();
+        $canReview = false;
+        $user = auth()->user();
 
-        if ($userId) {
+        if ($user) {
             $isFavourited = Favourite::query()
-                ->where('user_id', $userId)
+                ->where('user_id', $user->id)
                 ->where('product_id', $product->id)
                 ->exists();
+
+            $canReview = $this->reviewService->userCanReview($user, $product);
         }
 
         return [
@@ -152,6 +161,7 @@ class ProductService
             'relatedProducts' => $this->shopRelatedProducts($product),
             'reviews' => $this->shopProductReviews($product),
             'is_favourited' => $isFavourited,
+            'can_review' => $canReview,
         ];
     }
 
@@ -329,7 +339,9 @@ class ProductService
     }
 
     /**
-     * @return list<array{id: int|null, name: string, products_count: int}>
+     * Nested active categories for the shop filter sidebar.
+     *
+     * @return list<array{id: int|null, name: string, products_count: int, image: string|null, children: list<array<string, mixed>>}>
      */
     private function shopCategoryOptions(): array
     {
@@ -341,22 +353,40 @@ class ProductService
             ->status('active')
             ->ordered()
             ->withCount(['products' => $publishedConstraint])
-            ->get()
-            ->map(fn (Category $category) => [
-                'id' => $category->id,
-                'name' => $category->name,
-                'products_count' => (int) $category->products_count,
-            ])
-            ->values()
-            ->all();
+            ->get(['id', 'name', 'parent_id', 'image', 'sort_order']);
+
+        $tree = $this->buildShopCategoryTree($categories);
 
         return array_merge([
             [
                 'id' => null,
                 'name' => 'All',
                 'products_count' => $total,
+                'image' => null,
+                'children' => [],
             ],
-        ], $categories);
+        ], $tree);
+    }
+
+    /**
+     * @param  Collection<int, Category>|EloquentCollection<int, Category>  $categories
+     * @return list<array{id: int, name: string, products_count: int, image: string|null, children: list<array<string, mixed>>}>
+     */
+    private function buildShopCategoryTree(Collection|EloquentCollection $categories, ?int $parentId = null): array
+    {
+        return $categories
+            ->filter(fn (Category $category) => $category->parent_id === $parentId)
+            ->values()
+            ->map(function (Category $category) use ($categories) {
+                return [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'products_count' => (int) $category->products_count,
+                    'image' => Category::toPublicUrl($category->image),
+                    'children' => $this->buildShopCategoryTree($categories, $category->id),
+                ];
+            })
+            ->all();
     }
 
     /**

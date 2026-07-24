@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
     IconBread,
@@ -18,6 +19,13 @@ defineProps({
 });
 
 const page = usePage();
+
+const site = computed(() => page.props.siteSettings ?? {});
+const siteName = computed(() => site.value.site_name ?? 'Crave Bakery');
+const siteLogo = computed(() => site.value.logo ?? null);
+const siteTagline = computed(
+    () => site.value.tagline ?? 'Baking Smiles, One Pastry At A Time',
+);
 
 const trustPoints = [
     {
@@ -61,13 +69,20 @@ const trustPoints = [
                     :href="route('home')"
                     class="inline-flex items-center gap-3"
                 >
+                    <img
+                        v-if="siteLogo"
+                        :src="siteLogo"
+                        :alt="siteName"
+                        class="h-24 w-auto object-contain"
+                    />
                     <div
+                        v-else
                         class="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20 text-2xl"
                     >
                         🥐
                     </div>
                     <span class="font-serif text-headline-sm text-white">
-                        {{ page.props.siteSettings?.site_name ?? 'Crave Bakery' }}
+                        {{ siteName }}
                     </span>
                 </Link>
             </div>
@@ -78,7 +93,7 @@ const trustPoints = [
                         Welcome
                     </p>
                     <h1 class="mt-2 font-serif text-headline-lg text-white">
-                        Baking Smiles, One Pastry At A Time
+                        {{ siteTagline }}
                     </h1>
                 </div>
 
@@ -107,7 +122,7 @@ const trustPoints = [
 
             <p class="relative text-body-sm text-white/50">
                 &copy; {{ new Date().getFullYear() }}
-                {{ page.props.siteSettings?.site_name ?? 'Crave Bakery' }}
+                {{ siteName }}
             </p>
         </aside>
 
@@ -118,10 +133,16 @@ const trustPoints = [
             <div class="mx-auto w-full max-w-md">
                 <Link
                     :href="route('home')"
-                    class="mb-8 inline-flex items-center gap-2 font-serif text-headline-sm text-primary lg:hidden"
+                    class="mb-8 inline-flex items-center gap-3 font-serif text-headline-sm text-primary lg:hidden"
                 >
-                    <span class="text-xl">🥐</span>
-                    {{ page.props.siteSettings?.site_name ?? 'Crave Bakery' }}
+                    <img
+                        v-if="siteLogo"
+                        :src="siteLogo"
+                        :alt="siteName"
+                        class="h-10 w-auto object-contain"
+                    />
+                    <span v-else class="text-xl">🥐</span>
+                    {{ siteName }}
                 </Link>
 
                 <header class="mb-8">

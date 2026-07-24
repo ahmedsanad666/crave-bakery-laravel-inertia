@@ -432,7 +432,7 @@ const saveDraft = () => {
                 </p>
             </div>
             <div class="flex flex-wrap gap-md">
-                <AppButton
+                <!-- <AppButton
                     type="button"
                     variant="secondary"
                     class="!h-auto !rounded-full border-primary-container px-6 py-3 !font-sans !text-label-caps !uppercase text-primary-container"
@@ -450,7 +450,7 @@ const saveDraft = () => {
                     @click="publish"
                 >
                     {{ primaryActionLabel }}
-                </AppButton>
+                </AppButton> -->
             </div>
         </section>
 
@@ -555,7 +555,7 @@ const saveDraft = () => {
                                     }"
                                 >
                                     <span class="truncate">
-                                        cravebakery.com/products/
+                                    products/
                                         <input
                                             id="slug"
                                             v-model="form.slug"
@@ -573,7 +573,7 @@ const saveDraft = () => {
                         <div>
                             <AppInputLabel
                                 for="category_picker"
-                                value="Categories"
+                                value="Categories *"
                                 class="!mb-xs !font-sans !text-label-caps !uppercase"
                             />
                             <AppMultiSelect
@@ -597,7 +597,7 @@ const saveDraft = () => {
                             >
                                 <AppInputLabel
                                     for="short_description"
-                                    value="Short Description"
+                                    value="Short Description *"
                                     class="!mb-0 !font-sans !text-label-caps !uppercase"
                                 />
                                 <span class="text-[10px] text-outline">
@@ -609,6 +609,7 @@ const saveDraft = () => {
                                 v-model="form.short_description"
                                 rows="3"
                                 maxlength="500"
+                                required
                                 class="input-field h-auto resize-none py-md"
                                 placeholder="Briefly describe the product's flavor profile..."
                                 :class="{
@@ -624,13 +625,14 @@ const saveDraft = () => {
                         <div>
                             <AppInputLabel
                                 for="description"
-                                value="Full Description"
+                                value="Full Description *"
                                 class="!mb-xs !font-sans !text-label-caps !uppercase"
                             />
                             <textarea
                                 id="description"
                                 v-model="form.description"
                                 rows="6"
+                                required
                                 class="input-field h-auto min-h-[200px] py-md"
                                 placeholder="Tell the story of this product..."
                                 :class="{
@@ -728,7 +730,7 @@ const saveDraft = () => {
                     <div>
                         <AppInputLabel
                             for="gallery_images"
-                            value="Gallery Images"
+                            value="Gallery Images *"
                             class="!mb-xs !font-sans !text-label-caps !uppercase"
                         />
                         <input
@@ -816,7 +818,8 @@ const saveDraft = () => {
                             </label>
                         </div>
                         <p class="mt-sm text-xs text-on-surface-variant">
-                            Up to 8 gallery images. Max 5MB each.
+                            At least 1 gallery image required. Up to 8. Max 5MB
+                            each.
                         </p>
                         <AppInputError :message="form.errors.images" />
                         <AppInputError :message="form.errors['images.0']" />
@@ -967,7 +970,7 @@ const saveDraft = () => {
                         <div>
                             <AppInputLabel
                                 for="stock_quantity"
-                                value="Stock Quantity"
+                                value="Stock Quantity *"
                                 class="!mb-xs !font-sans !text-label-caps !uppercase"
                             />
                             <AppInput
@@ -977,6 +980,7 @@ const saveDraft = () => {
                                 min="0"
                                 class="block w-full"
                                 :has-error="!!form.errors.stock_quantity"
+                                required
                             />
                             <AppInputError
                                 :message="form.errors.stock_quantity"
@@ -1045,7 +1049,7 @@ const saveDraft = () => {
                             <h2
                                 class="font-serif text-headline-sm text-primary"
                             >
-                                Attributes
+                                Attributes *
                             </h2>
                         </div>
                         <Link
@@ -1072,6 +1076,7 @@ const saveDraft = () => {
                                 :model-value="null"
                                 :options="availableAttributes"
                                 placeholder="Select an attribute…"
+                                :has-error="!!form.errors.attribute_value_ids"
                                 @update:model-value="addAttribute"
                             />
                         </div>
@@ -1079,9 +1084,15 @@ const saveDraft = () => {
 
                     <div
                         v-if="addedAttributes.length === 0"
-                        class="rounded-xl border border-dashed border-outline-variant bg-surface-container-low p-lg text-center text-body-sm text-on-surface-variant"
+                        class="rounded-xl border border-dashed bg-surface-container-low p-lg text-center text-body-sm text-on-surface-variant"
+                        :class="
+                            form.errors.attribute_value_ids
+                                ? 'border-error'
+                                : 'border-outline-variant'
+                        "
                     >
-                        No attributes added yet. Select from your catalog above.
+                        At least one attribute value is required. Select from
+                        your catalog above.
                     </div>
 
                     <div v-else class="space-y-4">

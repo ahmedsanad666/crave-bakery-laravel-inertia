@@ -32,7 +32,7 @@ class StoreProductRequest extends FormRequest
     {
         return array_merge($this->productRules(), [
             'thumbnail' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
-            'images' => ['nullable', 'array', 'max:8'],
+            'images' => ['required', 'array', 'min:1', 'max:8'],
             'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'og_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ]);

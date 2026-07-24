@@ -57,7 +57,7 @@ const form = useForm({
     status: props.category?.status ?? 'draft',
     sort_order: props.category?.sort_order ?? 0,
     show_in_navigation: props.category?.show_in_navigation ?? true,
-    show_in_homepage: props.category?.show_in_homepage ?? false,
+    show_in_footer: props.category?.show_in_footer ?? false,
     image: null,
     banner_image: null,
     meta_title: props.category?.meta_title ?? '',
@@ -306,7 +306,7 @@ const saveDraft = () => {
                                 }"
                             >
                                 <span class="truncate">
-                                    cravebakery.com/shop/
+                                    shop/
                                     <input
                                         id="slug"
                                         v-model="form.slug"
@@ -659,11 +659,11 @@ const saveDraft = () => {
                         class="mb-lg flex items-center justify-between border-t border-outline-variant py-md"
                     >
                         <span class="text-body-sm font-medium">
-                            Show on Homepage
+                            Show in Footer
                         </span>
                         <label class="relative inline-flex cursor-pointer items-center">
                             <input
-                                v-model="form.show_in_homepage"
+                                v-model="form.show_in_footer"
                                 type="checkbox"
                                 class="peer sr-only"
                             />

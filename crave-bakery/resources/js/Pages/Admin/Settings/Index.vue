@@ -73,6 +73,7 @@ const formDefaults = () => ({
     logo: null,
     favicon: null,
     hero_image: null,
+    story_image: null,
 });
 
 const form = useForm(formDefaults());
@@ -80,6 +81,7 @@ const form = useForm(formDefaults());
 const logoPreviewUrl = ref(mediaUrl(props.settings.logo));
 const faviconPreviewUrl = ref(mediaUrl(props.settings.favicon));
 const heroImagePreviewUrl = ref(mediaUrl(props.settings.hero_image));
+const storyImagePreviewUrl = ref(mediaUrl(props.settings.story_image));
 
 const headingFontOptions = computed(() =>
     (props.fonts.heading ?? []).map((name) => ({ id: name, name })),
@@ -127,6 +129,7 @@ watch(
         logoPreviewUrl.value = mediaUrl(props.settings.logo);
         faviconPreviewUrl.value = mediaUrl(props.settings.favicon);
         heroImagePreviewUrl.value = mediaUrl(props.settings.hero_image);
+        storyImagePreviewUrl.value = mediaUrl(props.settings.story_image);
     },
     { deep: true },
 );
@@ -149,9 +152,11 @@ const discard = () => {
     form.logo = null;
     form.favicon = null;
     form.hero_image = null;
+    form.story_image = null;
     logoPreviewUrl.value = mediaUrl(props.settings.logo);
     faviconPreviewUrl.value = mediaUrl(props.settings.favicon);
     heroImagePreviewUrl.value = mediaUrl(props.settings.hero_image);
+    storyImagePreviewUrl.value = mediaUrl(props.settings.story_image);
 };
 
 const submit = () => {
@@ -172,6 +177,7 @@ const submit = () => {
                 form.logo = null;
                 form.favicon = null;
                 form.hero_image = null;
+                form.story_image = null;
             },
         });
 };
@@ -513,6 +519,12 @@ const fieldClass =
                                     <AppInputError class="mt-1" :message="form.errors.since_year" />
                                 </div>
                             </div>
+                            <SettingsImageField
+                                v-model="form.story_image"
+                                label="Story Image"
+                                :current-url="storyImagePreviewUrl"
+                                :error="form.errors.story_image"
+                            />
                             <div>
                                 <AppInputLabel for="story-content" value="Story Content" />
                                 <textarea

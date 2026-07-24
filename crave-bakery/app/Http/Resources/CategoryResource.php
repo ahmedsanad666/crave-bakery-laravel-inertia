@@ -25,7 +25,7 @@ class CategoryResource extends JsonResource
             'status' => $this->status,
             'sort_order' => $this->sort_order,
             'show_in_navigation' => $this->show_in_navigation,
-            'show_in_homepage' => $this->show_in_homepage,
+            'show_in_footer' => $this->show_in_footer,
             'meta_title' => $this->meta_title,
             'meta_description' => $this->meta_description,
             'parent' => $this->whenLoaded('parent', fn () => $this->parent ? [

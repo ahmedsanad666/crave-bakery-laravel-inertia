@@ -14,9 +14,13 @@ import {
     IconStarHalfFilled,
 } from '@tabler/icons-vue';
 import { useCart } from '@/Composables/useCart';
+import { useSiteSeo } from '@/Composables/useSiteSeo';
 
 const DEFAULT_HERO_IMAGE =
     'https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg';
+
+const DEFAULT_STORY_IMAGE =
+    'https://lh3.googleusercontent.com/aida-public/AB6AXuCmPeHM84-yiu02IwoBqmVbF2-FiRMsGOuHE1Bvly-ruXAUdfL8uFtzo-dMvYQjLUkcNSGjkiJE7CbKp6WJUyuhaCG2WRJpx1_ANQAd8xT90ZJ2HOncP7qEyopQ_-BVqWYUNKVUIk7G4rCX0S_c2f4MaWrTeii0DN973MghMCj3_pQWDq-uVQ6wxtn67TuD9CFsna6rgbpgYgKkJWp4V9p8csAKusW9YW0pegKPGnhlaeVJL9I5w9KPJOu6roeF4Azbyb3RgRAuiw';
 
 const props = defineProps({
     canLogin: {
@@ -42,6 +46,12 @@ const props = defineProps({
 const { add } = useCart();
 const page = usePage();
 const site = computed(() => page.props.siteSettings ?? {});
+const {
+    headTitle: seoHeadTitle,
+    title: seoTitle,
+    description: seoDescription,
+    keywords: seoKeywords,
+} = useSiteSeo();
 
 const heroTitle = computed(
     () =>
@@ -94,6 +104,9 @@ const storyContent = computed(
     () =>
         site.value.story_content?.trim() ||
         'For over three decades, Crave Bakery has been the aromatic heartbeat of our neighborhood. What started as a small family dream has blossomed into a destination for those who appreciate the patient art of slow-fermented dough and the golden crunch of a perfect crust.\n\nWe believe that good bread takes time. Our bakers arrive when the city still sleeps, hand-shaping every loaf and tempering every batch of chocolate to ensure that the warmth you feel in every bite is as authentic as the ingredients we source from local artisans.',
+);
+const storyImage = computed(
+    () => site.value.story_image?.trim() || DEFAULT_STORY_IMAGE,
 );
 const sinceYear = computed(() => {
     const year = Number(site.value.since_year);
@@ -191,7 +204,33 @@ const starIcons = (rating) => {
 
 <template>
     <AppLayout>
-        <Head title="Home" />
+        <Head>
+            <title>{{ seoHeadTitle }}</title>
+            <meta
+                v-if="seoDescription"
+                head-key="description"
+                name="description"
+                :content="seoDescription"
+            />
+            <meta
+                v-if="seoKeywords"
+                head-key="keywords"
+                name="keywords"
+                :content="seoKeywords"
+            />
+            <meta head-key="og:type" property="og:type" content="website" />
+            <meta
+                head-key="og:title"
+                property="og:title"
+                :content="seoTitle"
+            />
+            <meta
+                v-if="seoDescription"
+                head-key="og:description"
+                property="og:description"
+                :content="seoDescription"
+            />
+        </Head>
 
         <!-- Hero -->
         <section
@@ -286,7 +325,7 @@ const starIcons = (rating) => {
                         <img
                             alt="Bakery Interior"
                             class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmPeHM84-yiu02IwoBqmVbF2-FiRMsGOuHE1Bvly-ruXAUdfL8uFtzo-dMvYQjLUkcNSGjkiJE7CbKp6WJUyuhaCG2WRJpx1_ANQAd8xT90ZJ2HOncP7qEyopQ_-BVqWYUNKVUIk7G4rCX0S_c2f4MaWrTeii0DN973MghMCj3_pQWDq-uVQ6wxtn67TuD9CFsna6rgbpgYgKkJWp4V9p8csAKusW9YW0pegKPGnhlaeVJL9I5w9KPJOu6roeF4Azbyb3RgRAuiw"
+                            :src="storyImage"
                         />
                     </div>
                     <div

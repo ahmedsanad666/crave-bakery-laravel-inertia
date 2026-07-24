@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\SiteSettingService;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -61,6 +62,8 @@ class HomeController extends Controller
             'featuredProducts' => ProductResource::collection($featuredProducts)->resolve(),
             'latestProducts' => ProductResource::collection($latestProducts)->resolve(),
             'recommendedProducts' => ProductResource::collection($recommendedProducts)->resolve(),
+        ])->withViewData([
+            'seo' => app(SiteSettingService::class)->documentSeo(),
         ]);
     }
 }

@@ -24,7 +24,7 @@ class Category extends Model
         'image_alt',
         'default_sort',
         'show_in_navigation',
-        'show_in_homepage',
+        'show_in_footer',
         'meta_title',
         'meta_description',
         'meta_keywords',
@@ -38,7 +38,7 @@ class Category extends Model
     {
         return [
             'show_in_navigation' => 'boolean',
-            'show_in_homepage' => 'boolean',
+            'show_in_footer' => 'boolean',
             'meta_keywords' => 'array',
         ];
     }

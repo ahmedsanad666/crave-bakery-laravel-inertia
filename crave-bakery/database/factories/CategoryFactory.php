@@ -28,7 +28,7 @@ class CategoryFactory extends Factory
             'image_alt' => fake()->sentence(3),
             'default_sort' => 'newest',
             'show_in_navigation' => true,
-            'show_in_homepage' => fake()->boolean(40),
+            'show_in_footer' => fake()->boolean(40),
             'meta_title' => null,
             'meta_description' => fake()->sentence(10),
             'meta_keywords' => ['bakery', 'pastry', 'fresh'],
@@ -39,10 +39,10 @@ class CategoryFactory extends Factory
         ];
     }
 
-    public function homepage(): static
+    public function footer(): static
     {
         return $this->state(fn (array $attributes) => [
-            'show_in_homepage' => true,
+            'show_in_footer' => true,
             'show_in_navigation' => true,
             'status' => 'active',
         ]);
@@ -52,7 +52,7 @@ class CategoryFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'draft',
-            'show_in_homepage' => false,
+            'show_in_footer' => false,
         ]);
     }
 

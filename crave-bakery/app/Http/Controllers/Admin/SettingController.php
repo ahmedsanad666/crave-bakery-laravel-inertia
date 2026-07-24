@@ -37,6 +37,7 @@ class SettingController extends Controller
             $request->file('logo'),
             $request->file('favicon'),
             $request->file('hero_image'),
+            $request->file('story_image'),
         );
 
         return back()->with('success', 'Website settings saved.');

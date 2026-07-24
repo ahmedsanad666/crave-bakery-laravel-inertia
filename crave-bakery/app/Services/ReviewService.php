@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -72,6 +75,65 @@ class ReviewService
         ]);
 
         return $review;
+    }
+
+    public function userHasPurchased(User $user, Product $product): bool
+    {
+        return Order::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'delivered')
+            ->whereHas(
+                'orderItems',
+                fn ($query) => $query->where('product_id', $product->id),
+            )
+            ->exists();
+    }
+
+    public function userCanReview(User $user, Product $product): bool
+    {
+        if (! $this->userHasPurchased($user, $product)) {
+            return false;
+        }
+
+        return ! Review::query()
+            ->where('user_id', $user->id)
+            ->where('product_id', $product->id)
+            ->exists();
+    }
+
+    /**
+     * @param  array{rating: int, title: string, body: string}  $data
+     */
+    public function storeForProduct(User $user, Product $product, array $data): Review
+    {
+        if (! $this->userCanReview($user, $product)) {
+            throw ValidationException::withMessages([
+                'product' => 'You can only review products you have purchased, and only once per product.',
+            ]);
+        }
+
+        $order = Order::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'delivered')
+            ->whereHas(
+                'orderItems',
+                fn ($query) => $query->where('product_id', $product->id),
+            )
+            ->latest('delivered_at')
+            ->first();
+
+        return DB::transaction(function () use ($user, $product, $data, $order) {
+            return Review::query()->create([
+                'user_id' => $user->id,
+                'product_id' => $product->id,
+                'order_id' => $order?->id,
+                'rating' => (int) $data['rating'],
+                'title' => $data['title'],
+                'body' => $data['body'],
+                'status' => 'pending',
+                'is_verified_purchase' => true,
+            ]);
+        });
     }
 
     public function updateStatus(Review $review, string $status, ?string $flagReason = null): Review

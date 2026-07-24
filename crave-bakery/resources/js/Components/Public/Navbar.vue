@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import {
+    IconHeart,
     IconMenu2,
     IconShoppingBag,
     IconUser,
@@ -31,27 +32,67 @@ const accountLabel = computed(() =>
     isAdminUser.value ? 'Admin Dashboard' : 'My Profile',
 );
 
-const navLinks = [
-    { label: 'Home', href: route('home'), match: '/' },
-    { label: 'Catalogue', href: route('products.index'), match: '/products' },
-    { label: 'About Us', href: '/#about', match: null },
-    { label: 'Contact Us', href: '/#contact', match: null },
-];
+const favouritesHref = computed(() =>
+    user.value ? route('favourites.index') : route('login'),
+);
+
+const navLinks = computed(() => {
+    const categoryLinks = (page.props.navCategories ?? []).map((category) => ({
+        label: category.name,
+        href: route('products.index', { category_id: category.id }),
+        match: null,
+        isCategory: true,
+        categoryId: category.id,
+    }));
+
+    return [
+        { label: 'Home', href: route('home'), match: '/', isCategory: false },
+        {
+            label: 'Catalogue',
+            href: route('products.index'),
+            match: '/products',
+            isCategory: false,
+        },
+        ...categoryLinks,
+        {
+            label: 'Contact Us',
+            href: '/#contact',
+            match: null,
+            isCategory: false,
+        },
+    ];
+});
 
 const cartLabel = computed(() => {
     const count = cartCount.value;
-    const padded = String(count).padStart(2, '0');
+    const padded = String(count).padStart(1, '0');
 
     return `Cart (${padded})`;
 });
 
 const isActive = (link) => {
+    if (link.isCategory) {
+        const params = new URLSearchParams(page.url.split('?')[1] ?? '');
+        return (
+            currentUrl.value.startsWith('/products') &&
+            params.get('category_id') === String(link.categoryId)
+        );
+    }
+
     if (link.match === null) {
         return false;
     }
 
     if (link.match === '/') {
         return currentUrl.value === '/';
+    }
+
+    if (link.match === '/products') {
+        const params = new URLSearchParams(page.url.split('?')[1] ?? '');
+        return (
+            currentUrl.value.startsWith('/products') &&
+            !params.get('category_id')
+        );
     }
 
     return currentUrl.value.startsWith(link.match);
@@ -77,11 +118,11 @@ onUnmounted(() => {
 
 <template>
     <nav
-        class="sticky top-0 z-50 w-full shadow-md transition-all duration-300"
+        class="sticky top-0 z-50 w-full shadow-md transition-all duration-300 "
         :class="
             scrolled
-                ? 'bg-primary/95 py-sm backdrop-blur-[10px]'
-                : 'bg-primary py-md'
+                ? 'bg-primary/95  backdrop-blur-[10px]'
+                : 'bg-primary py-sm'
         "
     >
         <div
@@ -95,7 +136,7 @@ onUnmounted(() => {
                     v-if="site.logo"
                     :src="site.logo"
                     :alt="site.site_name ?? 'Crave Bakery'"
-                    class="h-9 w-auto"
+                    class="h-16 w-auto"
                 />
                 <span v-else>
                     {{ site.site_name ?? 'Crave Bakery' }}
@@ -128,6 +169,14 @@ onUnmounted(() => {
                 </Link>
 
                 <Link
+                    :href="favouritesHref"
+                    class="hidden items-center justify-center text-on-primary transition-all duration-150 hover:opacity-90 active:scale-95 sm:flex"
+                    aria-label="Favourites"
+                >
+                    <IconHeart :size="22" stroke-width="1.5" />
+                </Link>
+
+                <Link
                     v-if="user"
                     :href="accountHref"
                     class="hidden items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-on-primary/90 transition-colors hover:bg-white/10 sm:flex"
@@ -137,10 +186,10 @@ onUnmounted(() => {
                 </Link>
                 <Link
                     v-else
-                    :href="route('register')"
+                    :href="route('login')"
                     class="rounded-full bg-accent px-xl py-sm font-sans text-body-sm font-bold text-on-primary transition-all duration-150 hover:opacity-90 active:scale-95"
                 >
-                    Sign Up
+                    Login
                 </Link>
 
                 <button
@@ -176,6 +225,14 @@ onUnmounted(() => {
                     @click="closeMobile"
                 >
                     {{ cartLabel }}
+                </Link>
+                <Link
+                    :href="favouritesHref"
+                    class="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-on-primary/90 transition-colors hover:bg-white/10 sm:hidden"
+                    @click="closeMobile"
+                >
+                    <IconHeart :size="18" stroke-width="1.5" />
+                    Favourites
                 </Link>
                 <Link
                     v-if="user"

@@ -2,11 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Category;
 use App\Services\AdminProfileService;
 use App\Services\CartService;
+use App\Services\SiteSettingService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use App\Services\SiteSettingService;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -42,7 +43,7 @@ class HandleInertiaRequests extends Middleware
                     'role' => $request->user()->role,
                     'avatar' => AdminProfileService::avatarUrl($request->user()->avatar),
                     'permissions' => $request->user()->permissions,
-                ] : null
+                ] : null,
             ],
             'flash' => [
                 'success' => $request->session()->get('success'),
@@ -52,7 +53,51 @@ class HandleInertiaRequests extends Middleware
             'cart' => [
                 'count' => app(CartService::class)->getCount($request),
             ],
-
+            'navCategories' => $this->navCategories(),
+            'footerCategories' => $this->footerCategories(),
         ];
+    }
+
+    /**
+     * Active categories flagged for the main navbar.
+     *
+     * @return list<array{id: int, name: string, slug: string}>
+     */
+    private function navCategories(): array
+    {
+        return Category::query()
+            ->status('active')
+            ->where('show_in_navigation', true)
+            ->ordered()
+            ->get(['id', 'name', 'slug'])
+            ->map(fn (Category $category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Up to 4 active categories flagged for the footer.
+     *
+     * @return list<array{id: int, name: string, slug: string}>
+     */
+    private function footerCategories(): array
+    {
+        return Category::query()
+            ->status('active')
+            ->where('show_in_footer', true)
+            ->ordered()
+            ->limit(4)
+            ->get(['id', 'name', 'slug'])
+            ->map(fn (Category $category) => [
+                'id' => $category->id,
+                'name' => $category->name,
+                'slug' => $category->slug,
+            ])
+            ->values()
+            ->all();
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\ShopReviewResource;
 use App\Models\Favourite;
 use App\Models\Product;
 use App\Services\ProductService;
+use App\Services\SiteSettingService;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,6 +33,10 @@ class ProductController extends Controller
             'categoryOptions' => $result['categoryOptions'],
             'priceBounds' => $result['priceBounds'],
             'filters' => $result['filters'],
+        ])->withViewData([
+            'seo' => app(SiteSettingService::class)->documentSeo([
+                'page_title' => 'Catalogue',
+            ]),
         ]);
     }
 
@@ -67,6 +72,7 @@ class ProductController extends Controller
                 'rating_breakdown' => $result['reviews']['rating_breakdown'],
                 'items' => ShopReviewResource::collection($result['reviews']['items'])->resolve(),
             ],
+            'canReview' => (bool) ($result['can_review'] ?? false),
         ]);
     }
 }

@@ -144,6 +144,34 @@ class SiteSettingsTest extends TestCase
         ]);
     }
 
+    public function test_story_image_upload_is_stored(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->superAdmin()->create();
+
+        $this->actingAs($admin)
+            ->from(route('admin.settings.index'))
+            ->patch(route('admin.settings.update'), [
+                'name' => 'Crave Bakery',
+                'theme_palette' => 'artisanal_warmth',
+                'font_heading' => 'Playfair Display',
+                'font_body' => 'Inter',
+                'story_image' => UploadedFile::fake()->image('story.jpg'),
+            ])
+            ->assertRedirect(route('admin.settings.index'));
+
+        $path = SiteSettingService::get('story_image');
+
+        $this->assertIsString($path);
+        $this->assertNotSame('', $path);
+        Storage::disk('public')->assertExists($path);
+        $this->assertDatabaseHas('site_settings', [
+            'key' => 'story_image',
+            'value' => $path,
+        ]);
+    }
+
     public function test_public_payload_includes_palette_tokens(): void
     {
         $payload = app(SiteSettingService::class)->publicPayload();
@@ -152,5 +180,41 @@ class SiteSettingsTest extends TestCase
         $this->assertSame('#3D1A0E', $payload['theme']['palette']['tokens']['primary']);
         $this->assertSame('#E8572A', $payload['theme']['palette']['tokens']['accent']);
         $this->assertArrayHasKey('--color-primary', app(SiteSettingService::class)->themeCssProperties());
+        $this->assertArrayHasKey('story_image', $payload);
+    }
+
+    public function test_home_html_includes_seo_meta_description_in_source(): void
+    {
+        SiteSettingService::set('name', 'Crave Bakery');
+        SiteSettingService::set('seo_meta_description', 'Best bakery in town for fresh bread.');
+        SiteSettingService::set('seo_meta_keywords', ['bakery', 'bread', 'pastry']);
+        SiteSettingService::set('seo_title_template', '%site_name% | Fresh Daily');
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee(
+            '<meta inertia="description" name="description" content="Best bakery in town for fresh bread.">',
+            false,
+        );
+        $response->assertSee(
+            '<meta inertia="keywords" name="keywords" content="bakery, bread, pastry">',
+            false,
+        );
+        $response->assertSee('>Crave Bakery | Fresh Daily</title>', false);
+    }
+
+    public function test_document_seo_uses_page_title_when_template_has_no_placeholder(): void
+    {
+        SiteSettingService::set('name', 'Crave Bakery');
+        SiteSettingService::set('seo_title_template', '%site_name% | %tagline%');
+        SiteSettingService::set('seo_meta_description', 'Catalogue meta.');
+
+        $seo = app(SiteSettingService::class)->documentSeo([
+            'page_title' => 'Catalogue',
+        ]);
+
+        $this->assertSame('Catalogue - Crave Bakery', $seo['title']);
+        $this->assertSame('Catalogue meta.', $seo['description']);
     }
 }

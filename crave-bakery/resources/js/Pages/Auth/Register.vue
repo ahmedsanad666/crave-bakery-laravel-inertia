@@ -1,10 +1,15 @@
 <script setup>
+import { ref } from 'vue';
+import { IconEye, IconEyeOff } from '@tabler/icons-vue';
 import AppButton from '@/Components/Shared/AppButton.vue';
 import AppInput from '@/Components/Shared/AppInput.vue';
 import AppInputError from '@/Components/Shared/AppInputError.vue';
 import AppInputLabel from '@/Components/Shared/AppInputLabel.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
 
 const form = useForm({
     name: '',
@@ -59,15 +64,32 @@ const submit = () => {
 
             <div>
                 <AppInputLabel for="password" value="Password" />
-                <AppInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    :has-error="!!form.errors.password"
-                    required
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <AppInput
+                        id="password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        class="block w-full pr-12"
+                        :has-error="!!form.errors.password"
+                        required
+                        autocomplete="new-password"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary"
+                        :aria-label="
+                            showPassword ? 'Hide password' : 'Show password'
+                        "
+                        @click="showPassword = !showPassword"
+                    >
+                        <IconEyeOff
+                            v-if="showPassword"
+                            :size="20"
+                            stroke-width="1.5"
+                        />
+                        <IconEye v-else :size="20" stroke-width="1.5" />
+                    </button>
+                </div>
                 <AppInputError :message="form.errors.password" />
             </div>
 
@@ -76,15 +98,36 @@ const submit = () => {
                     for="password_confirmation"
                     value="Confirm password"
                 />
-                <AppInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    :has-error="!!form.errors.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <AppInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        :type="showPasswordConfirmation ? 'text' : 'password'"
+                        class="block w-full pr-12"
+                        :has-error="!!form.errors.password_confirmation"
+                        required
+                        autocomplete="new-password"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary"
+                        :aria-label="
+                            showPasswordConfirmation
+                                ? 'Hide confirm password'
+                                : 'Show confirm password'
+                        "
+                        @click="
+                            showPasswordConfirmation = !showPasswordConfirmation
+                        "
+                    >
+                        <IconEyeOff
+                            v-if="showPasswordConfirmation"
+                            :size="20"
+                            stroke-width="1.5"
+                        />
+                        <IconEye v-else :size="20" stroke-width="1.5" />
+                    </button>
+                </div>
                 <AppInputError :message="form.errors.password_confirmation" />
             </div>
 

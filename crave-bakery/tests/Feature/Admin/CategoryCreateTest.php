@@ -42,7 +42,7 @@ class CategoryCreateTest extends TestCase
                 'status' => 'active',
                 'sort_order' => 1,
                 'show_in_navigation' => true,
-                'show_in_homepage' => false,
+                'show_in_footer' => false,
             ])
             ->assertRedirect(route('admin.categories.index'));
 

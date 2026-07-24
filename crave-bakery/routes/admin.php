@@ -37,6 +37,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('orders/{order}/invoice', [OrderController::class, 'invoice'])
         ->name('orders.invoice');
+    Route::get('orders/{order}/invoice/pdf', [OrderController::class, 'downloadInvoice'])
+        ->name('orders.invoice.pdf');
 
     Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);
 

@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from 'vue';
+import { IconEye, IconEyeOff } from '@tabler/icons-vue';
 import AppButton from '@/Components/Shared/AppButton.vue';
 import AppCheckbox from '@/Components/Shared/AppCheckbox.vue';
 import AppInput from '@/Components/Shared/AppInput.vue';
@@ -15,6 +17,8 @@ defineProps({
         type: String,
     },
 });
+
+const showPassword = ref(false);
 
 const form = useForm({
     email: '',
@@ -61,15 +65,32 @@ const submit = () => {
 
             <div>
                 <AppInputLabel for="password" value="Password" />
-                <AppInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    :has-error="!!form.errors.password"
-                    required
-                    autocomplete="current-password"
-                />
+                <div class="relative mt-1">
+                    <AppInput
+                        id="password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        class="block w-full pr-12"
+                        :has-error="!!form.errors.password"
+                        required
+                        autocomplete="current-password"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary"
+                        :aria-label="
+                            showPassword ? 'Hide password' : 'Show password'
+                        "
+                        @click="showPassword = !showPassword"
+                    >
+                        <IconEyeOff
+                            v-if="showPassword"
+                            :size="20"
+                            stroke-width="1.5"
+                        />
+                        <IconEye v-else :size="20" stroke-width="1.5" />
+                    </button>
+                </div>
                 <AppInputError :message="form.errors.password" />
             </div>
 

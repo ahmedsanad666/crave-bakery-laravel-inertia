@@ -1,19 +1,32 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     IconArrowLeft,
     IconBread,
     IconDownload,
     IconPrinter,
 } from '@tabler/icons-vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     order: {
         type: Object,
         required: true,
     },
+});
+
+const page = usePage();
+const downloadingPdf = ref(false);
+
+const site = computed(() => page.props.siteSettings ?? {});
+const siteName = computed(() => site.value.site_name ?? 'Crave Bakery');
+const siteLogo = computed(() => site.value.logo ?? null);
+const siteEmail = computed(() => site.value.email ?? '');
+const sitePhone = computed(() => site.value.phone ?? '');
+const siteAddress = computed(() => {
+    const value = site.value.address;
+    return typeof value === 'string' ? value.trim() : '';
 });
 
 const formatMoney = (value) =>
@@ -128,6 +141,21 @@ const itemSubtitle = (item) => {
 const printInvoice = () => {
     window.print();
 };
+
+const downloadPdf = () => {
+    if (downloadingPdf.value || !props.order?.id) {
+        return;
+    }
+
+    downloadingPdf.value = true;
+
+    // Server-generated PDF download (DomPDF).
+    window.location.href = route('admin.orders.invoice.pdf', props.order.id);
+
+    window.setTimeout(() => {
+        downloadingPdf.value = false;
+    }, 1500);
+};
 </script>
 
 <template>
@@ -160,18 +188,19 @@ const printInvoice = () => {
                     </button>
                     <button
                         type="button"
-                        disabled
-                        title="Coming soon"
-                        class="h-12 px-8 rounded-full bg-secondary text-on-secondary font-semibold flex items-center gap-2 opacity-50 cursor-not-allowed"
+                        class="h-12 px-8 rounded-full bg-secondary text-on-secondary font-semibold flex items-center gap-2 hover:opacity-90 transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+                        :disabled="downloadingPdf"
+                        @click="downloadPdf"
                     >
                         <IconDownload class="h-5 w-5" />
-                        Download PDF
+                        {{ downloadingPdf ? 'Preparing PDF…' : 'Download PDF' }}
                     </button>
                 </div>
             </div>
 
             <!-- Invoice card -->
             <article
+                id="invoice-document"
                 class="invoice-card relative w-full max-w-[800px] overflow-hidden rounded-xl border border-outline-variant/30 bg-white p-8 sm:p-12 shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
             >
                 <div class="absolute top-0 left-0 right-0 h-1.5 bg-secondary" />
@@ -182,22 +211,37 @@ const printInvoice = () => {
                 >
                     <div class="flex flex-col gap-4">
                         <div class="flex items-center gap-3">
+                            <img
+                                v-if="siteLogo"
+                                :src="siteLogo"
+                                :alt="siteName"
+                                class="h-12 w-auto max-w-[160px] object-contain"
+                            />
                             <div
+                                v-else
                                 class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-container text-on-primary-fixed"
                             >
                                 <IconBread class="h-7 w-7" />
                             </div>
                             <h2 class="font-serif text-headline-md text-primary">
-                                Crave Bakery
+                                {{ siteName }}
                             </h2>
                         </div>
                         <address
                             class="not-italic text-on-surface-variant text-body-sm leading-relaxed"
                         >
-                            1242 Artisanal Way, Flour District<br />
-                            San Francisco, CA 94107<br />
-                            hello@cravebakery.com<br />
-                            (555) 012-3456
+                            <template v-if="siteAddress">
+                                {{ siteAddress }}<br />
+                            </template>
+                            <template v-if="siteEmail">
+                                {{ siteEmail }}<br v-if="sitePhone" />
+                            </template>
+                            <template v-if="sitePhone">
+                                {{ sitePhone }}
+                            </template>
+                            <template v-if="!siteAddress && !siteEmail && !sitePhone">
+                                —
+                            </template>
                         </address>
                     </div>
                     <div class="text-left sm:text-right">
@@ -436,7 +480,7 @@ const printInvoice = () => {
                             <p
                                 class="mt-6 text-[12px] font-bold uppercase tracking-wider text-outline"
                             >
-                                Crave Bakery &amp; Co.
+                                {{ siteName }}
                             </p>
                         </div>
                     </div>

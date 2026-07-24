@@ -1,6 +1,9 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
+    IconChevronDown,
+    IconChevronUp,
+    IconLayoutGrid,
     IconSearch,
     IconStar,
     IconStarFilled,
@@ -55,6 +58,85 @@ const emit = defineEmits([
     'clear',
 ]);
 
+const expandedIds = ref(new Set());
+
+const findAncestorIds = (nodes, targetId, path = []) => {
+    for (const node of nodes) {
+        if (node.id == null) {
+            const nested = findAncestorIds(node.children ?? [], targetId, path);
+            if (nested) {
+                return nested;
+            }
+            continue;
+        }
+
+        const nextPath = [...path, node.id];
+
+        if (String(node.id) === String(targetId)) {
+            return path;
+        }
+
+        const nested = findAncestorIds(node.children ?? [], targetId, nextPath);
+        if (nested) {
+            return nested;
+        }
+    }
+
+    return null;
+};
+
+const expandAncestorsOfActive = () => {
+    if (props.categoryId == null || props.categoryId === '') {
+        return;
+    }
+
+    const ancestors = findAncestorIds(props.categoryOptions, props.categoryId);
+    if (!ancestors?.length) {
+        return;
+    }
+
+    const next = new Set(expandedIds.value);
+    ancestors.forEach((id) => next.add(id));
+    expandedIds.value = next;
+};
+
+watch(
+    () => [props.categoryOptions, props.categoryId],
+    () => expandAncestorsOfActive(),
+    { immediate: true, deep: true },
+);
+
+const collectVisibleRows = (nodes, depth = 0) => {
+    const rows = [];
+
+    for (const node of nodes) {
+        const children = node.children ?? [];
+        const hasChildren = children.length > 0;
+        const isExpanded =
+            node.id != null && expandedIds.value.has(node.id);
+
+        rows.push({
+            id: node.id,
+            name: node.name,
+            products_count: node.products_count ?? 0,
+            image: node.image ?? null,
+            depth,
+            hasChildren,
+            isExpanded,
+        });
+
+        if (hasChildren && isExpanded) {
+            rows.push(...collectVisibleRows(children, depth + 1));
+        }
+    }
+
+    return rows;
+};
+
+const visibleCategoryRows = computed(() =>
+    collectVisibleRows(props.categoryOptions),
+);
+
 const sliderMax = computed(() => {
     const max = Number(props.priceBounds?.max ?? 0);
 
@@ -90,9 +172,30 @@ const isCategoryActive = (option) => {
     return String(props.categoryId) === String(option.id);
 };
 
+const toggleExpanded = (categoryId) => {
+    if (categoryId == null) {
+        return;
+    }
+
+    const next = new Set(expandedIds.value);
+    if (next.has(categoryId)) {
+        next.delete(categoryId);
+    } else {
+        next.add(categoryId);
+    }
+    expandedIds.value = next;
+};
+
+const selectCategory = (option) => {
+    emit('update:categoryId', option.id == null ? null : option.id);
+};
+
 const onPriceInput = (event) => {
     emit('update:priceMax', Number(event.target.value));
 };
+
+const categoryInitial = (name) =>
+    (name?.trim()?.charAt(0) || '?').toUpperCase();
 </script>
 
 <template>
@@ -126,25 +229,84 @@ const onPriceInput = (event) => {
                 Categories
             </h3>
             <ul class="flex flex-col gap-xs">
-                <li v-for="option in categoryOptions" :key="String(option.id)">
-                    <button
-                        type="button"
-                        class="flex w-full items-center justify-between rounded px-xs py-1 font-sans text-body-sm transition-all hover:translate-x-1"
+                <li
+                    v-for="row in visibleCategoryRows"
+                    :key="`${row.id ?? 'all'}-${row.depth}`"
+                >
+                    <div
+                        class="flex w-full items-center gap-sm rounded-lg px-xs py-1.5 transition-colors"
                         :class="
-                            isCategoryActive(option)
-                                ? 'font-bold text-secondary'
-                                : 'text-on-surface-variant hover:bg-surface-container-high'
+                            isCategoryActive(row)
+                                ? 'bg-secondary/10'
+                                : 'hover:bg-surface-container-high'
                         "
-                        @click="
-                            emit(
-                                'update:categoryId',
-                                option.id == null ? null : option.id,
-                            )
-                        "
+                        :style="{ paddingLeft: `${0.25 + row.depth * 0.875}rem` }"
                     >
-                        <span>{{ option.name }}</span>
-                        <span>({{ option.products_count }})</span>
-                    </button>
+                        <button
+                            type="button"
+                            class="flex min-w-0 flex-1 items-center gap-sm text-left font-sans text-body-sm transition-colors"
+                            :class="
+                                isCategoryActive(row)
+                                    ? 'font-bold text-secondary'
+                                    : 'text-on-surface-variant'
+                            "
+                            @click="selectCategory(row)"
+                        >
+                            <span
+                                class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full"
+                                :class="
+                                    row.image
+                                        ? 'bg-surface-container'
+                                        : 'bg-primary text-on-primary'
+                                "
+                            >
+                                <img
+                                    v-if="row.image"
+                                    :src="row.image"
+                                    :alt="row.name"
+                                    class="h-full w-full object-cover"
+                                />
+                                <IconLayoutGrid
+                                    v-else-if="row.id == null"
+                                    :size="16"
+                                    stroke-width="1.5"
+                                />
+                                <span
+                                    v-else
+                                    class="font-sans text-[11px] font-bold"
+                                >
+                                    {{ categoryInitial(row.name) }}
+                                </span>
+                            </span>
+                            <span class="min-w-0 flex-1 truncate">
+                                {{ row.name }}
+                            </span>
+                        </button>
+
+                        <button
+                            v-if="row.hasChildren"
+                            type="button"
+                            class="flex size-8 shrink-0 items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-white/80 hover:text-primary"
+                            :aria-expanded="row.isExpanded"
+                            :aria-label="
+                                row.isExpanded
+                                    ? `Collapse ${row.name}`
+                                    : `Expand ${row.name}`
+                            "
+                            @click.stop="toggleExpanded(row.id)"
+                        >
+                            <IconChevronUp
+                                v-if="row.isExpanded"
+                                :size="18"
+                                stroke-width="1.5"
+                            />
+                            <IconChevronDown
+                                v-else
+                                :size="18"
+                                stroke-width="1.5"
+                            />
+                        </button>
+                    </div>
                 </li>
             </ul>
         </div>

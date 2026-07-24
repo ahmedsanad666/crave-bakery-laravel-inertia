@@ -1,6 +1,6 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import {
     IconChevronRight,
     IconHeart,
@@ -9,6 +9,7 @@ import {
     IconPlus,
     IconShieldCheck,
     IconShoppingCart,
+    IconStar,
     IconStarFilled,
     IconStarHalfFilled,
     IconTruck,
@@ -20,6 +21,7 @@ import ShopReviewCard from '@/Components/Public/ShopReviewCard.vue';
 import RelatedProductCard from '@/Components/Public/RelatedProductCard.vue';
 import AppSelect from '@/Components/Shared/AppSelect.vue';
 import { useCart } from '@/Composables/useCart';
+import { useFavourite } from '@/Composables/useFavourite';
 
 const props = defineProps({
     product: {
@@ -39,9 +41,15 @@ const props = defineProps({
             items: [],
         }),
     },
+    canReview: {
+        type: Boolean,
+        default: false,
+    },
 });
 
+const page = usePage();
 const { add } = useCart();
+const { toggle } = useFavourite();
 
 const activeTab = ref('description');
 const quantity = ref(1);
@@ -199,12 +207,47 @@ const handleAddToCart = () => {
 };
 
 const handleToggleFavourite = () => {
-    isFavourited.value = !isFavourited.value;
-    // Favourites wiring comes in Phase 5
+    if (!page.props.auth?.user) {
+        router.visit(route('login'));
+        return;
+    }
+
+    if (!props.product?.slug) {
+        return;
+    }
+
+    toggle(props.product.slug);
 };
 
+const showReviewForm = ref(false);
+
+const reviewForm = useForm({
+    rating: 5,
+    title: '',
+    body: '',
+});
+
 const handleWriteReview = () => {
-    // Review form comes later
+    showReviewForm.value = true;
+};
+
+const submitReview = () => {
+    if (!props.product?.slug) {
+        return;
+    }
+
+    reviewForm.post(route('reviews.store', props.product.slug), {
+        preserveScroll: true,
+        onSuccess: () => {
+            showReviewForm.value = false;
+            reviewForm.reset('title', 'body');
+            reviewForm.rating = 5;
+        },
+    });
+};
+
+const setReviewRating = (value) => {
+    reviewForm.rating = value;
 };
 </script>
 
@@ -606,18 +649,6 @@ const handleWriteReview = () => {
                 >
                     Reviews ({{ reviewsCount }})
                 </button>
-                <button
-                    type="button"
-                    class="px-xl py-md font-sans text-title-lg transition-colors"
-                    :class="
-                        activeTab === 'ingredients'
-                            ? 'border-b-2 border-accent text-primary'
-                            : 'text-on-surface-variant hover:text-primary'
-                    "
-                    @click="activeTab = 'ingredients'"
-                >
-                    Ingredients
-                </button>
             </div>
 
             <!-- Description -->
@@ -738,12 +769,123 @@ const handleWriteReview = () => {
                         </div>
 
                         <button
+                            v-if="canReview && !showReviewForm"
                             type="button"
                             class="mt-xl w-full rounded-full border border-primary py-sm font-sans text-title-lg text-primary transition-all hover:bg-primary hover:text-white"
                             @click="handleWriteReview"
                         >
                             Write a Review
                         </button>
+
+                        <form
+                            v-if="canReview && showReviewForm"
+                            class="mt-xl space-y-md text-left"
+                            @submit.prevent="submitReview"
+                        >
+                            <div>
+                                <p class="mb-sm font-sans text-body-sm font-medium text-on-surface">
+                                    Your rating
+                                </p>
+                                <div class="flex gap-xs">
+                                    <button
+                                        v-for="star in 5"
+                                        :key="`review-star-${star}`"
+                                        type="button"
+                                        class="text-accent transition-transform hover:scale-110"
+                                        :aria-label="`Rate ${star} stars`"
+                                        @click="setReviewRating(star)"
+                                    >
+                                        <IconStarFilled
+                                            v-if="star <= reviewForm.rating"
+                                            :size="28"
+                                        />
+                                        <IconStar
+                                            v-else
+                                            :size="28"
+                                            class="text-outline-variant"
+                                        />
+                                    </button>
+                                </div>
+                                <p
+                                    v-if="reviewForm.errors.rating"
+                                    class="mt-xs font-sans text-body-sm text-error"
+                                >
+                                    {{ reviewForm.errors.rating }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    for="review-title"
+                                    class="mb-xs block font-sans text-body-sm font-medium text-on-surface"
+                                >
+                                    Title
+                                </label>
+                                <input
+                                    id="review-title"
+                                    v-model="reviewForm.title"
+                                    type="text"
+                                    maxlength="255"
+                                    class="input-field w-full"
+                                    :class="{ 'input-field-error': reviewForm.errors.title }"
+                                    placeholder="Sum up your experience"
+                                />
+                                <p
+                                    v-if="reviewForm.errors.title"
+                                    class="mt-xs font-sans text-body-sm text-error"
+                                >
+                                    {{ reviewForm.errors.title }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    for="review-body"
+                                    class="mb-xs block font-sans text-body-sm font-medium text-on-surface"
+                                >
+                                    Review
+                                </label>
+                                <textarea
+                                    id="review-body"
+                                    v-model="reviewForm.body"
+                                    rows="4"
+                                    maxlength="2000"
+                                    class="input-field h-auto w-full py-md"
+                                    :class="{ 'input-field-error': reviewForm.errors.body }"
+                                    placeholder="Tell others what you liked or what could be better"
+                                />
+                                <p
+                                    v-if="reviewForm.errors.body"
+                                    class="mt-xs font-sans text-body-sm text-error"
+                                >
+                                    {{ reviewForm.errors.body }}
+                                </p>
+                                <p
+                                    v-if="reviewForm.errors.product"
+                                    class="mt-xs font-sans text-body-sm text-error"
+                                >
+                                    {{ reviewForm.errors.product }}
+                                </p>
+                            </div>
+
+                            <div class="flex flex-col gap-sm sm:flex-row">
+                                <button
+                                    type="submit"
+                                    class="flex-1 rounded-full bg-accent py-sm font-sans text-title-lg text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                                    :disabled="reviewForm.processing"
+                                >
+                                    {{ reviewForm.processing ? 'Submitting…' : 'Submit Review' }}
+                                </button>
+                                <button
+                                    type="button"
+                                    class="flex-1 rounded-full border border-outline-variant py-sm font-sans text-title-lg text-on-surface-variant transition-colors hover:bg-surface-container-low"
+                                    :disabled="reviewForm.processing"
+                                    @click="showReviewForm = false"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -760,19 +902,6 @@ const handleWriteReview = () => {
                         No reviews yet. Be the first to share your thoughts.
                     </p>
                 </div>
-            </div>
-
-            <!-- Ingredients -->
-            <div
-                v-else
-                class="rounded-xl border border-dashed border-outline-variant bg-white p-xxl text-center"
-            >
-                <h3 class="mb-sm font-serif text-headline-sm text-primary">
-                    Ingredients
-                </h3>
-                <p class="font-sans text-body-lg text-on-surface-variant">
-                    Ingredient details coming soon.
-                </p>
             </div>
         </section>
 

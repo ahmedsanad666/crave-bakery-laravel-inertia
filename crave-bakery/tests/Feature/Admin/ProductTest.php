@@ -54,6 +54,7 @@ class ProductTest extends TestCase
 
     public function test_store_creates_product_with_relations(): void
     {
+        Storage::fake('public');
         $admin = User::factory()->superAdmin()->create();
         $category = Category::factory()->create();
         $attribute = Attribute::factory()->create();
@@ -64,11 +65,16 @@ class ProductTest extends TestCase
                 'name' => 'Sourdough Loaf',
                 'slug' => 'sourdough-loaf',
                 'sku' => 'CB-10001',
+                'short_description' => 'Tangy crusty loaf.',
+                'description' => 'A long-fermented sourdough with a crisp crust.',
                 'regular_price' => 12.5,
                 'status' => 'active',
                 'stock_quantity' => 10,
                 'category_ids' => [$category->id],
                 'attribute_value_ids' => [$value->id],
+                'images' => [
+                    UploadedFile::fake()->image('gallery-1.jpg'),
+                ],
             ])
             ->assertRedirect(route('admin.products.index'));
 
@@ -78,20 +84,28 @@ class ProductTest extends TestCase
         $this->assertSame('in_stock', $product->stock_status);
         $this->assertTrue($product->categories->contains('id', $category->id));
         $this->assertTrue($product->attributeValues->contains('id', $value->id));
+        $this->assertCount(1, $product->images);
     }
 
     public function test_store_uploads_thumbnail_and_gallery(): void
     {
         Storage::fake('public');
         $admin = User::factory()->superAdmin()->create();
+        $category = Category::factory()->create();
+        $value = AttributeValue::factory()->create();
 
         $this->actingAs($admin)
             ->post(route('admin.products.store'), [
                 'name' => 'Croissant',
                 'slug' => 'croissant',
                 'sku' => 'CB-10002',
+                'short_description' => 'Buttery laminated pastry.',
+                'description' => 'Flaky layers with a golden finish.',
                 'regular_price' => 4.5,
                 'status' => 'draft',
+                'stock_quantity' => 20,
+                'category_ids' => [$category->id],
+                'attribute_value_ids' => [$value->id],
                 'thumbnail' => UploadedFile::fake()->image('thumb.jpg'),
                 'images' => [
                     UploadedFile::fake()->image('gallery-1.jpg'),
@@ -108,13 +122,45 @@ class ProductTest extends TestCase
         Storage::disk('public')->assertExists($product->images->first()->path);
     }
 
+    public function test_store_requires_category_description_images_stock_and_attributes(): void
+    {
+        $admin = User::factory()->superAdmin()->create();
+
+        $this->actingAs($admin)
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'name' => 'Incomplete Product',
+                'slug' => 'incomplete-product',
+                'sku' => 'CB-INCOMPLETE',
+                'regular_price' => 8,
+                'status' => 'draft',
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors([
+                'short_description',
+                'description',
+                'stock_quantity',
+                'category_ids',
+                'attribute_value_ids',
+                'images',
+            ]);
+    }
+
     public function test_update_syncs_pivots_and_fields(): void
     {
+        Storage::fake('public');
         $admin = User::factory()->superAdmin()->create();
         $product = Product::factory()->create([
             'name' => 'Old Name',
             'slug' => 'old-name',
             'sku' => 'CB-OLD',
+            'short_description' => 'Old short description.',
+            'description' => 'Old full description.',
+            'stock_quantity' => 5,
+        ]);
+        $product->images()->create([
+            'path' => UploadedFile::fake()->image('existing.jpg')->store('products/gallery', 'public'),
+            'sort_order' => 0,
         ]);
         $oldCategory = Category::factory()->create();
         $newCategory = Category::factory()->create();
@@ -127,6 +173,8 @@ class ProductTest extends TestCase
                 'name' => 'New Name',
                 'slug' => 'new-name',
                 'sku' => 'CB-NEW',
+                'short_description' => 'Updated short description.',
+                'description' => 'Updated full description.',
                 'regular_price' => 9.99,
                 'status' => 'active',
                 'stock_quantity' => 0,
@@ -147,9 +195,24 @@ class ProductTest extends TestCase
 
     public function test_update_rejects_duplicate_slug(): void
     {
+        Storage::fake('public');
         $admin = User::factory()->superAdmin()->create();
         Product::factory()->create(['slug' => 'taken-slug', 'sku' => 'CB-A']);
-        $product = Product::factory()->create(['slug' => 'other-slug', 'sku' => 'CB-B']);
+        $product = Product::factory()->create([
+            'slug' => 'other-slug',
+            'sku' => 'CB-B',
+            'short_description' => 'Short description.',
+            'description' => 'Full description.',
+            'stock_quantity' => 3,
+        ]);
+        $product->images()->create([
+            'path' => UploadedFile::fake()->image('existing.jpg')->store('products/gallery', 'public'),
+            'sort_order' => 0,
+        ]);
+        $category = Category::factory()->create();
+        $value = AttributeValue::factory()->create();
+        $product->categories()->sync([$category->id]);
+        $product->attributeValues()->sync([$value->id]);
 
         $this->actingAs($admin)
             ->from(route('admin.products.edit', $product))
@@ -157,8 +220,13 @@ class ProductTest extends TestCase
                 'name' => $product->name,
                 'slug' => 'taken-slug',
                 'sku' => 'CB-B',
+                'short_description' => $product->short_description,
+                'description' => $product->description,
                 'regular_price' => 5,
                 'status' => 'draft',
+                'stock_quantity' => $product->stock_quantity,
+                'category_ids' => [$category->id],
+                'attribute_value_ids' => [$value->id],
             ])
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHasErrors('slug');

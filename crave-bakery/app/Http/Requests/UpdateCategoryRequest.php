@@ -28,6 +28,14 @@ class UpdateCategoryRequest extends FormRequest
         if ($this->input('parent_id') === '' || $this->input('parent_id') === 'null') {
             $this->merge(['parent_id' => null]);
         }
+
+        if ($this->has('show_in_navigation')) {
+            $this->merge(['show_in_navigation' => $this->boolean('show_in_navigation')]);
+        }
+
+        if ($this->has('show_in_footer')) {
+            $this->merge(['show_in_footer' => $this->boolean('show_in_footer')]);
+        }
     }
 
     /**

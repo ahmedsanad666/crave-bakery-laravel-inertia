@@ -214,7 +214,9 @@ const progressSteps = computed(() => {
             id: 'paid',
             label: 'Payment Confirmed',
             icon: IconCheck,
-            done: paymentConfirmed.value,
+            // Treat as complete once fulfillment has started, even if payment
+            // fields are missing/out of sync (e.g. cash / legacy orders).
+            done: paymentConfirmed.value || rank >= 3,
             current: false,
         },
         {

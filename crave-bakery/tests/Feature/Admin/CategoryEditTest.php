@@ -21,7 +21,7 @@ class CategoryEditTest extends TestCase
             'name' => 'Pastries',
             'slug' => 'pastries',
             'meta_title' => 'Pastries | Crave',
-            'show_in_homepage' => true,
+            'show_in_footer' => true,
         ]);
 
         $this->actingAs($admin)
@@ -33,7 +33,7 @@ class CategoryEditTest extends TestCase
                 ->where('category.name', 'Pastries')
                 ->where('category.slug', 'pastries')
                 ->where('category.meta_title', 'Pastries | Crave')
-                ->where('category.show_in_homepage', true)
+                ->where('category.show_in_footer', true)
                 ->has('parentOptions')
             );
     }
@@ -55,7 +55,7 @@ class CategoryEditTest extends TestCase
                 'parent_id' => '',
                 'sort_order' => 2,
                 'show_in_navigation' => true,
-                'show_in_homepage' => false,
+                'show_in_footer' => false,
                 'description' => 'Updated description',
             ])
             ->assertRedirect(route('admin.categories.index'));

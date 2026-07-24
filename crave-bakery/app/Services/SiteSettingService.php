@@ -25,6 +25,7 @@ class SiteSettingService
         'hero_rating_description',
         'story_title',
         'story_content',
+        'story_image',
         'since_year',
         'logo',
         'favicon',
@@ -165,8 +166,9 @@ class SiteSettingService
         ?UploadedFile $logo = null,
         ?UploadedFile $favicon = null,
         ?UploadedFile $heroImage = null,
+        ?UploadedFile $storyImage = null,
     ): void {
-        DB::transaction(function () use ($data, $logo, $favicon, $heroImage) {
+        DB::transaction(function () use ($data, $logo, $favicon, $heroImage, $storyImage) {
             if ($logo) {
                 $this->replaceImage('logo', $logo);
             }
@@ -177,6 +179,10 @@ class SiteSettingService
 
             if ($heroImage) {
                 $this->replaceImage('hero_image', $heroImage);
+            }
+
+            if ($storyImage) {
+                $this->replaceImage('story_image', $storyImage);
             }
 
             $writable = [
@@ -258,6 +264,7 @@ class SiteSettingService
             'hero_rating_description' => $settings['hero_rating_description'],
             'story_title' => $settings['story_title'],
             'story_content' => $settings['story_content'],
+            'story_image' => Product::toPublicUrl($settings['story_image']),
             'since_year' => $settings['since_year'],
             'logo' => Product::toPublicUrl($settings['logo']),
             'favicon' => Product::toPublicUrl($settings['favicon']),
@@ -276,6 +283,70 @@ class SiteSettingService
                 'meta_description' => $settings['seo_meta_description'],
                 'meta_keywords' => $settings['seo_meta_keywords'],
             ],
+        ];
+    }
+
+    /**
+     * Resolve the admin SEO title template with placeholder replacements.
+     *
+     * @param  array{site_name?: string, tagline?: string, category?: string, product?: string, page_title?: string}  $replacements
+     */
+    public function resolveTitleTemplate(array $replacements = []): string
+    {
+        $settings = $this->rawSettings();
+        $siteName = $settings['name'] !== '' ? $settings['name'] : 'Crave Bakery';
+        $tagline = $settings['tagline'] !== ''
+            ? $settings['tagline']
+            : ($settings['overview'] !== '' ? $settings['overview'] : '');
+
+        $vars = [
+            '%site_name%' => $replacements['site_name'] ?? $siteName,
+            '%tagline%' => $replacements['tagline'] ?? $tagline,
+            '%category%' => $replacements['category'] ?? '',
+            '%product%' => $replacements['product'] ?? '',
+            '%page_title%' => $replacements['page_title'] ?? '',
+        ];
+
+        $template = $settings['seo_title_template'] !== ''
+            ? $settings['seo_title_template']
+            : '%site_name% | %tagline%';
+
+        $resolved = str_replace(array_keys($vars), array_values($vars), $template);
+        $resolved = preg_replace('/\s*[\|\-–—]\s*$/u', '', trim($resolved)) ?? '';
+        $resolved = preg_replace('/^\s*[\|\-–—]\s*/u', '', $resolved) ?? '';
+        $resolved = preg_replace('/\s{2,}/', ' ', $resolved) ?? '';
+
+        return $resolved !== '' ? $resolved : $siteName;
+    }
+
+    /**
+     * Document SEO for Blade (View Source) and controller view data.
+     *
+     * @param  array{site_name?: string, tagline?: string, category?: string, product?: string, page_title?: string}  $replacements
+     * @return array{title: string, description: string, keywords: string}
+     */
+    public function documentSeo(array $replacements = []): array
+    {
+        $settings = $this->rawSettings();
+        $siteName = $settings['name'] !== '' ? $settings['name'] : 'Crave Bakery';
+        $pageTitle = trim((string) ($replacements['page_title'] ?? ''));
+        $template = $settings['seo_title_template'];
+
+        if ($pageTitle !== '' && ! str_contains($template, '%page_title%')) {
+            $title = $pageTitle.' - '.$siteName;
+        } else {
+            $title = $this->resolveTitleTemplate($replacements);
+        }
+
+        $keywords = array_values(array_filter(array_map(
+            fn ($item) => trim((string) $item),
+            $settings['seo_meta_keywords'],
+        )));
+
+        return [
+            'title' => $title,
+            'description' => $settings['seo_meta_description'],
+            'keywords' => implode(', ', $keywords),
         ];
     }
 
@@ -311,6 +382,7 @@ class SiteSettingService
             'hero_rating_description' => (string) (static::get('hero_rating_description') ?? ''),
             'story_title' => (string) (static::get('story_title') ?? ''),
             'story_content' => (string) (static::get('story_content') ?? ''),
+            'story_image' => static::get('story_image'),
             'since_year' => (int) (static::get('since_year') ?: 1999),
             'logo' => static::get('logo'),
             'favicon' => static::get('favicon'),

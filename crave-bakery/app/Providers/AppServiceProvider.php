@@ -8,8 +8,10 @@ use App\Models\User;
 use App\Policies\AdminUserPolicy;
 use App\Policies\CustomerPolicy;
 use App\Policies\SiteSettingPolicy;
+use App\Services\SiteSettingService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -45,6 +47,14 @@ class AppServiceProvider extends ServiceProvider
             return AdminUser::query()
                 ->whereKey($value)
                 ->firstOrFail();
+        });
+
+        View::composer('app', function ($view) {
+            if ($view->offsetExists('seo')) {
+                return;
+            }
+
+            $view->with('seo', app(SiteSettingService::class)->documentSeo());
         });
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests\Concerns\ValidatesProduct;
 use App\Models\Product;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -48,5 +49,31 @@ class UpdateProductRequest extends FormRequest
             'images.*' => ['image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'og_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ]);
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            /** @var Product $product */
+            $product = $this->route('product');
+
+            $removeIds = collect($this->input('remove_image_ids', []))
+                ->map(fn ($id) => (int) $id)
+                ->all();
+
+            $existingRemaining = $product->images()
+                ->when($removeIds !== [], fn ($query) => $query->whereNotIn('id', $removeIds))
+                ->count();
+
+            $newImages = $this->file('images', []);
+            $newCount = is_array($newImages) ? count($newImages) : 0;
+
+            if (($existingRemaining + $newCount) < 1) {
+                $validator->errors()->add(
+                    'images',
+                    'At least one gallery image is required.'
+                );
+            }
+        });
     }
 }
