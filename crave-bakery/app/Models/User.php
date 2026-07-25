@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 
 #[Fillable([
     'name',
@@ -30,7 +31,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use Billable, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * @return array<string, string>
@@ -89,13 +90,22 @@ class User extends Authenticatable
     }
 
     /**
-     * Paid, non-cancelled orders used for LTV / orders_count.
+     * Paid, non-cancelled orders used for strict LTV calculations.
      */
     public function paidOrders(): HasMany
     {
         return $this->hasMany(Order::class)
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid');
+    }
+
+    /**
+     * Non-cancelled orders for admin customer activity (count / spend).
+     */
+    public function shopOrders(): HasMany
+    {
+        return $this->hasMany(Order::class)
+            ->where('status', '!=', 'cancelled');
     }
 
     public function carts(): HasMany

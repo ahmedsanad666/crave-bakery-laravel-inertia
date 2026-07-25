@@ -138,6 +138,7 @@ class OrderService
     public function quote(User $user, array $input = []): array
     {
         $cartPayload = $this->cartService->getCartPayloadForUser($user);
+        // dd($cartPayload['items'][0]->toArray());
         $deliveryMethod = ($input['delivery_method'] ?? 'standard') === 'express'
             ? 'express'
             : 'standard';
@@ -147,6 +148,7 @@ class OrderService
             $deliveryMethod,
             $input['promo_code'] ?? null,
         );
+        // dd($totals);
 
         return [
             'cart' => $cartPayload,
@@ -271,6 +273,53 @@ class OrderService
         });
     }
 
+    /**
+     * Create an order from the cart and mark it paid for a successful Stripe PaymentIntent.
+     * Cart / stock / promo side effects only run here (not before payment).
+     *
+     * @param  array<string, mixed>  $validated
+     */
+    public function createPaidStripeOrderFromCart(
+        User $user,
+        array $validated,
+        string $paymentIntentId,
+    ): Order {
+        return DB::transaction(function () use ($user, $validated, $paymentIntentId) {
+            $existing = Order::query()
+                ->where('transaction_id', $paymentIntentId)
+                ->first();
+
+            if ($existing) {
+                if ($existing->user_id !== $user->id) {
+                    abort(403, 'Unauthorized.');
+                }
+
+                if ($existing->payment_status !== 'paid') {
+                    $existing->update([
+                        'payment_status' => 'paid',
+                        'status' => 'processing',
+                        'paid_at' => $existing->paid_at ?? now(),
+                        'payment_method' => 'stripe',
+                    ]);
+                }
+
+                return $existing->fresh(['orderItems.product']);
+            }
+
+            $validated['payment_method'] = 'stripe';
+            $order = $this->createFromCart($user, $validated);
+
+            $order->update([
+                'payment_status' => 'paid',
+                'status' => 'processing',
+                'paid_at' => now(),
+                'transaction_id' => $paymentIntentId,
+            ]);
+
+            return $order->fresh(['orderItems.product']);
+        });
+    }
+
     public function updateStatus(Order $order, string $status, ?string $note = null): Order
     {
         return DB::transaction(function () use ($order, $status, $note) {
@@ -278,6 +327,16 @@ class OrderService
 
             if ($status === 'delivered' && $order->delivered_at === null) {
                 $order->delivered_at = now();
+            }
+
+            // COD cash collected on delivery — mark as paid for invoices/refunds
+            if (
+                $status === 'delivered'
+                && $order->payment_method === 'cod'
+                && $order->payment_status === 'pending'
+            ) {
+                $order->payment_status = 'paid';
+                $order->paid_at = now();
             }
 
             if ($status === 'cancelled') {
@@ -316,6 +375,10 @@ class OrderService
             throw ValidationException::withMessages([
                 'payment_status' => 'Only paid orders can be refunded.',
             ]);
+        }
+
+        if ($order->payment_method === 'stripe') {
+            app(StripePaymentService::class)->refundPayment($order);
         }
 
         return DB::transaction(function () use ($order, $reason) {

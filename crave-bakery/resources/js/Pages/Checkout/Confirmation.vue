@@ -40,6 +40,10 @@ const paymentLabel = computed(() => {
         return 'Cash on Delivery';
     }
 
+    if (props.order.payment_method === 'stripe') {
+        return 'Stripe';
+    }
+
     return props.order.payment_method || 'Pending';
 });
 </script>

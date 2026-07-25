@@ -72,6 +72,7 @@ const canRefund = computed(
 
 const search = ref(props.filters.search ?? '');
 const status = ref(props.filters.status ?? '');
+const paymentStatus = ref(props.filters.payment_status ?? '');
 const paymentMethod = ref(props.filters.payment_method ?? '');
 const deliveryMethod = ref(props.filters.delivery_method ?? '');
 const dateFrom = ref(props.filters.date_from ?? '');
@@ -95,9 +96,15 @@ const datePresetOptions = [
 
 const paymentMethodOptions = [
     { id: '', name: 'All Methods' },
-    { id: 'card', name: 'Credit Card' },
-    { id: 'paypal', name: 'PayPal' },
-    { id: 'apple_pay', name: 'Apple Pay' },
+    { id: 'cod', name: 'Cash on Delivery' },
+    { id: 'stripe', name: 'Stripe' },
+];
+
+const paymentStatusOptions = [
+    { id: '', name: 'All Payment Statuses' },
+    { id: 'pending', name: 'Pending / Unpaid' },
+    { id: 'paid', name: 'Paid' },
+    { id: 'refunded', name: 'Refunded' },
 ];
 
 const deliveryMethodOptions = [
@@ -246,6 +253,7 @@ const applyFilters = () => {
         {
             search: search.value || undefined,
             status: status.value || undefined,
+            payment_status: paymentStatus.value || undefined,
             payment_method: paymentMethod.value || undefined,
             delivery_method: deliveryMethod.value || undefined,
             date_from: dateFrom.value || undefined,
@@ -260,6 +268,7 @@ const applyFilters = () => {
 const clearFilters = () => {
     search.value = '';
     status.value = '';
+    paymentStatus.value = '';
     paymentMethod.value = '';
     deliveryMethod.value = '';
     dateFrom.value = '';
@@ -281,7 +290,7 @@ watch(search, () => {
     searchDebounce = setTimeout(applyFilters, 350);
 });
 
-watch([paymentMethod, deliveryMethod], applyFilters);
+watch([paymentMethod, paymentStatus, deliveryMethod], applyFilters);
 
 let amountDebounce;
 watch([amountMin, amountMax], () => {
@@ -334,8 +343,9 @@ const customerInitials = (order) => {
 
 const paymentLabel = (method) => {
     const map = {
-        card: 'Card',
+        cod: 'Cash on Delivery',
         stripe: 'Stripe',
+        card: 'Card',
         paypal: 'PayPal',
         apple_pay: 'Apple Pay',
         google_pay: 'Google Pay',
@@ -343,7 +353,32 @@ const paymentLabel = (method) => {
     return map[method] ?? (method ? String(method) : '—');
 };
 
+const paymentStatusLabel = (value) => {
+    const map = {
+        pending: 'Unpaid',
+        paid: 'Paid',
+        refunded: 'Refunded',
+    };
+    return map[value] ?? (value ? String(value) : '—');
+};
+
+const paymentStatusBadgeClass = (value) => {
+    if (value === 'paid') {
+        return 'bg-green-100 text-green-700';
+    }
+    if (value === 'refunded') {
+        return 'bg-error/10 text-error';
+    }
+    return 'bg-amber-50 text-amber-700';
+};
+
 const paymentBadgeClass = (method) => {
+    if (method === 'cod') {
+        return 'bg-amber-50 text-amber-700';
+    }
+    if (method === 'stripe') {
+        return 'bg-blue-100 text-blue-700';
+    }
     if (method === 'paypal') {
         return 'bg-gray-100 text-gray-600';
     }
@@ -648,7 +683,7 @@ const bulkMarkShipped = () => {
 
             <div
                 v-show="showAdvancedFilters"
-                class="grid grid-cols-1 gap-4 border-t border-outline-variant/10 pt-4 sm:grid-cols-2 lg:grid-cols-4"
+                class="grid grid-cols-1 gap-4 border-t border-outline-variant/10 pt-4 sm:grid-cols-2 lg:grid-cols-5"
             >
                 <div class="space-y-1">
                     <label class="px-1 text-[10px] font-bold uppercase text-outline">
@@ -684,6 +719,17 @@ const bulkMarkShipped = () => {
                         v-model="paymentMethod"
                         :options="paymentMethodOptions"
                         placeholder="All Methods"
+                    />
+                </div>
+
+                <div class="space-y-1">
+                    <label class="px-1 text-[10px] font-bold uppercase text-outline">
+                        Payment Status
+                    </label>
+                    <AppSelect
+                        v-model="paymentStatus"
+                        :options="paymentStatusOptions"
+                        placeholder="All Payment Statuses"
                     />
                 </div>
 
@@ -810,6 +856,9 @@ const bulkMarkShipped = () => {
                                 Total
                             </th>
                             <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">
+                                Payment
+                            </th>
+                            <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">
                                 Delivery
                             </th>
                             <th class="px-4 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">
@@ -903,6 +952,14 @@ const bulkMarkShipped = () => {
                                     :class="paymentBadgeClass(order.payment_method)"
                                 >
                                     {{ paymentLabel(order.payment_method) }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4">
+                                <span
+                                    class="rounded-full px-2 py-1 text-[11px] font-bold uppercase"
+                                    :class="paymentStatusBadgeClass(order.payment_status)"
+                                >
+                                    {{ paymentStatusLabel(order.payment_status) }}
                                 </span>
                             </td>
                             <td class="px-4 py-4">

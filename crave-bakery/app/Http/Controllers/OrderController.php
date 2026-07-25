@@ -12,6 +12,7 @@ use App\Mail\OrderConfirmed;
 use App\Models\Order;
 use App\Services\AddressService;
 use App\Services\OrderService;
+use App\Services\StripePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +24,7 @@ class OrderController extends Controller
     public function __construct(
         private readonly OrderService $orderService,
         private readonly AddressService $addressService,
+        private readonly StripePaymentService $stripePaymentService,
     ) {
     }
 
@@ -56,16 +58,70 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request): RedirectResponse
     {
-        $order = $this->orderService->createFromCart(
-            $request->user(),
-            $request->validated(),
-        );
+        $validated = $request->validated();
+        $user = $request->user();
+
+        if (($validated['payment_method'] ?? null) === 'stripe') {
+            $quote = $this->orderService->quote($user, [
+                'delivery_method' => $validated['delivery_method'] ?? 'standard',
+                'promo_code' => $validated['promo_code'] ?? null,
+            ]);
+
+            if (($quote['cart']['item_count'] ?? 0) <= 0) {
+                return redirect()
+                    ->route('cart.index')
+                    ->with('error', 'Your cart is empty.');
+            }
+
+            $this->stripePaymentService->beginPendingCheckout(
+                $user,
+                $validated,
+                $quote['totals'],
+            );
+
+            return redirect()
+                ->route('checkout.payment')
+                ->with('success', 'Please complete your payment.');
+        }
+
+        $order = $this->orderService->createFromCart($user, $validated);
 
         Mail::to($order->email)->send(new OrderConfirmed($order));
 
         return redirect()
             ->route('checkout.confirmation', $order)
             ->with('success', 'Order placed successfully.');
+    }
+
+    public function payment(Request $request): Response|RedirectResponse
+    {
+        $user = $request->user();
+        $pending = $this->stripePaymentService->getPendingCheckout($user);
+
+        if (! $pending) {
+            return redirect()
+                ->route('checkout')
+                ->with('error', 'Your checkout session expired. Please try again.');
+        }
+
+        $quote = $this->orderService->quote($user, [
+            'delivery_method' => $pending['validated']['delivery_method'] ?? 'standard',
+            'promo_code' => $pending['validated']['promo_code'] ?? null,
+        ]);
+
+        if (($quote['cart']['item_count'] ?? 0) <= 0) {
+            $this->stripePaymentService->clearPendingCheckout($user);
+
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'Your cart is empty.');
+        }
+
+        return Inertia::render('Checkout/Payment', [
+            'cart' => (new CartResource($quote['cart']))->resolve(),
+            'totals' => $quote['totals'],
+            'stripe_key' => config('cashier.key') ?: config('services.stripe.key'),
+        ]);
     }
 
     public function index(FilterCustomerOrdersRequest $request): Response

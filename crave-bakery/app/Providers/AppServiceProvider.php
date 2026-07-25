@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\StripeEventListener;
 use App\Models\AdminUser;
 use App\Models\SiteSetting;
 use App\Models\User;
@@ -9,11 +10,13 @@ use App\Policies\AdminUserPolicy;
 use App\Policies\CustomerPolicy;
 use App\Policies\SiteSettingPolicy;
 use App\Services\SiteSettingService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Events\WebhookReceived;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +34,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        Event::listen(WebhookReceived::class, StripeEventListener::class);
 
         Gate::policy(User::class, CustomerPolicy::class);
         Gate::policy(AdminUser::class, AdminUserPolicy::class);

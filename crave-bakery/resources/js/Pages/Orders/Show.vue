@@ -93,6 +93,11 @@ const paymentLabel = computed(() => {
     if (!props.order.payment_method || props.order.payment_method === 'cod') {
         return 'Cash on Delivery';
     }
+
+    if (props.order.payment_method === 'stripe') {
+        return 'Stripe';
+    }
+
     return props.order.payment_method
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))

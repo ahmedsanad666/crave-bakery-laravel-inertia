@@ -158,14 +158,23 @@ const paymentStatusLabel = computed(() => {
 
 const paymentMethodLabel = computed(() => {
     const map = {
-        card: 'Card',
+        cod: 'Cash on Delivery',
         stripe: 'Stripe',
+        card: 'Card',
         paypal: 'PayPal',
         apple_pay: 'Apple Pay',
         google_pay: 'Google Pay',
         cash: 'Cash',
     };
     return map[props.order.payment_method] ?? (props.order.payment_method || '—');
+});
+
+const refundHelpText = computed(() => {
+    if (props.order.payment_method === 'stripe') {
+        return 'This will refund the charge via Stripe and mark the order as refunded.';
+    }
+
+    return 'This marks the COD payment as refunded in your records (no card charge).';
 });
 
 const deliveryMethodLabel = computed(() => {
@@ -214,9 +223,11 @@ const progressSteps = computed(() => {
             id: 'paid',
             label: 'Payment Confirmed',
             icon: IconCheck,
-            // Treat as complete once fulfillment has started, even if payment
-            // fields are missing/out of sync (e.g. cash / legacy orders).
-            done: paymentConfirmed.value || rank >= 3,
+            // Stripe must be paid; COD may show confirmed once fulfillment starts
+            // (cash collected at delivery) or when marked paid on deliver.
+            done:
+                paymentConfirmed.value ||
+                (props.order.payment_method !== 'stripe' && rank >= 3),
             current: false,
         },
         {
@@ -685,7 +696,7 @@ const refundOrder = () => {
                         <IconReceipt class="h-6 w-6 text-outline mx-auto mb-2" />
                         <h4 class="font-bold text-on-surface">Issue a Refund?</h4>
                         <p class="text-xs text-on-surface-variant mb-4">
-                            Refund this order’s payment or cancel via status update.
+                            {{ refundHelpText }}
                         </p>
                         <button
                             type="button"
@@ -849,7 +860,11 @@ const refundOrder = () => {
                                     class="w-10 h-6 bg-primary rounded flex items-center justify-center text-[8px] text-white font-bold shrink-0 uppercase"
                                 >
                                     {{
-                                        (order.payment_method || 'pay').slice(0, 4)
+                                        order.payment_method === 'cod'
+                                            ? 'COD'
+                                            : order.payment_method === 'stripe'
+                                              ? 'CARD'
+                                              : (order.payment_method || 'pay').slice(0, 4)
                                     }}
                                 </div>
                                 <p class="text-sm font-bold truncate">
@@ -880,7 +895,22 @@ const refundOrder = () => {
                             v-if="order.transaction_id"
                             class="text-[10px] text-on-surface-variant break-all"
                         >
-                            ID: {{ order.transaction_id }}
+                            Stripe ID: {{ order.transaction_id }}
+                        </p>
+                        <p
+                            v-if="order.paid_at"
+                            class="mt-1 text-[10px] text-on-surface-variant"
+                        >
+                            Paid at:
+                            {{
+                                new Date(order.paid_at).toLocaleString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                })
+                            }}
                         </p>
                     </div>
                 </div>

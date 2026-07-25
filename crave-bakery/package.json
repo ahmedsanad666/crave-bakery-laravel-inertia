@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "@headlessui/vue": "^1.7.23",
+        "@stripe/stripe-js": "^9.12.0",
         "@tabler/icons-vue": "^3.44.0",
         "@vueuse/core": "^14.3.0",
         "sortablejs": "^1.15.7",

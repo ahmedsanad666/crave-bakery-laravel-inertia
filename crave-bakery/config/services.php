@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'stripe' => [
+        // Publishable key alias — Cashier reads STRIPE_KEY / STRIPE_SECRET from its own config
+        'key' => env('STRIPE_KEY', env('STRIPE_PUBLISHABLE_KEY')),
+    ],
+
 ];

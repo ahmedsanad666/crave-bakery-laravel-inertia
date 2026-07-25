@@ -96,6 +96,19 @@ const paymentStatusMeta = computed(() => {
     );
 });
 
+const paymentMethodLabel = computed(() => {
+    const map = {
+        cod: 'Cash on Delivery',
+        stripe: 'Stripe',
+        card: 'Card',
+        paypal: 'PayPal',
+        apple_pay: 'Apple Pay',
+        google_pay: 'Google Pay',
+        cash: 'Cash',
+    };
+    return map[props.order.payment_method] ?? (props.order.payment_method || '—');
+});
+
 const discountLabel = computed(() => {
     if (props.order.promo_code) {
         return `Promo (${props.order.promo_code})`;
@@ -316,6 +329,16 @@ const downloadPdf = () => {
                             </p>
                             <p class="text-body-lg">
                                 {{ formatDateLong(dueDate) }}
+                            </p>
+                        </div>
+                        <div class="sm:text-right">
+                            <p
+                                class="mb-1 text-[12px] font-bold uppercase tracking-wider text-outline"
+                            >
+                                Payment Method
+                            </p>
+                            <p class="text-body-lg">
+                                {{ paymentMethodLabel }}
                             </p>
                         </div>
                         <div class="sm:text-right">

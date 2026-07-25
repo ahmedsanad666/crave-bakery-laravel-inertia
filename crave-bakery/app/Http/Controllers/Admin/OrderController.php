@@ -105,6 +105,16 @@ class OrderController extends Controller
             'refunded' => 'Refunded',
         ];
 
+        $paymentMethodLabels = [
+            'cod' => 'Cash on Delivery',
+            'stripe' => 'Stripe',
+            'card' => 'Card',
+            'paypal' => 'PayPal',
+            'apple_pay' => 'Apple Pay',
+            'google_pay' => 'Google Pay',
+            'cash' => 'Cash',
+        ];
+
         $issued = $order->created_at;
         $due = $issued?->copy()->addDays(14);
 
@@ -149,6 +159,7 @@ class OrderController extends Controller
             'issuedAt' => $issued?->format('F j, Y') ?? '—',
             'dueAt' => $due?->format('F j, Y') ?? '—',
             'paymentStatusLabel' => $paymentLabels[$order->payment_status] ?? ($order->payment_status ?: '—'),
+            'paymentMethodLabel' => $paymentMethodLabels[$order->payment_method] ?? ($order->payment_method ?: '—'),
         ])->setPaper('a4');
 
         $filename = 'invoice-'.$order->order_number.'.pdf';

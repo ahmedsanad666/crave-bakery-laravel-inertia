@@ -28,15 +28,8 @@ class StoreOrderRequest extends FormRequest
             'email' => ['required', 'email', 'max:255'],
             'delivery_method' => ['required', Rule::in(['standard', 'express'])],
             'delivery_notes' => ['nullable', 'string', 'max:1000'],
-            'payment_method' => ['required', Rule::in(['cod'])],
+            'payment_method' => ['required', Rule::in(['cod', 'stripe'])],
             'promo_code' => ['nullable', 'string', 'max:50'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'payment_method' => 'cod',
-        ]);
     }
 }

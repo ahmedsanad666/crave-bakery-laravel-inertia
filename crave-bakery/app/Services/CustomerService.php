@@ -29,7 +29,7 @@ class CustomerService
                 ->where('created_at', '>=', now()->startOfMonth())
                 ->count(),
             'with_orders' => (clone $base)
-                ->whereHas('paidOrders')
+                ->whereHas('shopOrders')
                 ->count(),
         ];
     }
@@ -45,8 +45,8 @@ class CustomerService
             ->customers()
             ->search($filters['search'] ?? null)
             ->status($filters['status'] ?? null)
-            ->withCount(['paidOrders as orders_count'])
-            ->withSum(['paidOrders as total_spent'], 'total')
+            ->withCount(['shopOrders as orders_count'])
+            ->withSum(['shopOrders as total_spent'], 'total')
             ->ordered()
             ->paginate(max(1, min($perPage, 100)))
             ->withQueryString();
@@ -67,19 +67,14 @@ class CustomerService
         ]);
 
         $customer->loadCount([
-            'paidOrders as orders_count',
+            'shopOrders as orders_count',
             'reviews as reviews_count',
         ]);
 
-        $customer->loadSum(['paidOrders as total_spent'], 'total');
+        $customer->loadSum(['shopOrders as total_spent'], 'total');
 
-        $avgOrderValue = null;
-        $lastOrderAt = null;
-
-        $paidOrdersQuery = $customer->paidOrders();
-
-        $avgOrderValue = $paidOrdersQuery->avg('total');
-        $lastOrderAt = $customer->paidOrders()->max('created_at');
+        $avgOrderValue = $customer->shopOrders()->avg('total');
+        $lastOrderAt = $customer->shopOrders()->max('created_at');
 
         $customer->setAttribute(
             'avg_order_value',

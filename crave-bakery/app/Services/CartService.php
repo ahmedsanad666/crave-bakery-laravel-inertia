@@ -16,6 +16,8 @@ class CartService
     public function resolveCart(Request $request): ?Cart
     {
         if ($request->user()) {
+            // dd($request->user()->toArray());
+           
             return Cart::query()
                 ->where('user_id', $request->user()->id)
                 ->first();
@@ -64,7 +66,9 @@ class CartService
      */
     public function getCartPayload(Request $request): array
     {
+        // dd($request->all());
         $cart = $this->resolveCart($request);
+       
 
         if (! $cart) {
             return [

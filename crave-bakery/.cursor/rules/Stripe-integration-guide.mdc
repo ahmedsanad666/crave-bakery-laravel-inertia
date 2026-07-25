@@ -1,0 +1,935 @@
+---
+alwaysApply: false
+---
+# Stripe Integration Guide — Crave Bakery
+# Learning Mode — Using stripe/stripe-php (Raw SDK)
+
+> **Purpose:** This file guides you through integrating Stripe payments into the Crave Bakery project
+> using the raw `stripe/stripe-php` SDK for learning purposes.
+>
+> **⚠️ Learning Note:** This integration uses `stripe/stripe-php` to follow along with instructor videos.
+> When the project goes live, this will be replaced with `laravel/cashier`.
+> The Stripe concepts (PaymentIntent, Webhooks, test cards) are identical — only the code style changes.
+>
+> Load alongside: `crave-bakery-project-brief.md` and `cursor-learning-rules.md`
+
+---
+
+## The Plan — Learning Now vs Going Live Later
+
+```
+NOW (Learning)                        LATER (Production)
+──────────────────────────────────    ──────────────────────────────────
+stripe/stripe-php (raw SDK)     →     laravel/cashier (Laravel wrapper)
+Manual Stripe::setApiKey()      →     Cashier handles automatically
+Manual PaymentIntent::create()  →     $user->createPaymentIntent()
+Manual webhook verification     →     Cashier built-in WebhookController
+```
+
+**Everything you learn now transfers directly** — same Stripe Dashboard, same test cards,
+same API keys, same concepts. Only the PHP code style changes when going live.
+
+---
+
+## Before You Start — Test Mode Explained
+
+```
+Stripe has two modes:
+  Test Mode  → fake money, fake cards, safe to experiment ✅  ← WE ARE HERE
+  Live Mode  → real money, real cards, needs business account
+
+We are ALWAYS in Test Mode during learning.
+You can tell by the orange "TEST MODE" banner in the Stripe dashboard.
+```
+
+**Test card numbers you will use:**
+```
+Successful payment:     4242 4242 4242 4242
+Card declined:          4000 0000 0000 0002
+Requires 3D Secure:     4000 0025 0000 3155
+Insufficient funds:     4000 0000 0000 9995
+Expiry:  any future date (e.g. 12/29)
+CVC:     any 3 digits   (e.g. 123)
+ZIP:     any 5 digits   (e.g. 10001)
+```
+
+---
+
+## What We Are Building
+
+```
+Customer fills checkout form
+         ↓
+Clicks "Place Order"
+         ↓
+Our Laravel backend creates a Stripe PaymentIntent
+         ↓
+Vue frontend uses Stripe.js to collect card details securely
+         ↓
+Stripe processes the payment
+         ↓
+Webhook hits our server to confirm payment succeeded
+         ↓
+Order status updates to "paid" + "processing"
+         ↓
+Customer sees confirmation page
+```
+
+---
+
+## Phase 1 — Stripe Account & Keys
+
+### Step 1 — Create a Stripe Account
+
+1. Go to [https://stripe.com](https://stripe.com) and sign up (free)
+2. No business registration needed for Test Mode
+3. Verify your email
+4. Stay in **Test Mode** (toggle top-left of dashboard)
+5. When Stripe asks about products → uncheck everything (Invoicing, Tax collection)
+   — you don't need them for a basic checkout
+
+### Step 2 — Get Your API Keys
+
+In Stripe Dashboard → Developers → API Keys:
+
+```
+Publishable key:  pk_test_xxxxxxxxxxxxxxxxxxxx  ← safe to use in frontend JS
+Secret key:       sk_test_xxxxxxxxxxxxxxxxxxxx  ← NEVER expose — backend PHP only
+```
+
+Add to your `.env`:
+```env
+STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxx
+STRIPE_SECRET=sk_test_xxxxxxxxxxxxxxxxxxxx
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxx
+```
+
+Add to `config/services.php`:
+```php
+'stripe' => [
+    'key'            => env('STRIPE_KEY'),
+    'secret'         => env('STRIPE_SECRET'),
+    'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+],
+```
+
+🔒 **Security Note:** The Secret Key (`sk_test_`) goes ONLY in `.env` and is accessed
+server-side only. Never put it in any Vue file or any `VITE_` variable.
+Verify `.env` is in your `.gitignore` — Laravel adds it by default.
+
+---
+
+## Phase 2 — Backend Setup
+
+### Step 3 — Install stripe/stripe-php
+
+💡 **Best Practice:** This is the official Stripe PHP SDK — gives you direct access to
+all Stripe API objects like `PaymentIntent`, `Webhook`, `Customer` etc.
+When going live later, this gets replaced by `laravel/cashier` which wraps this same SDK.
+
+```bash
+composer require stripe/stripe-php
+```
+
+Verify it installed — you should see `stripe/stripe-php` in your `composer.json` require section.
+
+### Step 4 — Create the Payment Controller
+
+```bash
+php artisan make:controller PaymentController
+```
+
+Open `app/Http/Controllers/PaymentController.php` and replace with:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Stripe\Exception\ApiErrorException;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class PaymentController extends Controller
+{
+    /**
+     * Create a Stripe PaymentIntent and return the clientSecret to the frontend.
+     *
+     * The clientSecret is a temporary token that lets the frontend
+     * confirm the payment using the card details — safely via Stripe.js.
+     */
+    public function createIntent(Request $request): JsonResponse
+    {
+        $request->validate([
+            'order_id' => ['required', 'integer', 'exists:orders,id'],
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        // Always verify the order belongs to the authenticated user
+        // Never let one user pay for another user's order
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        // If a PaymentIntent already exists for this order, reuse it
+        // This prevents duplicate charges if the user refreshes the page
+        if ($order->transaction_id) {
+            return response()->json([
+                'clientSecret' => $order->transaction_id,
+            ]);
+        }
+
+        try {
+            // Set your secret key — this authenticates your request to Stripe
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            // Create the PaymentIntent on Stripe's servers
+            // Amount must be in SMALLEST currency unit (cents for USD)
+            // Example: $36.72 → 3672 cents
+            $paymentIntent = PaymentIntent::create([
+                'amount'   => (int) round($order->total * 100),
+                'currency' => 'usd',
+
+                // metadata lets you store your own data on the Stripe object
+                // We use it to link the Stripe payment back to our order
+                'metadata' => [
+                    'order_id'     => $order->id,
+                    'order_number' => $order->order_number,
+                    'user_id'      => auth()->id(),
+                ],
+
+                // Automatically shows the best payment methods for the customer
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+            ]);
+
+            // Save the PaymentIntent ID on our order record
+            // We need this to look up the order when the webhook arrives
+            $order->update(['transaction_id' => $paymentIntent->id]);
+
+            return response()->json([
+                'clientSecret' => $paymentIntent->client_secret,
+            ]);
+
+        } catch (ApiErrorException $e) {
+            // Stripe API errors — log them and return a clean message to the user
+            \Log::error('Stripe PaymentIntent creation failed', [
+                'error'    => $e->getMessage(),
+                'order_id' => $order->id,
+            ]);
+
+            return response()->json([
+                'error' => 'Unable to initialise payment. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Called by the frontend AFTER Stripe.js confirms the payment.
+     * We verify the payment succeeded directly with Stripe, then update the order.
+     *
+     * IMPORTANT: Never trust what the frontend sends.
+     * Always verify payment status by calling Stripe directly.
+     */
+    public function confirm(Request $request): Response
+    {
+        $request->validate([
+            'payment_intent_id' => ['required', 'string'],
+        ]);
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            // Retrieve the PaymentIntent from Stripe to check its real status
+            $paymentIntent = PaymentIntent::retrieve(
+                $request->payment_intent_id
+            );
+
+            // If payment did not succeed, send user back with an error
+            if ($paymentIntent->status !== 'succeeded') {
+                return Inertia::render('Checkout/Index', [
+                    'error' => 'Payment was not successful. Please try again.',
+                ]);
+            }
+
+            // Find the order using the metadata we stored when creating the intent
+            $order = Order::findOrFail($paymentIntent->metadata->order_id);
+
+            // Update order status
+            $order->update([
+                'payment_status' => 'paid',
+                'status'         => 'processing',
+                'paid_at'        => now(),
+            ]);
+
+            return Inertia::render('Checkout/Confirmation', [
+                'order' => $order->load('items.product'),
+            ]);
+
+        } catch (ApiErrorException $e) {
+            \Log::error('Stripe payment confirmation failed', [
+                'error'              => $e->getMessage(),
+                'payment_intent_id'  => $request->payment_intent_id,
+            ]);
+
+            return Inertia::render('Checkout/Index', [
+                'error' => 'Something went wrong. Please contact support.',
+            ]);
+        }
+    }
+}
+```
+
+💡 **Why two steps (createIntent + confirm)?**
+- `createIntent` → runs when the checkout page loads. Creates the payment on Stripe's side.
+- `confirm` → runs after the user enters their card and Stripe processes it.
+This two-step flow is the **Payment Intents API** — Stripe's recommended approach for web payments.
+
+### Step 5 — Create the Webhook Controller
+
+```bash
+php artisan make:controller WebhookController
+```
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Stripe\Webhook;
+use Stripe\Exception\SignatureVerificationException;
+
+class WebhookController extends Controller
+{
+    /**
+     * Handle incoming webhook events from Stripe.
+     *
+     * Stripe calls this endpoint automatically when payment events happen —
+     * even if the user closes their browser before reaching the confirmation page.
+     * This is why webhooks are essential: they guarantee our order gets updated.
+     */
+    public function handle(Request $request): Response
+    {
+        $payload   = $request->getContent();
+        $sigHeader = $request->header('Stripe-Signature');
+        $secret    = config('services.stripe.webhook_secret');
+
+        // Verify the request actually came from Stripe
+        // Stripe signs every webhook with your webhook secret
+        // If someone sends a fake request to this URL, this check will reject it
+        try {
+            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
+
+        } catch (SignatureVerificationException $e) {
+            \Log::warning('Stripe webhook signature verification failed', [
+                'error' => $e->getMessage(),
+            ]);
+
+            // Return 400 to tell Stripe something went wrong
+            return response('Invalid signature.', 400);
+        }
+
+        // Route the event to the correct handler method
+        // We use match() — cleaner than a long if/elseif chain
+        match ($event->type) {
+            'payment_intent.succeeded'      => $this->onPaymentSucceeded($event),
+            'payment_intent.payment_failed' => $this->onPaymentFailed($event),
+            default                         => null,  // safely ignore all other events
+        };
+
+        // Always return 200 — tells Stripe "I received this, thank you"
+        // If you return anything else, Stripe will retry the webhook
+        return response('Webhook handled.', 200);
+    }
+
+    /**
+     * Payment succeeded — mark the order as paid.
+     */
+    private function onPaymentSucceeded(object $event): void
+    {
+        $paymentIntent = $event->data->object;
+        $orderId       = $paymentIntent->metadata->order_id ?? null;
+
+        if (! $orderId) {
+            \Log::warning('Webhook: payment_intent.succeeded — no order_id in metadata');
+            return;
+        }
+
+        $order = Order::find($orderId);
+
+        if (! $order) {
+            \Log::warning('Webhook: order not found', ['order_id' => $orderId]);
+            return;
+        }
+
+        // Only update if not already paid — webhooks can sometimes fire twice
+        if ($order->payment_status !== 'paid') {
+            $order->update([
+                'payment_status' => 'paid',
+                'status'         => 'processing',
+                'paid_at'        => now(),
+            ]);
+
+            \Log::info('Order marked as paid via webhook', [
+                'order_id'          => $orderId,
+                'payment_intent_id' => $paymentIntent->id,
+            ]);
+        }
+    }
+
+    /**
+     * Payment failed — keep the order as pending so the user can retry.
+     */
+    private function onPaymentFailed(object $event): void
+    {
+        $paymentIntent = $event->data->object;
+        $orderId       = $paymentIntent->metadata->order_id ?? null;
+
+        if (! $orderId) return;
+
+        Order::find($orderId)?->update([
+            'payment_status' => 'pending',
+            'status'         => 'pending',
+        ]);
+
+        \Log::info('Payment failed for order', ['order_id' => $orderId]);
+    }
+}
+```
+
+### Step 6 — Add Routes
+
+Open `routes/web.php`:
+
+```php
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\WebhookController;
+
+// Payment routes — authenticated users only
+Route::middleware('auth')->group(function () {
+    // ... your existing auth routes ...
+
+    Route::post('/payment/intent', [PaymentController::class, 'createIntent'])
+        ->name('payment.intent');
+
+    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])
+        ->name('payment.confirm');
+});
+
+// Stripe Webhook — OUTSIDE auth middleware
+// Stripe calls this directly — it has no session or CSRF token
+Route::post('/stripe/webhook', [WebhookController::class, 'handle'])
+    ->name('stripe.webhook');
+```
+
+### Step 7 — Exclude Webhook from CSRF
+
+Stripe cannot send a CSRF token with its requests — we must whitelist the webhook URL.
+
+Open `bootstrap/app.php`:
+
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->validateCsrfTokens(except: [
+        'stripe/webhook',   // Stripe webhook is secured by signature instead
+    ]);
+
+    $middleware->alias([
+        'admin'       => \App\Http\Middleware\AdminMiddleware::class,
+        'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
+    ]);
+})
+```
+
+🔒 **Security Note:** We are NOT disabling CSRF for the whole app — only this one URL.
+The webhook is protected by Stripe's signature verification inside `WebhookController`
+instead of CSRF. This is the correct pattern.
+
+---
+
+## Phase 3 — Frontend Setup
+
+### Step 8 — Install Stripe.js
+
+```bash
+npm install @stripe/stripe-js
+```
+
+💡 **What Stripe.js does:** Renders the card input inside a secure Stripe-hosted iframe.
+Your server NEVER sees raw card numbers. This is what makes you PCI compliant automatically.
+
+### Step 9 — Add Publishable Key to Environment
+
+Add to `.env`:
+```env
+VITE_STRIPE_KEY=pk_test_xxxxxxxxxxxxxxxxxxxx
+```
+
+🔒 **Security Note:** Only `VITE_STRIPE_KEY` (publishable key starting with `pk_test_`)
+goes here. Never add `STRIPE_SECRET` to any `VITE_` variable — it would be exposed in
+the browser's JavaScript bundle.
+
+### Step 10 — Create the StripePayment Vue Component
+
+Create `resources/js/Components/Public/StripePayment.vue`:
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { loadStripe } from '@stripe/stripe-js'
+import type { Stripe, StripeElements } from '@stripe/stripe-js'
+import { router } from '@inertiajs/vue3'
+import AppButton from '@/Components/Shared/AppButton.vue'
+import { IconLock } from '@tabler/icons-vue'
+
+// ─── Props ───────────────────────────────────────────────────────────────────
+const props = defineProps<{
+    orderId:    number
+    orderTotal: number
+}>()
+
+// ─── State ───────────────────────────────────────────────────────────────────
+const stripe     = ref<Stripe | null>(null)
+const elements   = ref<StripeElements | null>(null)
+const processing = ref(false)
+const error      = ref<string | null>(null)
+const ready      = ref(false)
+
+// ─── Lifecycle ────────────────────────────────────────────────────────────────
+onMounted(async () => {
+    await initStripe()
+})
+
+// ─── Methods ──────────────────────────────────────────────────────────────────
+
+/**
+ * 1. Load Stripe.js with our publishable key
+ * 2. Ask our Laravel backend to create a PaymentIntent → get clientSecret
+ * 3. Mount Stripe's secure Payment Element into the DOM
+ */
+async function initStripe(): Promise<void> {
+    // Load Stripe — uses the publishable key from .env via Vite
+    stripe.value = await loadStripe(import.meta.env.VITE_STRIPE_KEY as string)
+
+    if (!stripe.value) {
+        error.value = 'Failed to load payment processor. Please refresh the page.'
+        return
+    }
+
+    // Call our Laravel backend to create a PaymentIntent
+    // Laravel talks to Stripe server-to-server and returns the clientSecret
+    const response = await fetch(route('payment.intent'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Laravel requires CSRF token on POST requests
+            'X-CSRF-TOKEN': document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute('content') ?? '',
+        },
+        body: JSON.stringify({ order_id: props.orderId }),
+    })
+
+    const data = await response.json()
+
+    if (data.error || !data.clientSecret) {
+        error.value = data.error ?? 'Could not initialise payment. Please try again.'
+        return
+    }
+
+    // Create Stripe Elements — the secure card input UI
+    // Appearance is customised to match our Crave Bakery design system
+    elements.value = stripe.value.elements({
+        clientSecret: data.clientSecret,
+        appearance: {
+            theme: 'stripe',
+            variables: {
+                colorPrimary:    '#E8572A',  // our accent color
+                colorBackground: '#FFFFFF',
+                colorText:       '#1A1A1A',
+                colorDanger:     '#C62828',  // our error color
+                fontFamily:      'Inter, sans-serif',
+                borderRadius:    '10px',
+                fontSizeBase:    '14px',
+            },
+        },
+    })
+
+    // Create and mount the Payment Element into the #stripe-payment-element div
+    const paymentElement = elements.value.create('payment')
+    paymentElement.mount('#stripe-payment-element')
+
+    // Mark ready once Stripe's iframe has finished loading
+    paymentElement.on('ready', () => {
+        ready.value = true
+    })
+}
+
+/**
+ * Called when user clicks "Pay Now".
+ * Tells Stripe to confirm the payment using the card details entered.
+ * Then notifies our Laravel backend of the result.
+ */
+async function pay(): Promise<void> {
+    if (!stripe.value || !elements.value || processing.value) return
+
+    processing.value = true
+    error.value      = null
+
+    // confirmPayment sends the card details to Stripe and processes the charge
+    const { error: stripeError, paymentIntent } = await stripe.value.confirmPayment({
+        elements: elements.value,
+        redirect: 'if_required',  // handle redirect ourselves — don't auto-redirect
+    })
+
+    if (stripeError) {
+        // Show Stripe's error message to the user
+        // e.g. "Your card was declined" / "Incorrect CVC"
+        error.value      = stripeError.message ?? 'Payment failed. Please try again.'
+        processing.value = false
+        return
+    }
+
+    if (paymentIntent?.status === 'succeeded') {
+        // Payment worked — tell our Laravel backend to confirm the order
+        router.post(route('payment.confirm'), {
+            payment_intent_id: paymentIntent.id,
+        })
+    }
+}
+</script>
+
+<template>
+    <div class="space-y-5">
+
+        <!-- Skeleton loader while Stripe iframe loads -->
+        <div v-if="!ready" class="space-y-3 animate-pulse">
+            <div class="h-12 bg-gray-100 rounded-[10px]" />
+            <div class="h-12 bg-gray-100 rounded-[10px]" />
+            <div class="h-12 bg-gray-100 rounded-[10px] w-1/2" />
+        </div>
+
+        <!-- Stripe renders the secure card form inside this div -->
+        <div
+            id="stripe-payment-element"
+            :class="{ 'hidden': !ready }"
+        />
+
+        <!-- Error message -->
+        <div
+            v-if="error"
+            class="flex items-center gap-2 p-3 rounded-[10px]
+                   bg-error/10 border border-error/20"
+        >
+            <span class="text-error text-sm">{{ error }}</span>
+        </div>
+
+        <!-- Pay button — only shows once Stripe form is ready -->
+        <AppButton
+            v-if="ready"
+            variant="primary"
+            size="lg"
+            :loading="processing"
+            :disabled="processing"
+            class="w-full"
+            @click="pay"
+        >
+            <IconLock :size="18" stroke-width="1.5" />
+            <span>
+                {{ processing
+                    ? 'Processing payment...'
+                    : `Pay $${orderTotal.toFixed(2)}`
+                }}
+            </span>
+        </AppButton>
+
+        <!-- Trust message below the button -->
+        <p class="text-center text-xs text-[#6B6B6B]">
+            🔒 Secured by Stripe — we never store your card details
+        </p>
+
+    </div>
+</template>
+```
+
+### Step 11 — Use the Component in Checkout
+
+In `resources/js/Pages/Checkout/Index.vue`:
+
+```vue
+<script setup lang="ts">
+import StripePayment from '@/Components/Public/StripePayment.vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+
+const props = defineProps<{
+    order: {
+        id:           number
+        order_number: string
+        total:        number
+    }
+    error?: string  // shown when payment fails and user is sent back
+}>()
+</script>
+
+<template>
+    <AppLayout>
+        <div class="max-w-lg mx-auto px-6 py-12">
+
+            <!-- Page title -->
+            <h1 class="font-serif text-3xl text-primary mb-1">
+                Complete Your Order
+            </h1>
+            <p class="text-[#6B6B6B] text-sm mb-8">
+                Order {{ order.order_number }}
+            </p>
+
+            <!-- Error from a failed previous payment attempt -->
+            <div
+                v-if="error"
+                class="mb-6 p-4 rounded-[10px] bg-error/10 border border-error/20"
+            >
+                <p class="text-error text-sm">{{ error }}</p>
+            </div>
+
+            <!-- Payment card -->
+            <div class="bg-white rounded-2xl shadow-card p-6">
+                <h2 class="font-sans font-medium text-base text-primary mb-6">
+                    Payment Details
+                </h2>
+
+                <StripePayment
+                    :order-id="order.id"
+                    :order-total="order.total"
+                />
+            </div>
+
+        </div>
+    </AppLayout>
+</template>
+```
+
+---
+
+## Phase 4 — Local Webhook Testing
+
+### Step 12 — Install Stripe CLI
+
+The Stripe CLI forwards webhook events from Stripe to your local `localhost` during development.
+
+**macOS:**
+```bash
+brew install stripe/stripe-cli/stripe
+```
+
+**Windows:** Download from [https://stripe.com/docs/stripe-cli](https://stripe.com/docs/stripe-cli)
+
+**Linux:**
+```bash
+curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public \
+  | gpg --dearmor \
+  | sudo tee /usr/share/keyrings/stripe.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] \
+  https://packages.stripe.dev/stripe-cli-debian-local stable main" \
+  | sudo tee -a /etc/apt/sources.list.d/stripe.list
+
+sudo apt update && sudo apt install stripe
+```
+
+### Step 13 — Login and Forward Webhooks
+
+```bash
+# Login to Stripe (opens browser for authentication)
+stripe login
+
+# Start forwarding webhooks to your local server
+stripe listen --forward-to localhost:8000/stripe/webhook
+```
+
+The CLI outputs a webhook signing secret:
+```
+> Ready! Your webhook signing secret is whsec_xxxxxxxxxxxxxxxx (^C to quit)
+```
+
+Copy that value and update your `.env`:
+```env
+STRIPE_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxxxxx
+```
+
+Then restart your Laravel server so it picks up the new env value:
+```bash
+php artisan config:clear
+php artisan serve
+```
+
+---
+
+## Phase 5 — Run & Test
+
+### Step 14 — Start All Three Servers
+
+Open **3 terminal windows** and run one command in each:
+
+```bash
+# Terminal 1 — Laravel backend
+php artisan serve
+
+# Terminal 2 — Vite frontend (Vue + Tailwind)
+npm run dev
+
+# Terminal 3 — Stripe webhook forwarding
+stripe listen --forward-to localhost:8000/stripe/webhook
+```
+
+### Step 15 — Test Every Scenario
+
+Go to your checkout page and test each card:
+
+```
+✅ Successful payment
+   Card:     4242 4242 4242 4242
+   Expected: Order → paid + processing → confirmation page
+   Check:    Terminal 3 shows "payment_intent.succeeded"
+
+✅ Declined card
+   Card:     4000 0000 0000 0002
+   Expected: Red error message shown, order stays pending
+
+✅ 3D Secure (requires extra authentication step)
+   Card:     4000 0025 0000 3155
+   Expected: Stripe shows auth popup → user confirms → payment succeeds
+
+✅ Insufficient funds
+   Card:     4000 0000 0000 9995
+   Expected: "Your card has insufficient funds" error shown
+
+✅ Webhook received
+   After any payment → Terminal 3 shows:
+   --> payment_intent.created  [evt_xxx]  200 OK
+   --> payment_intent.succeeded [evt_xxx] 200 OK
+```
+
+---
+
+## Common Errors & Fixes
+
+```
+Error: "No API key provided"
+Fix:   STRIPE_SECRET missing from .env
+       Run: php artisan config:clear
+
+Error: "Invalid API Key provided"
+Fix:   Key is incomplete — copy the full key including sk_test_ prefix
+
+Error: "Amount must be at least $0.50"
+Fix:   order->total is 0 or too small — Stripe minimum is 50 cents
+
+Error: Webhook signature verification failed
+Fix:   STRIPE_WEBHOOK_SECRET in .env doesn't match what stripe listen printed
+       Make sure you restarted Laravel after updating .env
+
+Error: 419 Page Expired on payment.intent route
+Fix:   CSRF token missing — check the X-CSRF-TOKEN header in the fetch() call
+
+Error: VITE_STRIPE_KEY is undefined in Vue
+Fix:   Key must start with VITE_ in .env — restart npm run dev after adding it
+
+Error: "loadStripe is not a function"
+Fix:   Run: npm install @stripe/stripe-js
+       Then restart: npm run dev
+```
+
+---
+
+## Files Created in This Integration
+
+```
+app/Http/Controllers/
+├── PaymentController.php    ← createIntent() + confirm()
+└── WebhookController.php    ← handle() + onPaymentSucceeded() + onPaymentFailed()
+
+resources/js/Components/Public/
+└── StripePayment.vue        ← Stripe card form, styled to Crave Bakery design system
+
+resources/js/Pages/Checkout/
+└── Index.vue                ← updated to include StripePayment component
+
+routes/web.php               ← payment.intent + payment.confirm + stripe.webhook routes
+bootstrap/app.php            ← webhook URL excluded from CSRF
+.env                         ← STRIPE_KEY + STRIPE_SECRET + STRIPE_WEBHOOK_SECRET
+config/services.php          ← stripe key/secret/webhook_secret config
+```
+
+---
+
+## What You Learned in This Integration
+
+```
+PaymentIntent      The Stripe object representing one payment attempt.
+                   Created server-side, confirmed client-side.
+
+clientSecret       A temporary one-time token Stripe gives you.
+                   Safe to send to frontend — useless without the actual card.
+
+Stripe Elements    Pre-built secure card input rendered in an iframe by Stripe.
+                   You never handle raw card numbers — auto PCI compliant.
+
+Webhooks           Stripe calling YOUR server to notify you of payment events.
+                   More reliable than frontend redirects — fires even if browser closes.
+
+metadata           Custom data you attach to a Stripe object (like order_id).
+                   Used to link Stripe payments back to your database records.
+
+Test Mode          A completely separate Stripe environment.
+                   All pk_test_ / sk_test_ keys only work here — no real money.
+```
+
+---
+
+## When Going Live — Migration to Laravel Cashier
+
+When you are ready to launch, follow these steps to replace the raw SDK with Cashier:
+
+```bash
+# Step 1 — Remove raw SDK
+composer remove stripe/stripe-php
+
+# Step 2 — Install Cashier
+composer require laravel/cashier
+php artisan vendor:publish --tag="cashier-migrations"
+php artisan migrate
+
+# Step 3 — Add Billable trait to User model
+# (see stripe-integration-guide-cashier.md — to be created at that time)
+```
+
+**What changes in code:**
+```
+PaymentController  → rewrite using $user->createPaymentIntent()
+WebhookController  → replace with Cashier's built-in webhook handler
+Stripe::setApiKey() calls → removed (Cashier handles automatically)
+```
+
+**What stays the same:**
+```
+✅ All Stripe concepts (PaymentIntent, webhooks, metadata)
+✅ StripePayment.vue frontend component — no changes needed
+✅ API keys — same keys work with Cashier
+✅ Webhook routes and CSRF exclusion
+✅ Test cards and Stripe CLI workflow
+```
+
+---
+
+*Learning integration using stripe/stripe-php — to be replaced with laravel/cashier before going live.*
+*Crave Bakery Project — load alongside crave-bakery-project-brief.md*

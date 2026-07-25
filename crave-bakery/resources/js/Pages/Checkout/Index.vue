@@ -5,6 +5,7 @@ import {
     IconCash,
     IconChevronDown,
     IconChevronUp,
+    IconCreditCard,
     IconMapPin,
     IconPlus,
     IconStar,
@@ -130,11 +131,32 @@ const submit = () => {
         return;
     }
 
-    form.payment_method = 'cod';
     form.post(route('orders.store'), {
         preserveScroll: true,
     });
 };
+
+const placeOrderLabel = computed(() => {
+    if (form.processing) {
+        return form.payment_method === 'stripe'
+            ? 'Continuing to payment…'
+            : 'Placing order…';
+    }
+
+    if (form.payment_method === 'stripe') {
+        return `Continue to Payment — ${formatMoney(props.totals.total)}`;
+    }
+
+    return `Place Order — ${formatMoney(props.totals.total)}`;
+});
+
+const paymentDisclaimer = computed(() => {
+    if (form.payment_method === 'stripe') {
+        return 'You will enter your card details securely on the next step.';
+    }
+
+    return 'By placing your order, you agree to pay cash on delivery.';
+});
 </script>
 
 <template>
@@ -401,25 +423,75 @@ const submit = () => {
                             Payment
                         </h2>
 
-                        <div
-                            class="flex items-start gap-md rounded-xl border-2 border-secondary bg-surface-container-low p-md"
-                        >
-                            <div
-                                class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary"
-                            >
-                                <IconCash :size="24" stroke-width="1.5" />
-                            </div>
-                            <div>
-                                <p class="font-sans text-title-lg font-semibold text-primary">
-                                    Cash on Delivery
-                                </p>
-                                <p class="mt-xs font-sans text-body-sm text-on-surface-variant">
-                                    Pay with cash when your order arrives. No card
-                                    details required.
-                                </p>
-                            </div>
+                        <div class="space-y-md">
+                            <label class="group cursor-pointer">
+                                <input
+                                    v-model="form.payment_method"
+                                    class="peer sr-only"
+                                    type="radio"
+                                    value="cod"
+                                />
+                                <div
+                                    class="flex items-start gap-md rounded-xl border-2 border-outline-variant p-md transition-all group-hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-surface-container-low"
+                                >
+                                    <div
+                                        class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary"
+                                    >
+                                        <IconCash :size="24" stroke-width="1.5" />
+                                    </div>
+                                    <div>
+                                        <p
+                                            class="font-sans text-title-lg font-semibold text-primary"
+                                        >
+                                            Cash on Delivery
+                                        </p>
+                                        <p
+                                            class="mt-xs font-sans text-body-sm text-on-surface-variant"
+                                        >
+                                            Pay with cash when your order arrives. No
+                                            card details required.
+                                        </p>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="group cursor-pointer">
+                                <input
+                                    v-model="form.payment_method"
+                                    class="peer sr-only"
+                                    type="radio"
+                                    value="stripe"
+                                />
+                                <div
+                                    class="flex items-start gap-md rounded-xl border-2 border-outline-variant p-md transition-all group-hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-surface-container-low"
+                                >
+                                    <div
+                                        class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary"
+                                    >
+                                        <IconCreditCard :size="24" stroke-width="1.5" />
+                                    </div>
+                                    <div>
+                                        <p
+                                            class="font-sans text-title-lg font-semibold text-primary"
+                                        >
+                                            Pay with Stripe
+                                        </p>
+                                        <p
+                                            class="mt-xs font-sans text-body-sm text-on-surface-variant"
+                                        >
+                                            Pay securely with your credit or debit card.
+                                            Powered by Stripe.
+                                        </p>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
-                        <input type="hidden" name="payment_method" value="cod" />
+                        <p
+                            v-if="errors.payment_method"
+                            class="mt-sm font-sans text-sm text-error"
+                        >
+                            {{ errors.payment_method }}
+                        </p>
                     </section>
                 </div>
 
@@ -545,18 +617,13 @@ const submit = () => {
                             class="h-12 w-full rounded-full bg-secondary font-sans text-body-lg font-bold text-on-secondary shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
                             :disabled="!canPlaceOrder"
                         >
-                            {{
-                                form.processing
-                                    ? 'Placing order…'
-                                    : `Place Order — ${formatMoney(totals.total)}`
-                            }}
+                            {{ placeOrderLabel }}
                         </button>
 
                         <p
                             class="mt-md text-center font-sans text-[12px] text-on-surface-variant/70"
                         >
-                            By placing your order, you agree to pay cash on
-                            delivery.
+                            {{ paymentDisclaimer }}
                         </p>
                     </div>
                 </aside>

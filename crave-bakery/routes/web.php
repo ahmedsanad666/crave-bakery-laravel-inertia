@@ -7,6 +7,7 @@ use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -25,9 +26,15 @@ Route::delete('/cart/items/{cartItem}', [CartController::class, 'remove'])->name
 
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [OrderController::class, 'create'])->name('checkout');
+    Route::get('/checkout/payment', [OrderController::class, 'payment'])
+        ->name('checkout.payment');
     Route::get('/checkout/confirmation/{order}', [OrderController::class, 'confirmation'])
         ->name('checkout.confirmation');
     Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/payment/intent', [PaymentController::class, 'createIntent'])
+        ->name('payment.intent');
+    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])
+        ->name('payment.confirm');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 

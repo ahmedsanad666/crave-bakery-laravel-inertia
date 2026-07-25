@@ -197,6 +197,9 @@
                 <p class="meta-label">Due Date</p>
                 <p class="meta-value">{{ $dueAt }}</p>
                 <br>
+                <p class="meta-label">Payment Method</p>
+                <p class="meta-value">{{ $paymentMethodLabel }}</p>
+                <br>
                 <p class="meta-label">Payment Status</p>
                 <p style="margin-top: 4px;">
                     <span class="badge badge-{{ $order->payment_status }}">{{ $paymentStatusLabel }}</span>
