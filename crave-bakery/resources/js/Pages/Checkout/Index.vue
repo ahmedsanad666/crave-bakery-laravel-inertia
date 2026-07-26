@@ -2,13 +2,13 @@
 import { computed, ref, watch } from 'vue';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
 import {
-    IconCash,
     IconChevronDown,
     IconChevronUp,
     IconCreditCard,
     IconMapPin,
     IconPlus,
     IconStar,
+    IconTruck,
 } from '@tabler/icons-vue';
 import AddressFormModal from '@/Components/Public/AddressFormModal.vue';
 import CheckoutLayout from '@/Layouts/CheckoutLayout.vue';
@@ -34,6 +34,10 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    paymentMethods: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const page = usePage();
@@ -41,14 +45,28 @@ const itemsExpanded = ref(true);
 const quoting = ref(false);
 const addressModalOpen = ref(false);
 
+const defaultPaymentMethod = props.paymentMethods[0]?.name ?? '';
+
 const form = useForm({
     address_id: props.default_address_id ?? null,
     email: props.prefill.email ?? '',
     delivery_method: props.totals.delivery_method || 'standard',
     delivery_notes: '',
-    payment_method: 'cod',
+    payment_method: defaultPaymentMethod,
     promo_code: props.totals.promo_code || '',
 });
+
+watch(
+    () => props.paymentMethods,
+    (methods) => {
+        const names = methods.map((m) => m.name);
+        if (form.payment_method && names.includes(form.payment_method)) {
+            return;
+        }
+        form.payment_method = names[0] ?? '';
+    },
+    { deep: true },
+);
 
 watch(
     () => [props.default_address_id, props.addresses],
@@ -66,9 +84,24 @@ const items = computed(() => props.cart.items ?? []);
 const itemCount = computed(() => Number(props.cart.item_count ?? 0));
 const errors = computed(() => page.props.errors ?? {});
 const hasAddresses = computed(() => props.addresses.length > 0);
-const canPlaceOrder = computed(
-    () => hasAddresses.value && !!form.address_id && !form.processing && !quoting.value,
+const hasPaymentMethods = computed(() => props.paymentMethods.length > 0);
+const selectedMethod = computed(() =>
+    props.paymentMethods.find((m) => m.name === form.payment_method),
 );
+const canPlaceOrder = computed(
+    () =>
+        hasAddresses.value &&
+        hasPaymentMethods.value &&
+        !!form.address_id &&
+        !!form.payment_method &&
+        !form.processing &&
+        !quoting.value,
+);
+
+const gatewayIcons = {
+    stripe: IconCreditCard,
+    cod: IconTruck,
+};
 
 const formatMoney = (price) => {
     const value = Number(price);
@@ -117,7 +150,13 @@ watch(
             {
                 preserveState: true,
                 preserveScroll: true,
-                only: ['cart', 'totals', 'addresses', 'default_address_id'],
+                only: [
+                    'cart',
+                    'totals',
+                    'addresses',
+                    'default_address_id',
+                    'paymentMethods',
+                ],
                 onFinish: () => {
                     quoting.value = false;
                 },
@@ -153,6 +192,10 @@ const placeOrderLabel = computed(() => {
 const paymentDisclaimer = computed(() => {
     if (form.payment_method === 'stripe') {
         return 'You will enter your card details securely on the next step.';
+    }
+
+    if (selectedMethod.value?.instructions) {
+        return selectedMethod.value.instructions;
     }
 
     return 'By placing your order, you agree to pay cash on delivery.';
@@ -423,44 +466,27 @@ const paymentDisclaimer = computed(() => {
                             Payment
                         </h2>
 
-                        <div class="space-y-md">
-                            <label class="group cursor-pointer">
-                                <input
-                                    v-model="form.payment_method"
-                                    class="peer sr-only"
-                                    type="radio"
-                                    value="cod"
-                                />
-                                <div
-                                    class="flex items-start gap-md rounded-xl border-2 border-outline-variant p-md transition-all group-hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-surface-container-low"
-                                >
-                                    <div
-                                        class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary"
-                                    >
-                                        <IconCash :size="24" stroke-width="1.5" />
-                                    </div>
-                                    <div>
-                                        <p
-                                            class="font-sans text-title-lg font-semibold text-primary"
-                                        >
-                                            Cash on Delivery
-                                        </p>
-                                        <p
-                                            class="mt-xs font-sans text-body-sm text-on-surface-variant"
-                                        >
-                                            Pay with cash when your order arrives. No
-                                            card details required.
-                                        </p>
-                                    </div>
-                                </div>
-                            </label>
+                        <div
+                            v-if="!hasPaymentMethods"
+                            class="rounded-[10px] border border-warning/20 bg-warning/10 p-4"
+                        >
+                            <p class="font-sans text-sm text-warning">
+                                No payment methods are available right now. Please
+                                contact the store or try again later.
+                            </p>
+                        </div>
 
-                            <label class="group cursor-pointer">
+                        <div v-else class="space-y-md">
+                            <label
+                                v-for="method in paymentMethods"
+                                :key="method.name"
+                                class="group cursor-pointer"
+                            >
                                 <input
                                     v-model="form.payment_method"
                                     class="peer sr-only"
                                     type="radio"
-                                    value="stripe"
+                                    :value="method.name"
                                 />
                                 <div
                                     class="flex items-start gap-md rounded-xl border-2 border-outline-variant p-md transition-all group-hover:bg-surface-container-low peer-checked:border-secondary peer-checked:bg-surface-container-low"
@@ -468,19 +494,35 @@ const paymentDisclaimer = computed(() => {
                                     <div
                                         class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-secondary/10 text-secondary"
                                     >
-                                        <IconCreditCard :size="24" stroke-width="1.5" />
+                                        <component
+                                            :is="
+                                                gatewayIcons[method.name] ??
+                                                IconCreditCard
+                                            "
+                                            :size="24"
+                                            stroke-width="1.5"
+                                        />
                                     </div>
                                     <div>
                                         <p
                                             class="font-sans text-title-lg font-semibold text-primary"
                                         >
-                                            Pay with Stripe
+                                            {{ method.label }}
                                         </p>
                                         <p
                                             class="mt-xs font-sans text-body-sm text-on-surface-variant"
                                         >
-                                            Pay securely with your credit or debit card.
-                                            Powered by Stripe.
+                                            {{ method.description }}
+                                        </p>
+                                        <p
+                                            v-if="
+                                                method.name === 'cod' &&
+                                                method.instructions &&
+                                                form.payment_method === 'cod'
+                                            "
+                                            class="mt-sm font-sans text-body-sm text-on-surface-variant"
+                                        >
+                                            {{ method.instructions }}
                                         </p>
                                     </div>
                                 </div>

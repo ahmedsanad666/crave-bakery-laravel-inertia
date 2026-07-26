@@ -12,6 +12,7 @@ import {
     IconSettings,
     IconShieldLock,
     IconStar,
+    IconCreditCard,
     IconTag,
     IconUsers,
     IconX,
@@ -228,6 +229,31 @@ const isActive = (routeName) => {
                 <IconSettings class="size-5 shrink-0" stroke="1.5" />
                 <span v-if="!collapsed">Settings</span>
             </span>
+
+            <!-- Show whenever Settings is available so a Ziggy miss cannot hide payments entirely -->
+            <Link
+                v-if="hasRoute('admin.settings.payments')"
+                :href="route('admin.settings.payments')"
+                class="mx-2 flex items-center gap-3 rounded-lg px-4 py-3 text-body-lg text-tertiary-fixed-dim transition-colors hover:bg-white/5 hover:text-white"
+                :class="[
+                    isActive('admin.settings.payments') ? 'admin-sidebar-link-active text-white' : '',
+                    collapsed ? 'justify-center px-2' : '',
+                ]"
+                :title="collapsed ? 'Payment Methods' : undefined"
+            >
+                <IconCreditCard class="size-5 shrink-0" stroke="1.5" />
+                <span v-if="!collapsed">Payment Methods</span>
+            </Link>
+            <Link
+                v-else-if="hasRoute('admin.settings.index')"
+                href="/admin/settings/payments"
+                class="mx-2 flex items-center gap-3 rounded-lg px-4 py-3 text-body-lg text-tertiary-fixed-dim transition-colors hover:bg-white/5 hover:text-white"
+                :class="collapsed ? 'justify-center px-2' : ''"
+                :title="collapsed ? 'Payment Methods' : undefined"
+            >
+                <IconCreditCard class="size-5 shrink-0" stroke="1.5" />
+                <span v-if="!collapsed">Payment Methods</span>
+            </Link>
 
             <div
                 class="mx-2 mt-2 flex items-center gap-3 rounded-xl bg-black/20 px-4 py-4"

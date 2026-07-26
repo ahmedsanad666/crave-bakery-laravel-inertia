@@ -377,8 +377,10 @@ class OrderService
             ]);
         }
 
-        if ($order->payment_method === 'stripe') {
-            app(StripePaymentService::class)->refundPayment($order);
+        if (filled($order->payment_method)) {
+            app(PaymentService::class)
+                ->resolve($order->payment_method, requireEnabled: false)
+                ->refund($order);
         }
 
         return DB::transaction(function () use ($order, $reason) {

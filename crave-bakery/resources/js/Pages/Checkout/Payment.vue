@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import StripePayment from '@/Components/Public/StripePayment.vue';
+import StripePayment from '@/Components/Public/Gateways/StripePayment.vue';
 import CheckoutLayout from '@/Layouts/CheckoutLayout.vue';
 
 const props = defineProps({

@@ -7,11 +7,13 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Resources\AddressResource;
 use App\Http\Resources\CartResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PaymentGatewayResource;
 use App\Http\Resources\ProfileResource;
 use App\Mail\OrderConfirmed;
 use App\Models\Order;
 use App\Services\AddressService;
 use App\Services\OrderService;
+use App\Services\PaymentService;
 use App\Services\StripePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,6 +27,7 @@ class OrderController extends Controller
         private readonly OrderService $orderService,
         private readonly AddressService $addressService,
         private readonly StripePaymentService $stripePaymentService,
+        private readonly PaymentService $paymentService,
     ) {
     }
 
@@ -53,6 +56,9 @@ class OrderController extends Controller
             'prefill' => [
                 'email' => $user->email,
             ],
+            'paymentMethods' => PaymentGatewayResource::collection(
+                $this->paymentService->enabledGateways(),
+            )->resolve(),
         ]);
     }
 
@@ -120,7 +126,7 @@ class OrderController extends Controller
         return Inertia::render('Checkout/Payment', [
             'cart' => (new CartResource($quote['cart']))->resolve(),
             'totals' => $quote['totals'],
-            'stripe_key' => config('cashier.key') ?: config('services.stripe.key'),
+            'stripe_key' => $this->paymentService->publishableKey('stripe'),
         ]);
     }
 

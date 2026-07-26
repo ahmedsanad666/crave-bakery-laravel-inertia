@@ -4,11 +4,14 @@ namespace App\Providers;
 
 use App\Listeners\StripeEventListener;
 use App\Models\AdminUser;
+use App\Models\PaymentGatewayModel;
 use App\Models\SiteSetting;
 use App\Models\User;
 use App\Policies\AdminUserPolicy;
 use App\Policies\CustomerPolicy;
+use App\Policies\PaymentGatewayModelPolicy;
 use App\Policies\SiteSettingPolicy;
+use App\Services\PaymentService;
 use App\Services\SiteSettingService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -37,9 +40,13 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(WebhookReceived::class, StripeEventListener::class);
 
+        // Prefer encrypted DB credentials over .env when payment_gateways is seeded
+        $this->app->make(PaymentService::class)->applyStripeCredentials();
+
         Gate::policy(User::class, CustomerPolicy::class);
         Gate::policy(AdminUser::class, AdminUserPolicy::class);
         Gate::policy(SiteSetting::class, SiteSettingPolicy::class);
+        Gate::policy(PaymentGatewayModel::class, PaymentGatewayModelPolicy::class);
 
         Route::bind('customer', function (string $value) {
             return User::query()

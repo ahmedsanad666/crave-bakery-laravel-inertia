@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PaymentGatewayController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -53,6 +54,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');
+
+    Route::get('settings/payments', [PaymentGatewayController::class, 'index'])
+        ->name('settings.payments');
+    Route::patch('settings/payments/{gateway}', [PaymentGatewayController::class, 'update'])
+        ->name('settings.payments.update');
+    Route::patch('settings/payments/{gateway}/toggle', [PaymentGatewayController::class, 'toggle'])
+        ->name('settings.payments.toggle');
 
     Route::middleware('super-admin')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');

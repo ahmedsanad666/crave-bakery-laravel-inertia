@@ -1,0 +1,1561 @@
+---
+alwaysApply: false
+---
+# Payment Gateway Manager — Crave Bakery
+# Build Guide for Cursor AI
+
+> **Purpose:** This file guides Cursor through building a dynamic Payment Gateway Manager
+> for the Crave Bakery project. The system allows admins to enable/disable payment methods,
+> configure API credentials, and control what appears on the checkout page — all without
+> touching code.
+>
+> **Current State:** Stripe and Cash on Delivery are already integrated and working.
+> This file refactors them into a scalable gateway management system.
+>
+> Load alongside: `crave-bakery-project-brief.md` and `cursor-learning-rules.md`
+
+---
+
+## What We Are Building
+
+```
+BEFORE (current state):
+  Stripe → hardcoded in PaymentController
+  Cash on Delivery → hardcoded in CheckoutController
+  No admin control over payment methods
+
+AFTER (target state):
+  Admin Panel → Settings → Payment Methods
+       ↓
+  Admin enables/disables Stripe ✅
+  Admin enables/disables Cash on Delivery ✅
+  Admin fills in Stripe API keys from the UI
+  Admin sets sort order (which appears first)
+       ↓
+  Checkout page reads enabled gateways dynamically
+       ↓
+  Customer sees only the active payment methods
+       ↓
+  Adding a NEW gateway in the future = one new class + one new Vue component
+  (zero changes to existing code)
+```
+
+---
+
+## Architecture Overview
+
+```
+app/
+├── Contracts/
+│   └── PaymentGateway.php          ← Interface all gateways must implement
+├── Gateways/
+│   ├── StripeGateway.php           ← Stripe implementation (already working)
+│   └── CashOnDeliveryGateway.php   ← COD implementation (already working)
+├── Services/
+│   └── PaymentService.php          ← Resolves the correct gateway, lists enabled ones
+├── Models/
+│   └── PaymentGatewayModel.php     ← DB model for gateway configs
+├── Http/Controllers/
+│   ├── PaymentController.php       ← Updated to use PaymentService
+│   └── Admin/
+│       └── PaymentGatewayController.php  ← Admin CRUD for gateway settings
+└── Http/Resources/
+    └── PaymentGatewayResource.php  ← Resource for passing gateway data to Vue
+
+database/migrations/
+└── create_payment_gateways_table.php
+
+resources/js/
+├── Pages/
+│   ├── Checkout/
+│   │   └── Index.vue               ← Updated to render dynamic gateway list
+│   └── Admin/
+│       └── Settings/
+│           └── Payments.vue        ← Admin payment management page
+└── Components/
+    └── Public/
+        └── Gateways/
+            ├── StripePayment.vue   ← Already exists — moved here
+            └── CashOnDelivery.vue  ← New simple component
+```
+
+---
+
+## Phase 1 — Database
+
+### Step 1 — Create the Migration
+
+```bash
+php artisan make:migration create_payment_gateways_table
+```
+
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('payment_gateways', function (Blueprint $table) {
+            $table->id();
+
+            // Unique machine-readable identifier — used in code to resolve the gateway
+            // e.g. 'stripe', 'cod', 'paypal', 'kuveytturk', 'tap'
+            $table->string('name')->unique();
+
+            // Human-readable label shown in admin and checkout
+            $table->string('label');
+
+            // Short description shown on checkout page under the gateway name
+            $table->text('description')->nullable();
+
+            // Path to the gateway logo (stored in /storage/gateways/)
+            $table->string('logo')->nullable();
+
+            // Whether this gateway is available on the checkout page
+            $table->boolean('is_enabled')->default(false);
+
+            // Whether to use sandbox/test mode for this gateway
+            $table->boolean('is_test_mode')->default(true);
+
+            // All API credentials stored as encrypted JSON
+            // e.g. {"key": "pk_live_xxx", "secret": "sk_live_xxx", "webhook_secret": "whsec_xxx"}
+            // ALWAYS encrypted — never stored as plain text
+            $table->text('config')->nullable();
+
+            // Instructions shown to customer (used by Cash on Delivery)
+            $table->text('instructions')->nullable();
+
+            // Controls the order gateways appear in checkout
+            $table->integer('sort_order')->default(0);
+
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('payment_gateways');
+    }
+};
+```
+
+```bash
+php artisan migrate
+```
+
+### Step 2 — Seed the Two Default Gateways
+
+```bash
+php artisan make:seeder PaymentGatewaySeeder
+```
+
+```php
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class PaymentGatewaySeeder extends Seeder
+{
+    public function run(): void
+    {
+        // Stripe — already working, migrate existing config into DB
+        DB::table('payment_gateways')->insertOrIgnore([
+            'name'         => 'stripe',
+            'label'        => 'Credit / Debit Card',
+            'description'  => 'Pay securely with your Visa, Mastercard, or American Express card.',
+            'logo'         => null,
+            'is_enabled'   => true,
+            'is_test_mode' => true,
+            'config'       => encrypt(json_encode([
+                'key'            => env('STRIPE_KEY', ''),
+                'secret'         => env('STRIPE_SECRET', ''),
+                'webhook_secret' => env('STRIPE_WEBHOOK_SECRET', ''),
+            ])),
+            'instructions' => null,
+            'sort_order'   => 1,
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
+
+        // Cash on Delivery — simple, no API credentials needed
+        DB::table('payment_gateways')->insertOrIgnore([
+            'name'         => 'cod',
+            'label'        => 'Cash on Delivery',
+            'description'  => 'Pay with cash when your order arrives at your door.',
+            'logo'         => null,
+            'is_enabled'   => true,
+            'is_test_mode' => false,
+            'config'       => null,
+            'instructions' => 'Please have the exact amount ready. Our delivery team will collect payment upon arrival.',
+            'sort_order'   => 2,
+            'created_at'   => now(),
+            'updated_at'   => now(),
+        ]);
+    }
+}
+```
+
+```bash
+php artisan db:seed --class=PaymentGatewaySeeder
+```
+
+---
+
+## Phase 2 — Backend Architecture
+
+### Step 3 — Create the PaymentGateway Model
+
+```bash
+php artisan make:model PaymentGatewayModel
+```
+
+> 💡 **Best Practice:** We name it `PaymentGatewayModel` (not `PaymentGateway`) because
+> we already have a `PaymentGateway` interface. Two things with the same name in the same
+> namespace would cause a conflict. The model class name differs from the interface name.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+class PaymentGatewayModel extends Model
+{
+    protected $table = 'payment_gateways';
+
+    protected $fillable = [
+        'name',
+        'label',
+        'description',
+        'logo',
+        'is_enabled',
+        'is_test_mode',
+        'config',
+        'instructions',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'is_enabled'   => 'boolean',
+        'is_test_mode' => 'boolean',
+        'sort_order'   => 'integer',
+    ];
+
+    // ─── Accessors ────────────────────────────────────────────────────────────
+
+    /**
+     * Decrypt and decode the config JSON when reading.
+     * Encrypt and encode when writing.
+     * This keeps API keys safe even if the database is compromised.
+     */
+    protected function config(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): array {
+                if (! $value) return [];
+                try {
+                    return json_decode(decrypt($value), true) ?? [];
+                } catch (\Exception) {
+                    return [];
+                }
+            },
+            set: function (array|null $value): ?string {
+                if (! $value) return null;
+                return encrypt(json_encode($value));
+            },
+        );
+    }
+
+    // ─── Scopes ───────────────────────────────────────────────────────────────
+
+    /**
+     * Only return gateways the admin has enabled.
+     * Used in checkout to show available payment methods.
+     */
+    public function scopeEnabled($query)
+    {
+        return $query->where('is_enabled', true)->orderBy('sort_order');
+    }
+
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    /**
+     * Get a specific config value safely.
+     * e.g. $gateway->getConfig('secret') returns the Stripe secret key
+     */
+    public function getConfig(string $key, mixed $default = null): mixed
+    {
+        return $this->config[$key] ?? $default;
+    }
+}
+```
+
+### Step 4 — Create the PaymentGateway Interface (Contract)
+
+```bash
+mkdir -p app/Contracts
+```
+
+Create `app/Contracts/PaymentGateway.php`:
+
+```php
+<?php
+
+namespace App\Contracts;
+
+use App\Models\Order;
+
+/**
+ * Every payment gateway must implement this interface.
+ * This guarantees all gateways work the same way from the controller's perspective.
+ *
+ * HOW TO ADD A NEW GATEWAY IN THE FUTURE:
+ * 1. Create app/Gateways/YourGateway.php implementing this interface
+ * 2. Add it to PaymentService::resolve()
+ * 3. Add a Vue component in resources/js/Components/Public/Gateways/
+ * 4. Add a seeder entry for it in payment_gateways table
+ * That's it — zero changes to existing code.
+ */
+interface PaymentGateway
+{
+    /**
+     * Create a payment intent / session with the gateway.
+     * Returns data the frontend needs to complete the payment.
+     * e.g. for Stripe: ['clientSecret' => 'pi_xxx_secret_xxx']
+     * e.g. for PayPal: ['orderId' => 'PAYPAL-ORDER-ID']
+     * e.g. for COD:    ['method' => 'cod', 'instructions' => '...']
+     */
+    public function createIntent(Order $order): array;
+
+    /**
+     * Verify that a payment actually succeeded.
+     * Called after the frontend reports a successful payment.
+     * Always verify with the gateway directly — never trust frontend data.
+     * Returns true if payment is confirmed, false otherwise.
+     */
+    public function verify(string $reference): bool;
+
+    /**
+     * Process a refund for a paid order.
+     * Returns true if refund was successful.
+     */
+    public function refund(Order $order, float $amount): bool;
+}
+```
+
+### Step 5 — Create Gateway Implementations
+
+Create `app/Gateways/StripeGateway.php`:
+
+```php
+<?php
+
+namespace App\Gateways;
+
+use App\Contracts\PaymentGateway;
+use App\Models\Order;
+use App\Models\PaymentGatewayModel;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
+use Stripe\Refund;
+use Stripe\Exception\ApiErrorException;
+use Illuminate\Support\Facades\Log;
+
+class StripeGateway implements PaymentGateway
+{
+    private PaymentGatewayModel $gateway;
+
+    public function __construct()
+    {
+        // Load config from DB — admin may have updated keys via admin panel
+        $this->gateway = PaymentGatewayModel::where('name', 'stripe')->firstOrFail();
+
+        // Set the API key from the encrypted DB config
+        Stripe::setApiKey($this->gateway->getConfig('secret'));
+    }
+
+    public function createIntent(Order $order): array
+    {
+        // Reuse existing PaymentIntent if one already exists for this order
+        if ($order->transaction_id) {
+            return ['clientSecret' => $order->transaction_id];
+        }
+
+        try {
+            $paymentIntent = PaymentIntent::create([
+                'amount'   => (int) round($order->total * 100), // convert to cents
+                'currency' => 'usd',
+                'metadata' => [
+                    'order_id'     => $order->id,
+                    'order_number' => $order->order_number,
+                    'user_id'      => $order->user_id,
+                ],
+                'automatic_payment_methods' => ['enabled' => true],
+            ]);
+
+            // Save the PaymentIntent ID on the order
+            $order->update(['transaction_id' => $paymentIntent->id]);
+
+            return ['clientSecret' => $paymentIntent->client_secret];
+
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe createIntent failed', [
+                'error'    => $e->getMessage(),
+                'order_id' => $order->id,
+            ]);
+            throw $e;
+        }
+    }
+
+    public function verify(string $reference): bool
+    {
+        try {
+            $paymentIntent = PaymentIntent::retrieve($reference);
+            return $paymentIntent->status === 'succeeded';
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe verify failed', ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    public function refund(Order $order, float $amount): bool
+    {
+        try {
+            Refund::create([
+                'payment_intent' => $order->transaction_id,
+                'amount'         => (int) round($amount * 100),
+            ]);
+            return true;
+        } catch (ApiErrorException $e) {
+            Log::error('Stripe refund failed', [
+                'error'    => $e->getMessage(),
+                'order_id' => $order->id,
+            ]);
+            return false;
+        }
+    }
+}
+```
+
+Create `app/Gateways/CashOnDeliveryGateway.php`:
+
+```php
+<?php
+
+namespace App\Gateways;
+
+use App\Contracts\PaymentGateway;
+use App\Models\Order;
+use App\Models\PaymentGatewayModel;
+
+class CashOnDeliveryGateway implements PaymentGateway
+{
+    private PaymentGatewayModel $gateway;
+
+    public function __construct()
+    {
+        $this->gateway = PaymentGatewayModel::where('name', 'cod')->firstOrFail();
+    }
+
+    /**
+     * COD has no external API — just return the instructions for the customer.
+     * The order is placed immediately without any payment processing.
+     */
+    public function createIntent(Order $order): array
+    {
+        // Mark the order as pending payment (they pay on delivery)
+        $order->update([
+            'payment_method' => 'cod',
+            'payment_status' => 'pending',
+            'status'         => 'processing', // we process the order immediately
+        ]);
+
+        return [
+            'method'       => 'cod',
+            'instructions' => $this->gateway->instructions,
+        ];
+    }
+
+    /**
+     * COD is verified when the delivery driver collects payment.
+     * For now, we return true and let admin mark it manually.
+     */
+    public function verify(string $reference): bool
+    {
+        return true;
+    }
+
+    /**
+     * COD refunds are handled offline — no API call needed.
+     */
+    public function refund(Order $order, float $amount): bool
+    {
+        // Admin handles COD refunds manually
+        return true;
+    }
+}
+```
+
+### Step 6 — Create the PaymentService
+
+```bash
+php artisan make:service PaymentService
+```
+
+> If `make:service` doesn't exist, create manually: `app/Services/PaymentService.php`
+
+```php
+<?php
+
+namespace App\Services;
+
+use App\Contracts\PaymentGateway;
+use App\Gateways\StripeGateway;
+use App\Gateways\CashOnDeliveryGateway;
+use App\Models\PaymentGatewayModel;
+use Illuminate\Support\Collection;
+
+class PaymentService
+{
+    /**
+     * Resolve the correct gateway class based on the gateway name.
+     *
+     * HOW TO ADD A NEW GATEWAY:
+     * 1. Create the gateway class in app/Gateways/
+     * 2. Add a new case here
+     * That's the only change needed in existing code.
+     */
+    public function resolve(string $gatewayName): PaymentGateway
+    {
+        return match($gatewayName) {
+            'stripe' => new StripeGateway(),
+            'cod'    => new CashOnDeliveryGateway(),
+
+            // Future gateways — add cases here:
+            // 'paypal'      => new PayPalGateway(),
+            // 'kuveytturk'  => new KuveytTurkGateway(),
+            // 'tap'         => new TapPaymentsGateway(),
+            // 'myfatoorah'  => new MyFatoorahGateway(),
+
+            default => throw new \InvalidArgumentException(
+                "Payment gateway [{$gatewayName}] is not supported."
+            ),
+        };
+    }
+
+    /**
+     * Get all gateways that the admin has enabled.
+     * Used by the checkout page to show available payment options.
+     */
+    public function enabledGateways(): Collection
+    {
+        return PaymentGatewayModel::enabled()->get();
+    }
+
+    /**
+     * Get a specific gateway's DB record.
+     */
+    public function find(string $name): PaymentGatewayModel
+    {
+        return PaymentGatewayModel::where('name', $name)->firstOrFail();
+    }
+}
+```
+
+### Step 7 — Update the PaymentController
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Order;
+use App\Services\PaymentService;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class PaymentController extends Controller
+{
+    public function __construct(
+        private readonly PaymentService $paymentService
+    ) {}
+
+    /**
+     * Create a payment intent using whichever gateway the customer selected.
+     * The gateway name comes from the request — it was set when the customer
+     * clicked their chosen payment method on the checkout page.
+     */
+    public function createIntent(Request $request): JsonResponse
+    {
+        $request->validate([
+            'order_id' => ['required', 'integer', 'exists:orders,id'],
+            'gateway'  => ['required', 'string', 'in:stripe,cod'],
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        // Security: make sure this order belongs to the current user
+        if ($order->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        try {
+            // Resolve the correct gateway and create the payment intent
+            $gateway = $this->paymentService->resolve($request->gateway);
+            $result  = $gateway->createIntent($order);
+
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            \Log::error('Payment intent creation failed', [
+                'gateway'  => $request->gateway,
+                'order_id' => $order->id,
+                'error'    => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'error' => 'Unable to initialise payment. Please try again.',
+            ], 500);
+        }
+    }
+
+    /**
+     * Confirm a payment after the frontend reports success.
+     * Always verify with the gateway — never trust frontend data.
+     */
+    public function confirm(Request $request): Response
+    {
+        $request->validate([
+            'gateway'   => ['required', 'string'],
+            'reference' => ['required', 'string'],
+            'order_id'  => ['required', 'integer', 'exists:orders,id'],
+        ]);
+
+        $order   = Order::findOrFail($request->order_id);
+        $gateway = $this->paymentService->resolve($request->gateway);
+
+        // Verify payment succeeded directly with the gateway
+        $confirmed = $gateway->verify($request->reference);
+
+        if (! $confirmed) {
+            return Inertia::render('Checkout/Index', [
+                'error' => 'Payment could not be confirmed. Please try again.',
+            ]);
+        }
+
+        // Mark the order as paid
+        $order->update([
+            'payment_status' => 'paid',
+            'payment_method' => $request->gateway,
+            'status'         => 'processing',
+            'paid_at'        => now(),
+        ]);
+
+        return Inertia::render('Checkout/Confirmation', [
+            'order' => $order->load('items.product'),
+        ]);
+    }
+}
+```
+
+### Step 8 — Create Admin PaymentGateway Controller
+
+```bash
+php artisan make:controller Admin/PaymentGatewayController
+```
+
+```php
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\PaymentGatewayModel;
+use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class PaymentGatewayController extends Controller
+{
+    /**
+     * Show the payment gateways management page.
+     * Admin sees all gateways with their current enabled/disabled state.
+     */
+    public function index(): Response
+    {
+        $gateways = PaymentGatewayModel::orderBy('sort_order')->get()->map(function ($gateway) {
+            return [
+                'id'           => $gateway->id,
+                'name'         => $gateway->name,
+                'label'        => $gateway->label,
+                'description'  => $gateway->description,
+                'logo'         => $gateway->logo,
+                'is_enabled'   => $gateway->is_enabled,
+                'is_test_mode' => $gateway->is_test_mode,
+                'instructions' => $gateway->instructions,
+                'sort_order'   => $gateway->sort_order,
+                // Return config keys but NEVER return the actual secret values
+                // Admin can see which fields are filled but not the values
+                'config_fields' => $this->getConfigFields($gateway->name, $gateway->config),
+            ];
+        });
+
+        return Inertia::render('Admin/Settings/Payments', [
+            'gateways' => $gateways,
+        ]);
+    }
+
+    /**
+     * Update a gateway's settings (enable/disable, API keys, etc.)
+     */
+    public function update(Request $request, PaymentGatewayModel $gateway): RedirectResponse
+    {
+        $validated = $request->validate([
+            'is_enabled'   => ['boolean'],
+            'is_test_mode' => ['boolean'],
+            'label'        => ['string', 'max:100'],
+            'description'  => ['nullable', 'string', 'max:500'],
+            'instructions' => ['nullable', 'string', 'max:1000'],
+            'sort_order'   => ['integer', 'min:0'],
+            'config'       => ['nullable', 'array'],
+        ]);
+
+        // Merge new config with existing — don't wipe keys the admin didn't touch
+        // If a config field is submitted empty, keep the existing value
+        if (isset($validated['config'])) {
+            $existingConfig = $gateway->config; // auto-decrypted by model accessor
+            $newConfig      = array_filter(
+                $validated['config'],
+                fn($value) => $value !== null && $value !== ''
+            );
+            $validated['config'] = array_merge($existingConfig, $newConfig);
+        }
+
+        $gateway->update($validated);
+
+        return redirect()
+            ->route('admin.settings.payments')
+            ->with('success', "{$gateway->label} settings updated successfully.");
+    }
+
+    /**
+     * Toggle a gateway on or off — quick action from the list page.
+     */
+    public function toggle(PaymentGatewayModel $gateway): RedirectResponse
+    {
+        $gateway->update(['is_enabled' => ! $gateway->is_enabled]);
+
+        $status = $gateway->is_enabled ? 'enabled' : 'disabled';
+
+        return redirect()
+            ->route('admin.settings.payments')
+            ->with('success', "{$gateway->label} has been {$status}.");
+    }
+
+    /**
+     * Returns config field definitions for each gateway type.
+     * Shows admin which fields exist and whether they are filled.
+     * NEVER returns actual secret values.
+     */
+    private function getConfigFields(string $gatewayName, array $config): array
+    {
+        return match($gatewayName) {
+            'stripe' => [
+                ['key' => 'key',            'label' => 'Publishable Key',   'type' => 'text',     'filled' => ! empty($config['key'])],
+                ['key' => 'secret',         'label' => 'Secret Key',        'type' => 'password', 'filled' => ! empty($config['secret'])],
+                ['key' => 'webhook_secret', 'label' => 'Webhook Secret',    'type' => 'password', 'filled' => ! empty($config['webhook_secret'])],
+            ],
+            'cod' => [],  // COD has no API credentials
+
+            // Future gateways — add their field definitions here:
+            // 'paypal' => [
+            //     ['key' => 'client_id',     'label' => 'Client ID',     'type' => 'text',     'filled' => !empty($config['client_id'])],
+            //     ['key' => 'client_secret', 'label' => 'Client Secret', 'type' => 'password', 'filled' => !empty($config['client_secret'])],
+            // ],
+            // 'kuveytturk' => [
+            //     ['key' => 'merchant_id',  'label' => 'Merchant ID',  'type' => 'text',     'filled' => !empty($config['merchant_id'])],
+            //     ['key' => 'username',     'label' => 'Username',     'type' => 'text',     'filled' => !empty($config['username'])],
+            //     ['key' => 'password',     'label' => 'Password',     'type' => 'password', 'filled' => !empty($config['password'])],
+            //     ['key' => 'customer_id',  'label' => 'Customer ID',  'type' => 'text',     'filled' => !empty($config['customer_id'])],
+            //     ['key' => 'store_key',    'label' => 'Store Key',    'type' => 'password', 'filled' => !empty($config['store_key'])],
+            // ],
+
+            default => [],
+        };
+    }
+}
+```
+
+### Step 9 — Add Routes
+
+In `routes/admin.php`:
+
+```php
+// Payment Gateway Management — inside existing admin middleware group
+Route::get('/settings/payments', [Admin\PaymentGatewayController::class, 'index'])
+    ->name('settings.payments');
+
+Route::patch('/settings/payments/{gateway}', [Admin\PaymentGatewayController::class, 'update'])
+    ->name('settings.payments.update');
+
+Route::patch('/settings/payments/{gateway}/toggle', [Admin\PaymentGatewayController::class, 'toggle'])
+    ->name('settings.payments.toggle');
+```
+
+In `routes/web.php` — update existing payment routes:
+
+```php
+Route::middleware('auth')->group(function () {
+    // Payment — now accepts a gateway parameter
+    Route::post('/payment/intent', [PaymentController::class, 'createIntent'])
+        ->name('payment.intent');
+
+    Route::post('/payment/confirm', [PaymentController::class, 'confirm'])
+        ->name('payment.confirm');
+});
+```
+
+---
+
+## Phase 3 — Frontend
+
+### Step 10 — Create Gateway Vue Components
+
+Create `resources/js/Components/Public/Gateways/CashOnDelivery.vue`:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { router } from '@inertiajs/vue3'
+import AppButton from '@/Components/Shared/AppButton.vue'
+import { IconTruck } from '@tabler/icons-vue'
+
+const props = defineProps<{
+    orderId:      number
+    orderTotal:   number
+    instructions: string
+}>()
+
+const processing = ref(false)
+
+function placeOrder(): void {
+    processing.value = true
+
+    // COD — no payment processing, just place the order
+    router.post(route('payment.confirm'), {
+        gateway:   'cod',
+        reference: 'cod',
+        order_id:  props.orderId,
+    }, {
+        onFinish: () => { processing.value = false },
+    })
+}
+</script>
+
+<template>
+    <div class="space-y-5">
+
+        <!-- Instructions card -->
+        <div class="flex gap-3 p-4 bg-warning/10 border border-warning/20 rounded-[10px]">
+            <IconTruck :size="20" stroke-width="1.5" class="text-warning shrink-0 mt-0.5" />
+            <div>
+                <p class="text-sm font-medium text-primary mb-1">Cash on Delivery</p>
+                <p class="text-sm text-[#6B6B6B]">{{ instructions }}</p>
+            </div>
+        </div>
+
+        <!-- Place order button -->
+        <AppButton
+            variant="primary"
+            size="lg"
+            :loading="processing"
+            :disabled="processing"
+            class="w-full"
+            @click="placeOrder"
+        >
+            <IconTruck :size="18" stroke-width="1.5" />
+            <span>
+                {{ processing ? 'Placing order...' : `Place Order — $${orderTotal.toFixed(2)}` }}
+            </span>
+        </AppButton>
+
+        <p class="text-center text-xs text-[#6B6B6B]">
+            Your order will be confirmed and prepared immediately.
+            Payment is collected upon delivery.
+        </p>
+
+    </div>
+</template>
+```
+
+Move your existing Stripe component to `resources/js/Components/Public/Gateways/StripePayment.vue` and update the `createIntent` fetch to send the gateway name:
+
+```js
+// Inside StripePayment.vue — update the fetch call in initStripe()
+const response = await fetch(route('payment.intent'), {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content') ?? '',
+    },
+    body: JSON.stringify({
+        order_id: props.orderId,
+        gateway: 'stripe',          // ← add this
+    }),
+})
+```
+
+### Step 11 — Update Checkout Page
+
+Update `resources/js/Pages/Checkout/Index.vue`:
+
+```vue
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import AppLayout from '@/Layouts/AppLayout.vue'
+import StripePayment from '@/Components/Public/Gateways/StripePayment.vue'
+import CashOnDelivery from '@/Components/Public/Gateways/CashOnDelivery.vue'
+import { IconCreditCard, IconTruck, IconCircleCheck } from '@tabler/icons-vue'
+
+// ─── Props ───────────────────────────────────────────────────────────────────
+const props = defineProps<{
+    order: {
+        id:           number
+        order_number: string
+        total:        number
+    }
+    // Admin-enabled gateways passed from CheckoutController
+    paymentMethods: Array<{
+        name:         string
+        label:        string
+        description:  string
+        logo:         string | null
+        instructions: string | null
+    }>
+    error?: string
+}>()
+
+// ─── State ───────────────────────────────────────────────────────────────────
+// Default to the first available payment method
+const selectedGateway = ref(props.paymentMethods[0]?.name ?? 'cod')
+
+// ─── Computed ────────────────────────────────────────────────────────────────
+const activeMethod = computed(() =>
+    props.paymentMethods.find(m => m.name === selectedGateway.value)
+)
+
+// ─── Icon map ────────────────────────────────────────────────────────────────
+const gatewayIcons: Record<string, any> = {
+    stripe: IconCreditCard,
+    cod:    IconTruck,
+}
+</script>
+
+<template>
+    <AppLayout>
+        <div class="max-w-lg mx-auto px-6 py-12">
+
+            <h1 class="font-serif text-3xl text-primary mb-1">Complete Your Order</h1>
+            <p class="text-[#6B6B6B] text-sm mb-8">Order {{ order.order_number }}</p>
+
+            <!-- Error from failed payment attempt -->
+            <div
+                v-if="error"
+                class="mb-6 p-4 rounded-[10px] bg-error/10 border border-error/20"
+            >
+                <p class="text-error text-sm">{{ error }}</p>
+            </div>
+
+            <!-- Payment method selector -->
+            <div class="space-y-3 mb-6">
+                <p class="text-sm font-medium text-primary">Select Payment Method</p>
+
+                <div
+                    v-for="method in paymentMethods"
+                    :key="method.name"
+                    class="flex items-center gap-3 p-4 bg-white rounded-2xl border-2 cursor-pointer transition-colors"
+                    :class="selectedGateway === method.name
+                        ? 'border-accent bg-accent/5'
+                        : 'border-[#E5DDD4] hover:border-[#C4B5A8]'"
+                    @click="selectedGateway = method.name"
+                >
+                    <!-- Radio dot -->
+                    <div
+                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                        :class="selectedGateway === method.name
+                            ? 'border-accent'
+                            : 'border-[#E5DDD4]'"
+                    >
+                        <div
+                            v-if="selectedGateway === method.name"
+                            class="w-2.5 h-2.5 rounded-full bg-accent"
+                        />
+                    </div>
+
+                    <!-- Gateway icon -->
+                    <component
+                        :is="gatewayIcons[method.name] ?? IconCreditCard"
+                        :size="20"
+                        stroke-width="1.5"
+                        class="text-primary shrink-0"
+                    />
+
+                    <!-- Gateway info -->
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-primary">{{ method.label }}</p>
+                        <p class="text-xs text-[#6B6B6B]">{{ method.description }}</p>
+                    </div>
+
+                    <!-- Selected checkmark -->
+                    <IconCircleCheck
+                        v-if="selectedGateway === method.name"
+                        :size="20"
+                        stroke-width="1.5"
+                        class="text-accent shrink-0"
+                    />
+                </div>
+            </div>
+
+            <!-- Active payment form -->
+            <div class="bg-white rounded-2xl shadow-card p-6">
+                <h2 class="font-sans font-medium text-base text-primary mb-6">
+                    {{ activeMethod?.label }}
+                </h2>
+
+                <!-- Stripe card form -->
+                <StripePayment
+                    v-if="selectedGateway === 'stripe'"
+                    :order-id="order.id"
+                    :order-total="order.total"
+                />
+
+                <!-- Cash on delivery -->
+                <CashOnDelivery
+                    v-else-if="selectedGateway === 'cod'"
+                    :order-id="order.id"
+                    :order-total="order.total"
+                    :instructions="activeMethod?.instructions ?? ''"
+                />
+
+                <!--
+                    ADDING A NEW GATEWAY IN THE FUTURE:
+                    1. Add a new v-else-if block here
+                    2. Import the new gateway component at the top
+                    Example:
+                    <PayPalPayment
+                        v-else-if="selectedGateway === 'paypal'"
+                        :order-id="order.id"
+                        :order-total="order.total"
+                    />
+                -->
+
+            </div>
+
+        </div>
+    </AppLayout>
+</template>
+```
+
+### Step 12 — Update CheckoutController
+
+```php
+// In CheckoutController.php — update the create() method
+public function create(): Response
+{
+    // Pass only enabled gateways to the checkout page
+    // Order comes from sort_order set by admin
+    $paymentMethods = PaymentGatewayModel::enabled()
+        ->get(['name', 'label', 'description', 'logo', 'instructions'])
+        ->toArray();
+
+    return Inertia::render('Checkout/Index', [
+        'order'          => OrderResource::make($this->orderService->getPendingOrder()),
+        'paymentMethods' => $paymentMethods,
+    ]);
+}
+```
+
+### Step 13 — Create Admin Payments Settings Page
+
+Create `resources/js/Pages/Admin/Settings/Payments.vue`:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { router, useForm } from '@inertiajs/vue3'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import AppButton from '@/Components/Shared/AppButton.vue'
+import AppToggle from '@/Components/Shared/AppToggle.vue'
+import AppInput from '@/Components/Shared/AppInput.vue'
+import AppBadge from '@/Components/Shared/AppBadge.vue'
+import {
+    IconCreditCard, IconTruck, IconSettings,
+    IconChevronDown, IconChevronUp, IconCircleCheck
+} from '@tabler/icons-vue'
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+interface ConfigField {
+    key:    string
+    label:  string
+    type:   'text' | 'password'
+    filled: boolean
+}
+
+interface Gateway {
+    id:           number
+    name:         string
+    label:        string
+    description:  string
+    is_enabled:   boolean
+    is_test_mode: boolean
+    instructions: string | null
+    sort_order:   number
+    config_fields: ConfigField[]
+}
+
+// ─── Props ───────────────────────────────────────────────────────────────────
+const props = defineProps<{
+    gateways: Gateway[]
+}>()
+
+// ─── State ───────────────────────────────────────────────────────────────────
+const expandedGateway = ref<string | null>(null)
+
+// Create a form for each gateway
+const forms = Object.fromEntries(
+    props.gateways.map(g => [
+        g.name,
+        useForm({
+            is_enabled:   g.is_enabled,
+            is_test_mode: g.is_test_mode,
+            label:        g.label,
+            description:  g.description,
+            instructions: g.instructions ?? '',
+            sort_order:   g.sort_order,
+            config:       Object.fromEntries(
+                g.config_fields.map(f => [f.key, '']) // empty — never pre-fill secrets
+            ),
+        })
+    ])
+)
+
+// ─── Icons map ───────────────────────────────────────────────────────────────
+const gatewayIcons: Record<string, any> = {
+    stripe: IconCreditCard,
+    cod:    IconTruck,
+}
+
+// ─── Methods ─────────────────────────────────────────────────────────────────
+function toggleExpand(gatewayName: string): void {
+    expandedGateway.value = expandedGateway.value === gatewayName ? null : gatewayName
+}
+
+function toggleEnable(gateway: Gateway): void {
+    router.patch(
+        route('admin.settings.payments.toggle', { gateway: gateway.id }),
+        {},
+        { preserveScroll: true }
+    )
+}
+
+function saveGateway(gateway: Gateway): void {
+    forms[gateway.name].patch(
+        route('admin.settings.payments.update', { gateway: gateway.id }),
+        {
+            preserveScroll: true,
+            onSuccess: () => expandedGateway.value = null,
+        }
+    )
+}
+</script>
+
+<template>
+    <AdminLayout>
+        <div class="px-6 py-6">
+
+            <!-- Page header -->
+            <div class="mb-8">
+                <h1 class="font-serif text-3xl text-primary">Payment Methods</h1>
+                <p class="text-[#6B6B6B] mt-1">
+                    Enable payment methods and configure their credentials.
+                    Only enabled methods appear on the checkout page.
+                </p>
+            </div>
+
+            <!-- Gateway cards -->
+            <div class="space-y-4 max-w-3xl">
+
+                <div
+                    v-for="gateway in gateways"
+                    :key="gateway.name"
+                    class="bg-white rounded-2xl shadow-card overflow-hidden"
+                >
+                    <!-- Gateway header row -->
+                    <div class="flex items-center gap-4 p-5">
+
+                        <!-- Gateway icon -->
+                        <div class="w-10 h-10 rounded-xl bg-surface flex items-center justify-center shrink-0">
+                            <component
+                                :is="gatewayIcons[gateway.name] ?? IconCreditCard"
+                                :size="20"
+                                stroke-width="1.5"
+                                class="text-primary"
+                            />
+                        </div>
+
+                        <!-- Gateway info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <p class="font-medium text-primary">{{ gateway.label }}</p>
+                                <AppBadge
+                                    v-if="gateway.is_test_mode && gateway.name !== 'cod'"
+                                    variant="warning"
+                                    size="sm"
+                                >
+                                    Test Mode
+                                </AppBadge>
+                                <AppBadge
+                                    v-if="gateway.is_enabled"
+                                    variant="success"
+                                    size="sm"
+                                >
+                                    Active
+                                </AppBadge>
+                            </div>
+                            <p class="text-sm text-[#6B6B6B] truncate">{{ gateway.description }}</p>
+                        </div>
+
+                        <!-- Enable/disable toggle -->
+                        <div class="flex items-center gap-3 shrink-0">
+                            <span class="text-sm text-[#6B6B6B]">
+                                {{ gateway.is_enabled ? 'Enabled' : 'Disabled' }}
+                            </span>
+                            <AppToggle
+                                :model-value="gateway.is_enabled"
+                                @update:model-value="toggleEnable(gateway)"
+                            />
+                        </div>
+
+                        <!-- Configure button -->
+                        <button
+                            class="flex items-center gap-1 text-sm text-accent hover:underline shrink-0"
+                            @click="toggleExpand(gateway.name)"
+                        >
+                            <IconSettings :size="16" stroke-width="1.5" />
+                            Configure
+                            <component
+                                :is="expandedGateway === gateway.name ? IconChevronUp : IconChevronDown"
+                                :size="14"
+                            />
+                        </button>
+
+                    </div>
+
+                    <!-- Config fields — shown when expanded -->
+                    <div
+                        v-if="expandedGateway === gateway.name"
+                        class="border-t border-[#E5DDD4] p-5 space-y-5"
+                    >
+
+                        <!-- Test mode toggle (not for COD) -->
+                        <div
+                            v-if="gateway.name !== 'cod'"
+                            class="flex items-center justify-between p-4 bg-surface rounded-[10px]"
+                        >
+                            <div>
+                                <p class="text-sm font-medium text-primary">Test Mode</p>
+                                <p class="text-xs text-[#6B6B6B]">
+                                    Use test credentials. Disable when going live.
+                                </p>
+                            </div>
+                            <AppToggle v-model="forms[gateway.name].is_test_mode" />
+                        </div>
+
+                        <!-- API credential fields -->
+                        <div
+                            v-if="gateway.config_fields.length > 0"
+                            class="space-y-4"
+                        >
+                            <p class="text-xs font-medium text-[#6B6B6B] uppercase tracking-wide">
+                                API Credentials
+                            </p>
+
+                            <div
+                                v-for="field in gateway.config_fields"
+                                :key="field.key"
+                            >
+                                <label class="block text-sm font-medium text-primary mb-1.5">
+                                    {{ field.label }}
+                                    <!-- Show filled indicator if key exists but field is empty -->
+                                    <span
+                                        v-if="field.filled"
+                                        class="ml-2 text-xs text-success font-normal"
+                                    >
+                                        ✓ Saved
+                                    </span>
+                                </label>
+
+                                <AppInput
+                                    v-model="forms[gateway.name].config[field.key]"
+                                    :type="field.type"
+                                    :placeholder="field.filled
+                                        ? '••••••••••••••••••••••• (leave blank to keep existing)'
+                                        : `Enter your ${field.label}`"
+                                    autocomplete="off"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- COD instructions -->
+                        <div v-if="gateway.name === 'cod'" class="space-y-4">
+                            <p class="text-xs font-medium text-[#6B6B6B] uppercase tracking-wide">
+                                Customer Instructions
+                            </p>
+                            <div>
+                                <label class="block text-sm font-medium text-primary mb-1.5">
+                                    Instructions shown to customer at checkout
+                                </label>
+                                <textarea
+                                    v-model="forms[gateway.name].instructions"
+                                    rows="3"
+                                    class="w-full bg-white border border-[#E5DDD4] rounded-[10px]
+                                           px-4 py-3 text-sm text-primary resize-none
+                                           focus:border-accent focus:ring-1 focus:ring-accent/20
+                                           focus:outline-none"
+                                    placeholder="e.g. Please have the exact amount ready when our driver arrives."
+                                />
+                            </div>
+                        </div>
+
+                        <!-- Sort order -->
+                        <div>
+                            <label class="block text-sm font-medium text-primary mb-1.5">
+                                Sort Order
+                                <span class="text-xs text-[#6B6B6B] font-normal ml-1">
+                                    (lower number appears first in checkout)
+                                </span>
+                            </label>
+                            <AppInput
+                                v-model="forms[gateway.name].sort_order"
+                                type="number"
+                                class="w-24"
+                            />
+                        </div>
+
+                        <!-- Form error -->
+                        <p
+                            v-if="forms[gateway.name].hasErrors"
+                            class="text-sm text-error"
+                        >
+                            Please check the fields above and try again.
+                        </p>
+
+                        <!-- Save button -->
+                        <div class="flex items-center justify-end gap-3 pt-2">
+                            <button
+                                class="text-sm text-[#6B6B6B] hover:text-primary"
+                                @click="expandedGateway = null"
+                            >
+                                Cancel
+                            </button>
+                            <AppButton
+                                variant="primary"
+                                size="sm"
+                                :loading="forms[gateway.name].processing"
+                                @click="saveGateway(gateway)"
+                            >
+                                Save Changes
+                            </AppButton>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </AdminLayout>
+</template>
+```
+
+---
+
+## Phase 4 — Add to Admin Sidebar
+
+In `resources/js/Components/Admin/Sidebar.vue`, the Payment Methods link goes under the Settings section:
+
+```vue
+<!-- Inside the Settings nav group -->
+<SidebarItem
+    :href="route('admin.settings.payments')"
+    label="Payment Methods"
+    :icon="IconCreditCard"
+/>
+```
+
+---
+
+## How to Add a New Payment Gateway in the Future
+
+> This section is for Cursor — follow these exact steps when adding any new gateway.
+> **Zero changes to existing code** — only additions.
+
+### Step A — Create the Gateway Class
+
+```bash
+# Create app/Gateways/PayPalGateway.php (or whichever gateway)
+```
+
+```php
+<?php
+
+namespace App\Gateways;
+
+use App\Contracts\PaymentGateway;
+use App\Models\Order;
+use App\Models\PaymentGatewayModel;
+
+class PayPalGateway implements PaymentGateway
+{
+    private PaymentGatewayModel $gateway;
+
+    public function __construct()
+    {
+        $this->gateway = PaymentGatewayModel::where('name', 'paypal')->firstOrFail();
+        // Initialize PayPal SDK with config from DB
+    }
+
+    public function createIntent(Order $order): array
+    {
+        // PayPal-specific implementation
+        return ['orderId' => 'PAYPAL-ORDER-ID'];
+    }
+
+    public function verify(string $reference): bool
+    {
+        // Verify with PayPal API
+        return true;
+    }
+
+    public function refund(Order $order, float $amount): bool
+    {
+        // Refund via PayPal API
+        return true;
+    }
+}
+```
+
+### Step B — Register in PaymentService
+
+```php
+// In app/Services/PaymentService.php — add ONE line to the match():
+'paypal' => new PayPalGateway(),
+```
+
+### Step C — Add Config Fields in Admin Controller
+
+```php
+// In Admin/PaymentGatewayController.php — add to getConfigFields() match():
+'paypal' => [
+    ['key' => 'client_id',     'label' => 'Client ID',     'type' => 'text',     'filled' => !empty($config['client_id'])],
+    ['key' => 'client_secret', 'label' => 'Client Secret', 'type' => 'password', 'filled' => !empty($config['client_secret'])],
+],
+```
+
+### Step D — Create the Vue Component
+
+```bash
+# Create resources/js/Components/Public/Gateways/PayPalPayment.vue
+```
+
+### Step E — Register in Checkout Page
+
+```vue
+<!-- In Checkout/Index.vue — add one v-else-if block: -->
+<PayPalPayment
+    v-else-if="selectedGateway === 'paypal'"
+    :order-id="order.id"
+    :order-total="order.total"
+/>
+```
+
+### Step F — Add Gateway Icon
+
+```js
+// In Checkout/Index.vue and Admin/Settings/Payments.vue — add to gatewayIcons:
+paypal: IconBrandPaypal,
+```
+
+### Step G — Seed the Gateway
+
+```php
+// In a new seeder or directly in tinker:
+PaymentGatewayModel::create([
+    'name'        => 'paypal',
+    'label'       => 'PayPal',
+    'description' => 'Pay with your PayPal account.',
+    'is_enabled'  => false,  // admin enables it after adding credentials
+    'is_test_mode'=> true,
+    'sort_order'  => 3,
+]);
+```
+
+**That's it. 7 small steps. No existing files modified except adding one line to the match() in PaymentService.**
+
+---
+
+## Security Checklist
+
+```
+✅ All gateway API secrets stored encrypted in DB (using Laravel encrypt())
+✅ Secret values never returned to frontend — only "filled: true/false" indicator
+✅ Admin can update keys — blank fields keep existing encrypted values
+✅ Payment verification always done server-side — never trust frontend
+✅ Gateway name validated server-side against allowed values ('in:stripe,cod')
+✅ Order ownership verified before creating payment intent
+✅ Webhook endpoint excluded from CSRF but verified by Stripe signature
+```
+
+---
+
+## Files Created / Modified Summary
+
+```
+NEW FILES:
+  app/Contracts/PaymentGateway.php
+  app/Gateways/StripeGateway.php
+  app/Gateways/CashOnDeliveryGateway.php
+  app/Services/PaymentService.php
+  app/Models/PaymentGatewayModel.php
+  app/Http/Controllers/Admin/PaymentGatewayController.php
+  database/migrations/create_payment_gateways_table.php
+  database/seeders/PaymentGatewaySeeder.php
+  resources/js/Components/Public/Gateways/StripePayment.vue  (moved from existing)
+  resources/js/Components/Public/Gateways/CashOnDelivery.vue (new)
+  resources/js/Pages/Admin/Settings/Payments.vue             (new)
+
+MODIFIED FILES:
+  app/Http/Controllers/PaymentController.php  (uses PaymentService now)
+  app/Http/Controllers/CheckoutController.php (passes paymentMethods to view)
+  resources/js/Pages/Checkout/Index.vue       (dynamic gateway selector)
+  resources/js/Components/Admin/Sidebar.vue   (add Payment Methods link)
+  routes/admin.php                            (add payment gateway routes)
+```
+
+---
+
+*Crave Bakery — Payment Gateway Manager*
+*Load alongside: crave-bakery-project-brief.md and cursor-learning-rules.md*

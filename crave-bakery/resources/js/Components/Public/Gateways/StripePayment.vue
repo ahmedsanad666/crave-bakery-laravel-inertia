@@ -68,7 +68,9 @@ async function initStripe() {
             'X-CSRF-TOKEN': csrfToken,
             'X-XSRF-TOKEN': csrfToken,
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+            gateway: 'stripe',
+        }),
     });
 
     const data = await response.json();
