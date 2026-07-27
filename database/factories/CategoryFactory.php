@@ -16,22 +16,33 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->words(2, true);
+        $name = fake()->unique()->randomElement([
+            'Single Origin Beans',
+            'Espresso Blends',
+            'Cold Brew Kits',
+            'Pour-Over Gear',
+            'Dark Roasts',
+            'Light Roasts',
+            'Decaf Selection',
+            'Travel Mugs',
+            'Gift Boxes',
+            'Instant Specialty',
+        ]).' '.fake()->unique()->numerify('##');
 
         return [
-            'name' => ucwords($name),
+            'name' => $name,
             'slug' => Str::slug($name),
-            'description' => fake()->sentence(12),
+            'description' => fake()->sentence(14),
             'parent_id' => null,
             'image' => fake()->randomElement($this->categoryImages()),
             'banner_image' => null,
-            'image_alt' => fake()->sentence(3),
+            'image_alt' => $name.' category',
             'default_sort' => 'newest',
             'show_in_navigation' => true,
             'show_in_footer' => fake()->boolean(40),
             'meta_title' => null,
-            'meta_description' => fake()->sentence(10),
-            'meta_keywords' => ['bakery', 'pastry', 'fresh'],
+            'meta_description' => fake()->sentence(12),
+            'meta_keywords' => ['coffee', 'beans', 'specialty'],
             'og_image' => null,
             'canonical_url' => null,
             'sort_order' => fake()->numberBetween(0, 20),
@@ -62,10 +73,12 @@ class CategoryFactory extends Factory
     private function categoryImages(): array
     {
         return [
-            'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80',
-            'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&q=80',
-            'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80',
-            'https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=800&q=80',
+            'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&q=80',
+            'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+            'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&q=80',
+            'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80',
+            'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&q=80',
+            'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&q=80',
         ];
     }
 }
