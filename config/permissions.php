@@ -93,6 +93,14 @@ return [
             ],
         ],
 
+        'analytics' => [
+            'label' => 'Analytics',
+            'super_admin_only' => false,
+            'actions' => [
+                'view' => 'View analytics',
+            ],
+        ],
+
         'site_settings' => [
             'label' => 'Site Settings',
             'super_admin_only' => true,
@@ -137,6 +145,7 @@ return [
             'reviews'     => ['view', 'approve', 'delete', 'respond'],
             'customers'   => ['view', 'edit', 'export'],
             'promo_codes' => ['view', 'create', 'edit', 'delete'],
+            'analytics'   => ['view'],
         ],
 
         // Read-only admin — view only, no mutations
@@ -148,6 +157,7 @@ return [
             'reviews'     => ['view'],
             'customers'   => ['view'],
             'promo_codes' => ['view'],
+            'analytics'   => ['view'],
         ],
 
         // Catalogue manager — products + categories only

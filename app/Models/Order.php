@@ -162,4 +162,19 @@ class Order extends Model
     {
         return $query->latest();
     }
+
+    public function scopePaid(Builder $query): Builder
+    {
+        return $query->where('payment_status', 'paid');
+    }
+
+    public function scopeNotCancelled(Builder $query): Builder
+    {
+        return $query->where('status', '!=', 'cancelled');
+    }
+
+    public function scopeBetweenDates(Builder $query, $from, $to): Builder
+    {
+        return $query->whereBetween('created_at', [$from, $to]);
+    }
 }

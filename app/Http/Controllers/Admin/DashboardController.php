@@ -3,65 +3,35 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\ShowAnalyticsRequest;
+use App\Http\Resources\AnalyticsOverviewResource;
+use App\Services\AnalyticsService;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): Response
-    {
-        return Inertia::render('Admin/Dashboard');
-    }
+    public function __construct(
+        private readonly AnalyticsService $analyticsService,
+    ) {}
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(ShowAnalyticsRequest $request): Response
     {
-        //
-    }
+        $period = $request->validated('period');
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return Inertia::render('Admin/Dashboard', [
+            'analytics' => (new AnalyticsOverviewResource([
+                'period' => $period,
+                'kpis' => $this->analyticsService->overview($period),
+                'revenueSeries' => $this->analyticsService->revenueSeries($period),
+                'ordersByCategory' => $this->analyticsService->ordersByCategory($period),
+                'topProducts' => $this->analyticsService->topProducts($period),
+                'lowStock' => $this->analyticsService->lowStock(),
+                'recentOrders' => $this->analyticsService->recentOrders(),
+                'recentReviews' => $this->analyticsService->recentReviews(),
+                'recentActivity' => $this->analyticsService->recentActivity(),
+                'activeDeliveries' => $this->analyticsService->activeDeliveries(),
+            ]))->resolve(),
+        ]);
     }
 }

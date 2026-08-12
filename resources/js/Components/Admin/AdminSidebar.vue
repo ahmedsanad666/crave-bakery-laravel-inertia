@@ -5,7 +5,6 @@ import {
     IconAdjustments,
     IconBook,
     IconCategory,
-    IconChartBar,
     IconLayoutDashboard,
     IconLogout,
     IconReceipt,
@@ -64,7 +63,6 @@ const navSections = computed(() => {
             label: 'Main',
             items: [
                 { label: 'Dashboard', icon: IconLayoutDashboard, route: 'admin.dashboard' },
-                { label: 'Analytics', icon: IconChartBar, route: 'admin.analytics.index' },
             ],
         },
         {
