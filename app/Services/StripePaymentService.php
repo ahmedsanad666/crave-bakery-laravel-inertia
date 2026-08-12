@@ -39,6 +39,7 @@ class StripePaymentService
             'quoted_total' => round((float) $totals['total'], 2),
             'payment_intent_id' => null,
         ];
+        // dd($payload);
 
         session([self::SESSION_KEY => $payload]);
 

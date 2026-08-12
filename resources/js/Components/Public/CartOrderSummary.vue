@@ -12,9 +12,30 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    discountAmount: {
+        type: Number,
+        default: 0,
+    },
+    promoCode: {
+        type: String,
+        default: null,
+    },
+    totalAfterDiscount: {
+        type: Number,
+        default: null,
+    },
 });
 
 const isEmpty = computed(() => props.itemCount <= 0);
+const hasDiscount = computed(() => Number(props.discountAmount) > 0);
+
+const displayTotal = computed(() => {
+    if (props.totalAfterDiscount != null) {
+        return Number(props.totalAfterDiscount);
+    }
+
+    return Math.max(0, Number(props.subtotal) - Number(props.discountAmount));
+});
 
 const formatMoney = (price) => {
     const value = Number(price);
@@ -38,6 +59,20 @@ const formatMoney = (price) => {
                 <span class="text-on-surface-variant">Subtotal</span>
                 <span class="font-bold text-on-surface">{{ formatMoney(subtotal) }}</span>
             </div>
+            <div
+                v-if="hasDiscount"
+                class="flex justify-between font-sans text-body-lg"
+            >
+                <span class="text-on-surface-variant">
+                    Discount
+                    <span v-if="promoCode" class="font-bold text-accent">
+                        ({{ promoCode }})
+                    </span>
+                </span>
+                <span class="font-bold text-success">
+                    -{{ formatMoney(discountAmount) }}
+                </span>
+            </div>
             <div class="flex justify-between font-sans text-body-lg">
                 <span class="text-on-surface-variant">Delivery</span>
                 <span class="font-bold text-secondary">Calculated at checkout</span>
@@ -47,7 +82,7 @@ const formatMoney = (price) => {
         <div class="mb-xl flex items-center justify-between">
             <span class="font-serif text-headline-sm text-primary">Total</span>
             <span class="text-3xl font-bold text-secondary-container">
-                {{ formatMoney(subtotal) }}
+                {{ formatMoney(displayTotal) }}
             </span>
         </div>
 

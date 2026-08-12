@@ -16,6 +16,10 @@ class CartResource extends JsonResource
             'items' => CartItemResource::collection($this->resource['items'] ?? [])->resolve(),
             'item_count' => (int) ($this->resource['item_count'] ?? 0),
             'subtotal' => (float) ($this->resource['subtotal'] ?? 0),
+            'promo_code' => $this->resource['promo_code'] ?? null,
+            'discount_amount' => (float) ($this->resource['discount_amount'] ?? 0),
+            'total_after_discount' => (float) ($this->resource['total_after_discount']
+                ?? ($this->resource['subtotal'] ?? 0)),
         ];
     }
 }

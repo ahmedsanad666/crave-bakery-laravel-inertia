@@ -13,6 +13,7 @@ class PromoCode extends Model
 
     protected $fillable = [
         'code',
+        'title',
         'type',
         'value',
         'min_order_amount',
@@ -32,5 +33,43 @@ class PromoCode extends Model
             'expires_at' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if (blank($search)) {
+            return $query;
+        }
+
+        return $query->where(function ($query) use ($search) {
+            $query->whereRaw('LOWER(code) like ?', ['%'.mb_strtolower($search).'%'])
+                ->orWhereRaw('LOWER(title) like ?', ['%'.mb_strtolower($search).'%']);
+        });
+    }
+
+    /**
+     * Filter by admin status: active | inactive | expired.
+     */
+    public function scopeStatus($query, ?string $status)
+    {
+        if (blank($status)) {
+            return $query;
+        }
+
+        return match ($status) {
+            'active' => $query
+                ->where('is_active', true)
+                ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now())),
+            'inactive' => $query->where('is_active', false),
+            'expired' => $query
+                ->whereNotNull('expires_at')
+                ->where('expires_at', '<=', now()),
+            default => $query,
+        };
+    }
+
+    public function scopeOrdered($query)
+    {
+        return $query->orderByDesc('created_at')->orderBy('code');
     }
 }

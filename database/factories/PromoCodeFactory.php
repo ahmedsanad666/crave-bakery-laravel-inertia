@@ -20,6 +20,7 @@ class PromoCodeFactory extends Factory
 
         return [
             'code' => strtoupper(Str::random(8)),
+            'title' => fake()->sentence(4),
             'type' => $type,
             'value' => $type === 'percentage' ? fake()->numberBetween(5, 25) : fake()->randomFloat(2, 5, 20),
             'min_order_amount' => fake()->optional()->randomFloat(2, 20, 50),

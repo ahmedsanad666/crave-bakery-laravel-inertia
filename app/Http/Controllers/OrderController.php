@@ -12,6 +12,7 @@ use App\Http\Resources\ProfileResource;
 use App\Mail\OrderConfirmed;
 use App\Models\Order;
 use App\Services\AddressService;
+use App\Services\CartService;
 use App\Services\OrderService;
 use App\Services\PaymentService;
 use App\Services\StripePaymentService;
@@ -28,15 +29,21 @@ class OrderController extends Controller
         private readonly AddressService $addressService,
         private readonly StripePaymentService $stripePaymentService,
         private readonly PaymentService $paymentService,
+        private readonly CartService $cartService,
     ) {
     }
 
     public function create(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
+        $promoCode = $request->string('promo_code')->toString() ?: null;
+        if (blank($promoCode)) {
+            $promoCode = $this->cartService->getStoredPromoCode($request);
+        }
+
         $quote = $this->orderService->quote($user, [
             'delivery_method' => $request->string('delivery_method')->toString() ?: 'standard',
-            'promo_code' => $request->string('promo_code')->toString() ?: null,
+            'promo_code' => $promoCode,
         ]);
 
         if ($quote['cart']['item_count'] <= 0) {

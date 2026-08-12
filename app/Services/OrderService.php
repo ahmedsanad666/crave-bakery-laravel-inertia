@@ -147,6 +147,7 @@ class OrderService
             (float) $cartPayload['subtotal'],
             $deliveryMethod,
             $input['promo_code'] ?? null,
+            $user,
         );
         // dd($totals);
 
@@ -201,6 +202,7 @@ class OrderService
                 (float) $cartPayload['subtotal'],
                 $deliveryMethod,
                 $validated['promo_code'] ?? null,
+                $user,
             );
 
             $promo = null;
@@ -208,6 +210,7 @@ class OrderService
                 $promo = $this->promoCodeService->findValid(
                     (string) $totals['promo_code'],
                     (float) $cartPayload['subtotal'],
+                    $user,
                 );
             }
 
@@ -416,14 +419,14 @@ class OrderService
      *     delivery_method: string
      * }
      */
-    private function computeTotals(float $subtotal, string $deliveryMethod, ?string $promoCode): array
+    private function computeTotals(float $subtotal, string $deliveryMethod, ?string $promoCode, ?User $user = null): array
     {
         $subtotal = round(max(0, $subtotal), 2);
         $discountAmount = 0.0;
         $resolvedPromoCode = null;
 
         if (filled($promoCode)) {
-            $promo = $this->promoCodeService->findValid($promoCode, $subtotal);
+            $promo = $this->promoCodeService->findValid($promoCode, $subtotal, $user);
             $discountAmount = $this->promoCodeService->discountAmount($promo, $subtotal);
             $resolvedPromoCode = $promo->code;
         }

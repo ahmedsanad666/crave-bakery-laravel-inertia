@@ -20,6 +20,8 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/promo', [CartController::class, 'applyPromo'])->name('cart.promo.apply');
+Route::delete('/cart/promo', [CartController::class, 'removePromo'])->name('cart.promo.remove');
 Route::post('/cart/{product:slug}', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/items/{cartItem}', [CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/items/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');

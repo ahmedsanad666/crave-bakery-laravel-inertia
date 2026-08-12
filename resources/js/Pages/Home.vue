@@ -1,26 +1,27 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/Layouts/AppLayout.vue';
-import ProductCard from '@/Components/Public/ProductCard.vue';
-import LatestOvenCard from '@/Components/Public/LatestOvenCard.vue';
-import RecommendedProductCard from '@/Components/Public/RecommendedProductCard.vue';
-import EmptyState from '@/Components/Shared/EmptyState.vue';
+import { computed, ref } from "vue";
+import { Head, Link, usePage } from "@inertiajs/vue3";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import ProductCard from "@/Components/Public/ProductCard.vue";
+import PromoCodeCard from "@/Components/Public/PromoCodeCard.vue";
+import LatestOvenCard from "@/Components/Public/LatestOvenCard.vue";
+import RecommendedProductCard from "@/Components/Public/RecommendedProductCard.vue";
+import EmptyState from "@/Components/Shared/EmptyState.vue";
 import {
     IconArrowLeft,
     IconArrowRight,
     IconStar,
     IconStarFilled,
     IconStarHalfFilled,
-} from '@tabler/icons-vue';
-import { useCart } from '@/Composables/useCart';
-import { useSiteSeo } from '@/Composables/useSiteSeo';
+} from "@tabler/icons-vue";
+import { useCart } from "@/Composables/useCart";
+import { useSiteSeo } from "@/Composables/useSiteSeo";
 
 const DEFAULT_HERO_IMAGE =
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg';
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuCEiZOv3vfT-iDVk6YRQoz11JxNndYpTEDoOg98ZkNqTBfBLTS4ubx2TLUm_5KaC3-o1Sc7K9A1pGE7udIj_tO9IGJZS4cg7XiKCznzvrHH_PNFz0zpMf71y2Zc4Mm6Paw41iWA-FEb-oT5ddg4mYDoiBf6lfyeMm-sVUQYFDNaQVCqJj9HzJHf81hu9lRJI712daE-1AkEy3A1EtXG7JQX-pcHR0CuNo3-3bpWIEckwzcDfS8E_DRifQ7RPivZwu6VUXGRRq4Xgg";
 
 const DEFAULT_STORY_IMAGE =
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuCmPeHM84-yiu02IwoBqmVbF2-FiRMsGOuHE1Bvly-ruXAUdfL8uFtzo-dMvYQjLUkcNSGjkiJE7CbKp6WJUyuhaCG2WRJpx1_ANQAd8xT90ZJ2HOncP7qEyopQ_-BVqWYUNKVUIk7G4rCX0S_c2f4MaWrTeii0DN973MghMCj3_pQWDq-uVQ6wxtn67TuD9CFsna6rgbpgYgKkJWp4V9p8csAKusW9YW0pegKPGnhlaeVJL9I5w9KPJOu6roeF4Azbyb3RgRAuiw';
+    "https://lh3.googleusercontent.com/aida-public/AB6AXuCmPeHM84-yiu02IwoBqmVbF2-FiRMsGOuHE1Bvly-ruXAUdfL8uFtzo-dMvYQjLUkcNSGjkiJE7CbKp6WJUyuhaCG2WRJpx1_ANQAd8xT90ZJ2HOncP7qEyopQ_-BVqWYUNKVUIk7G4rCX0S_c2f4MaWrTeii0DN973MghMCj3_pQWDq-uVQ6wxtn67TuD9CFsna6rgbpgYgKkJWp4V9p8csAKusW9YW0pegKPGnhlaeVJL9I5w9KPJOu6roeF4Azbyb3RgRAuiw";
 
 const props = defineProps({
     canLogin: {
@@ -41,11 +42,32 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    promoCodes: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const { add } = useCart();
 const page = usePage();
 const site = computed(() => page.props.siteSettings ?? {});
+const brandName = computed(
+    () =>
+        site.value.site_name?.trim() ||
+        site.value.name?.trim() ||
+        "Crave Bakery",
+);
+const promoTrack = ref(null);
+
+const scrollPromos = (direction) => {
+    const el = promoTrack.value;
+    if (!el) {
+        return;
+    }
+
+    const amount = Math.min(el.clientWidth * 0.85, 420);
+    el.scrollBy({ left: direction * amount, behavior: "smooth" });
+};
 const {
     headTitle: seoHeadTitle,
     title: seoTitle,
@@ -55,13 +77,12 @@ const {
 
 const heroTitle = computed(
     () =>
-        site.value.hero_title?.trim() ||
-        'Baking Smiles, One Pastry At A Time',
+        site.value.hero_title?.trim() || "Baking Smiles, One Pastry At A Time",
 );
 const heroDescription = computed(
     () =>
         site.value.hero_description?.trim() ||
-        'Experience the warmth of our ovens delivered straight to your heart. Artisanal craftsmanship meets neighborhood comfort.',
+        "Experience the warmth of our ovens delivered straight to your heart. Artisanal craftsmanship meets neighborhood comfort.",
 );
 const heroImage = computed(
     () => site.value.hero_image?.trim() || DEFAULT_HERO_IMAGE,
@@ -80,7 +101,7 @@ const heroRatingLabel = computed(() => {
 const heroRatingDescription = computed(
     () =>
         site.value.hero_rating_description?.trim() ||
-        'The best croissant in the city, hands down!',
+        "The best croissant in the city, hands down!",
 );
 const heroRatingStars = computed(() => {
     const rating = heroRating.value;
@@ -98,12 +119,12 @@ const heroRatingStars = computed(() => {
     };
 });
 const storyTitle = computed(
-    () => site.value.story_title?.trim() || 'The Heart of Our Bakery',
+    () => site.value.story_title?.trim() || "The Heart of Our Bakery",
 );
 const storyContent = computed(
     () =>
         site.value.story_content?.trim() ||
-        'For over three decades, Crave Bakery has been the aromatic heartbeat of our neighborhood. What started as a small family dream has blossomed into a destination for those who appreciate the patient art of slow-fermented dough and the golden crunch of a perfect crust.\n\nWe believe that good bread takes time. Our bakers arrive when the city still sleeps, hand-shaping every loaf and tempering every batch of chocolate to ensure that the warmth you feel in every bite is as authentic as the ingredients we source from local artisans.',
+        "For over three decades, Crave Bakery has been the aromatic heartbeat of our neighborhood. What started as a small family dream has blossomed into a destination for those who appreciate the patient art of slow-fermented dough and the golden crunch of a perfect crust.\n\nWe believe that good bread takes time. Our bakers arrive when the city still sleeps, hand-shaping every loaf and tempering every batch of chocolate to ensure that the warmth you feel in every bite is as authentic as the ingredients we source from local artisans.",
 );
 const storyImage = computed(
     () => site.value.story_image?.trim() || DEFAULT_STORY_IMAGE,
@@ -113,7 +134,7 @@ const sinceYear = computed(() => {
     return Number.isFinite(year) && year > 0 ? year : 1999;
 });
 
-const activeCategory = ref('all');
+const activeCategory = ref("all");
 
 const categoryFilters = computed(() => {
     const categories = new Map();
@@ -131,7 +152,7 @@ const categoryFilters = computed(() => {
 });
 
 const filteredProducts = computed(() => {
-    if (activeCategory.value === 'all') {
+    if (activeCategory.value === "all") {
         return props.featuredProducts;
     }
 
@@ -143,7 +164,7 @@ const filteredProducts = computed(() => {
 });
 
 const filterOptions = computed(() => [
-    { id: 'all', name: 'All Items' },
+    { id: "all", name: "All Items" },
     ...categoryFilters.value,
 ]);
 
@@ -164,25 +185,25 @@ const cycleFilter = (direction) => {
 
 const testimonials = [
     {
-        name: 'Sarah Jenkins',
-        role: 'Loyal Customer',
+        name: "Sarah Jenkins",
+        role: "Loyal Customer",
         rating: 5,
-        body: 'The sourdough here is life-changing. I drive 20 miles every Saturday just to get a fresh loaf. It\'s the highlight of my week.',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCJP5azAsw_utqBVlVzNYWKI_X0gOBKKU3NHA3Kx5E0sbXVGIbHJyvL9diOGE6KlvH4pwhAYzOKTNWpmTrDKVEAHybN-GnznkyghpctMjlQHAuY4EXDn_YkB53bXXkk6T-ZN3wSXKTBw2mWnuPKWsH2Iu-rOSLeLFB7S0rclq9DVxaybGrDzD9ooG59q80wvpdmmTO8sH1d12-w9W3-AddmILPzvgtX7hUg41huOQE9mK4lNfIWPYPHzF4c72hLbVxS1mtPBJrXUA',
+        body: "The sourdough here is life-changing. I drive 20 miles every Saturday just to get a fresh loaf. It's the highlight of my week.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCJP5azAsw_utqBVlVzNYWKI_X0gOBKKU3NHA3Kx5E0sbXVGIbHJyvL9diOGE6KlvH4pwhAYzOKTNWpmTrDKVEAHybN-GnznkyghpctMjlQHAuY4EXDn_YkB53bXXkk6T-ZN3wSXKTBw2mWnuPKWsH2Iu-rOSLeLFB7S0rclq9DVxaybGrDzD9ooG59q80wvpdmmTO8sH1d12-w9W3-AddmILPzvgtX7hUg41huOQE9mK4lNfIWPYPHzF4c72hLbVxS1mtPBJrXUA",
     },
     {
-        name: 'Mark Thompson',
-        role: 'Food Critic',
+        name: "Mark Thompson",
+        role: "Food Critic",
         rating: 5,
-        body: 'Their croissants are exactly like the ones I had in Paris. Flaky, buttery, and perfectly layered. Absolutely incredible quality.',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAj7ecliR_lGu9qb9kdES-4-sFsTLO6gDHu5s5KHsOpxkV51EBN8xY9z8jQ8r30tNOw9CweXCi1iHgSnUazsWtIwxykrNN5PctJZUdVGh8GRSB5ltM8FvJcD82OG_To61qYnMSBeY3Jy-HofxoCAm5nO05nnj1tXlNj7kqaaP6_T2ni4m4tvErrq60nmcDwFfZf1O9HCGfeRGYllhZpjf0k3uYET5JTeB-HbV9hNm6gNDcAYCrPTWXqLe4Ww7-PTX3GU-IxOfjLxQ',
+        body: "Their croissants are exactly like the ones I had in Paris. Flaky, buttery, and perfectly layered. Absolutely incredible quality.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuAj7ecliR_lGu9qb9kdES-4-sFsTLO6gDHu5s5KHsOpxkV51EBN8xY9z8jQ8r30tNOw9CweXCi1iHgSnUazsWtIwxykrNN5PctJZUdVGh8GRSB5ltM8FvJcD82OG_To61qYnMSBeY3Jy-HofxoCAm5nO05nnj1tXlNj7kqaaP6_T2ni4m4tvErrq60nmcDwFfZf1O9HCGfeRGYllhZpjf0k3uYET5JTeB-HbV9hNm6gNDcAYCrPTWXqLe4Ww7-PTX3GU-IxOfjLxQ",
     },
     {
-        name: 'Elena Rodriguez',
-        role: 'Local Resident',
+        name: "Elena Rodriguez",
+        role: "Local Resident",
         rating: 4.5,
-        body: 'The staff is so warm and the atmosphere is lovely. My kids love the dark chocolate muffins. It\'s our favorite neighborhood spot.',
-        avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWuz6Y2hEMoQ-Vrt_FtOIo6nR5A8TK0l6BDaq4x3LUlWQ8zyBVlpJr6xszestnl0rvUIYu2oCwg5wnvYx6oc-oX_nAkUyR_PoEfNQozADqLEI4J9mW3jt7c7cpfYy3zBGKaIax9eaHSTLCJplvLKKZ-GlZ-f1p4xqdnqUah71lbrSWlXCaw_bg5Uf9PYylGGPsfg3SVxNbxKDJKVO86trRBlJosUxoYpNqIxFo6lQfrt5r1259xIMZWHsM9blMIUZM7AhXQE2bMg',
+        body: "The staff is so warm and the atmosphere is lovely. My kids love the dark chocolate muffins. It's our favorite neighborhood spot.",
+        avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCWuz6Y2hEMoQ-Vrt_FtOIo6nR5A8TK0l6BDaq4x3LUlWQ8zyBVlpJr6xszestnl0rvUIYu2oCwg5wnvYx6oc-oX_nAkUyR_PoEfNQozADqLEI4J9mW3jt7c7cpfYy3zBGKaIax9eaHSTLCJplvLKKZ-GlZ-f1p4xqdnqUah71lbrSWlXCaw_bg5Uf9PYylGGPsfg3SVxNbxKDJKVO86trRBlJosUxoYpNqIxFo6lQfrt5r1259xIMZWHsM9blMIUZM7AhXQE2bMg",
     },
 ];
 
@@ -219,11 +240,7 @@ const starIcons = (rating) => {
                 :content="seoKeywords"
             />
             <meta head-key="og:type" property="og:type" content="website" />
-            <meta
-                head-key="og:title"
-                property="og:title"
-                :content="seoTitle"
-            />
+            <meta head-key="og:title" property="og:title" :content="seoTitle" />
             <meta
                 v-if="seoDescription"
                 head-key="og:description"
@@ -246,7 +263,9 @@ const starIcons = (rating) => {
                         >
                             {{ heroTitle }}
                         </h1>
-                        <p class="max-w-md whitespace-pre-line font-sans text-body-lg text-on-primary/70">
+                        <p
+                            class="max-w-md whitespace-pre-line font-sans text-body-lg text-on-primary/70"
+                        >
                             {{ heroDescription }}
                         </p>
                     </div>
@@ -443,6 +462,54 @@ const starIcons = (rating) => {
                         Browse Products
                     </Link>
                 </EmptyState>
+            </div>
+        </section>
+
+        <!-- Exclusive Member Rewards -->
+        <section v-if="promoCodes.length" id="rewards" class="bg-surface py-32">
+            <div class="container-page">
+                <div
+                    class="mb-xl flex flex-col items-end justify-between gap-lg md:flex-row"
+                >
+                    <div class="space-y-sm">
+                        <h2 class="font-serif text-headline-lg text-primary">
+                            Exclusive Member Rewards
+                        </h2>
+                        <div class="h-1 w-24 rounded-full bg-accent" />
+                    </div>
+                    <div class="flex items-center gap-md">
+                        <button
+                            type="button"
+                            class="flex h-12 w-12 items-center justify-center rounded-full border border-outline text-primary transition-all hover:bg-primary hover:text-white"
+                            aria-label="Previous promo codes"
+                            @click="scrollPromos(-1)"
+                        >
+                            <IconArrowLeft :size="20" stroke-width="1.5" />
+                        </button>
+                        <button
+                            type="button"
+                            class="flex h-12 w-12 items-center justify-center rounded-full border border-outline text-primary transition-all hover:bg-primary hover:text-white"
+                            aria-label="Next promo codes"
+                            @click="scrollPromos(1)"
+                        >
+                            <IconArrowRight :size="20" stroke-width="1.5" />
+                        </button>
+                    </div>
+                </div>
+
+                <div
+                    ref="promoTrack"
+                    class="no-scrollbar -mx-1 flex snap-x snap-mandatory gap-lg overflow-x-auto scroll-smooth px-1 pb-md"
+                    style="touch-action: pan-x"
+                >
+                    <PromoCodeCard
+                        v-for="promo in promoCodes"
+                        :key="promo.id"
+                        :promo="promo"
+                        :brand="brandName"
+                        notch-class="bg-surface"
+                    />
+                </div>
             </div>
         </section>
 

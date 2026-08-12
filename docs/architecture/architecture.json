@@ -1,0 +1,2412 @@
+{
+  "meta": {
+    "displayName": "Crave Bakery",
+    "version": "1.0.0",
+    "description": "Crave Bakery — Laravel 13 + Inertia Vue bakery e-commerce architecture map",
+    "generatedAt": "2026-07-30",
+    "techStack": {
+      "language": "PHP 8.3+",
+      "framework": "Laravel 13 + Inertia.js v2 + Vue 3",
+      "database": "MySQL / MariaDB",
+      "auth": "Laravel session auth (Breeze) + admin/super-admin middleware",
+      "payments": "Laravel Cashier (Stripe)",
+      "media": "Spatie MediaLibrary",
+      "frontend": "Vite 8 + Tailwind CSS + Headless UI + Tabler Icons"
+    }
+  },
+  "workspaces": [
+    {
+      "id": "laravel-app",
+      "name": "pastaci-website",
+      "type": "backend",
+      "description": "Monolith: Laravel HTTP + Inertia SSR bridge + Vue pages",
+      "port": 8000,
+      "entrypoint": "public/index.php"
+    },
+    {
+      "id": "vue-frontend",
+      "name": "resources/js",
+      "type": "frontend",
+      "description": "Inertia Vue 3 pages, components, layouts, composables",
+      "port": 5173,
+      "entrypoint": "resources/js/app.js"
+    }
+  ],
+  "infrastructure": [
+    {
+      "id": "mysql",
+      "name": "MySQL / MariaDB",
+      "type": "database",
+      "image": "local / hosted MySQL",
+      "port": 3306,
+      "description": "Primary application database (Eloquent models).",
+      "features": [
+        "Eloquent ORM",
+        "migrations",
+        "soft deletes"
+      ]
+    },
+    {
+      "id": "stripe",
+      "name": "Stripe (Cashier)",
+      "type": "monitoring",
+      "image": "stripe.com API",
+      "port": 443,
+      "description": "Payment processing via Laravel Cashier / StripePaymentService.",
+      "features": [
+        "PaymentIntents",
+        "webhooks (CSRF excepted stripe/*)"
+      ]
+    }
+  ],
+  "dockerDiagram": {
+    "description": "No docker-compose.yml in this project. Local/dev uses php artisan serve + Vite.",
+    "nodes": [],
+    "edges": []
+  },
+  "systemArchitectureDiagram": {
+    "description": "Crave Bakery layered architecture: browser → Laravel/Inertia → services → MySQL/Stripe.",
+    "subgraphs": [
+      {
+        "id": "client_layer",
+        "label": "Client Layer",
+        "nodes": [
+          {
+            "id": "browser",
+            "label": "Browser (Vue 3 + Inertia)",
+            "type": "app"
+          }
+        ]
+      },
+      {
+        "id": "app_layer",
+        "label": "Application Layer",
+        "nodes": [
+          {
+            "id": "laravel",
+            "label": "Laravel 13 HTTP Kernel",
+            "type": "app"
+          },
+          {
+            "id": "inertia",
+            "label": "Inertia Middleware",
+            "type": "app"
+          },
+          {
+            "id": "controllers",
+            "label": "Controllers + FormRequests",
+            "type": "app"
+          },
+          {
+            "id": "services",
+            "label": "Domain Services",
+            "type": "app"
+          },
+          {
+            "id": "policies",
+            "label": "Policies + Permissions",
+            "type": "app"
+          }
+        ]
+      },
+      {
+        "id": "data_layer",
+        "label": "Data & Integrations",
+        "nodes": [
+          {
+            "id": "mysql",
+            "label": "MySQL Database",
+            "type": "database"
+          },
+          {
+            "id": "media",
+            "label": "Media Disk (Spatie)",
+            "type": "cache"
+          },
+          {
+            "id": "stripe",
+            "label": "Stripe API",
+            "type": "queue"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "from": "browser",
+        "to": "laravel",
+        "label": "HTTPS / XHR Inertia"
+      },
+      {
+        "from": "laravel",
+        "to": "inertia",
+        "label": "web middleware"
+      },
+      {
+        "from": "inertia",
+        "to": "controllers",
+        "label": "route match"
+      },
+      {
+        "from": "controllers",
+        "to": "policies",
+        "label": "authorize"
+      },
+      {
+        "from": "controllers",
+        "to": "services",
+        "label": "validated data"
+      },
+      {
+        "from": "services",
+        "to": "mysql",
+        "label": "Eloquent"
+      },
+      {
+        "from": "services",
+        "to": "media",
+        "label": "uploads"
+      },
+      {
+        "from": "services",
+        "to": "stripe",
+        "label": "PaymentIntent"
+      }
+    ]
+  },
+  "swaggerSchemas": {
+    "matchStatus": "Inertia Web App — documented 119 routes (no OpenAPI server)",
+    "openapi": "3.0.0",
+    "servedAt": "n/a (Inertia pages, not a public REST API)",
+    "securityScheme": "session cookie (web) + CSRF; admin / super-admin middleware",
+    "servers": [
+      {
+        "url": "http://localhost:8000",
+        "description": "Local php artisan serve"
+      },
+      {
+        "url": "http://127.0.0.1:8000",
+        "description": "Local alternate"
+      }
+    ],
+    "schemas": [
+      {
+        "name": "Product",
+        "description": "Bakery product with pricing, stock, media, categories"
+      },
+      {
+        "name": "Order",
+        "description": "Customer order with items, payment and delivery status"
+      },
+      {
+        "name": "User",
+        "description": "Customer user (role=user)"
+      },
+      {
+        "name": "AdminUser",
+        "description": "Admin account with JSON permissions matrix"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "id": "public-catalogue",
+      "name": "Public Catalogue",
+      "basePath": "/",
+      "description": "Homepage and public product browsing (Inertia).",
+      "color": "#3D1A0E",
+      "icon": "🧁",
+      "files": [
+        "app/Http/Controllers/HomeController.php",
+        "app/Http/Controllers/ProductController.php",
+        "app/Services/ProductService.php",
+        "resources/js/Pages/Home.vue",
+        "resources/js/Pages/Products/Index.vue",
+        "resources/js/Pages/Products/Show.vue"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/",
+          "auth": false,
+          "permission": null,
+          "description": "home → App\\Http\\Controllers\\HomeController@index",
+          "name": "home"
+        },
+        {
+          "method": "GET",
+          "path": "/products",
+          "auth": false,
+          "permission": null,
+          "description": "products.index → App\\Http\\Controllers\\ProductController@index",
+          "name": "products.index"
+        },
+        {
+          "method": "GET",
+          "path": "/products/{product:slug}",
+          "auth": false,
+          "permission": null,
+          "description": "products.show → App\\Http\\Controllers\\ProductController@show",
+          "name": "products.show"
+        },
+        {
+          "method": "GET",
+          "path": "/test",
+          "auth": false,
+          "permission": null,
+          "description": "test → App\\Http\\Controllers\\TestController@index",
+          "name": "test"
+        }
+      ]
+    },
+    {
+      "id": "cart",
+      "name": "Cart",
+      "basePath": "/cart",
+      "description": "Guest + authenticated cart operations.",
+      "color": "#E8572A",
+      "icon": "🛒",
+      "files": [
+        "app/Http/Controllers/CartController.php",
+        "app/Services/CartService.php",
+        "resources/js/Pages/Cart/Index.vue"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/cart",
+          "auth": false,
+          "permission": null,
+          "description": "cart.index → App\\Http\\Controllers\\CartController@index",
+          "name": "cart.index"
+        },
+        {
+          "method": "PATCH",
+          "path": "/cart/items/{cartItem}",
+          "auth": false,
+          "permission": null,
+          "description": "cart.update → App\\Http\\Controllers\\CartController@update",
+          "name": "cart.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/cart/items/{cartItem}",
+          "auth": false,
+          "permission": null,
+          "description": "cart.remove → App\\Http\\Controllers\\CartController@remove",
+          "name": "cart.remove"
+        },
+        {
+          "method": "POST",
+          "path": "/cart/promo",
+          "auth": false,
+          "permission": null,
+          "description": "cart.promo.apply → App\\Http\\Controllers\\CartController@applyPromo",
+          "name": "cart.promo.apply"
+        },
+        {
+          "method": "DELETE",
+          "path": "/cart/promo",
+          "auth": false,
+          "permission": null,
+          "description": "cart.promo.remove → App\\Http\\Controllers\\CartController@removePromo",
+          "name": "cart.promo.remove"
+        },
+        {
+          "method": "POST",
+          "path": "/cart/{product:slug}",
+          "auth": false,
+          "permission": null,
+          "description": "cart.add → App\\Http\\Controllers\\CartController@add",
+          "name": "cart.add"
+        }
+      ]
+    },
+    {
+      "id": "checkout-orders",
+      "name": "Checkout & Orders",
+      "basePath": "/checkout",
+      "description": "Authenticated checkout, order placement, and order history.",
+      "color": "#185FA5",
+      "icon": "📦",
+      "files": [
+        "app/Http/Controllers/OrderController.php",
+        "app/Services/OrderService.php",
+        "resources/js/Pages/Checkout/Index.vue",
+        "resources/js/Pages/Orders/Index.vue",
+        "resources/js/Pages/Orders/Show.vue"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/checkout",
+          "auth": true,
+          "permission": null,
+          "description": "checkout → App\\Http\\Controllers\\OrderController@create",
+          "name": "checkout"
+        },
+        {
+          "method": "GET",
+          "path": "/checkout/confirmation/{order}",
+          "auth": true,
+          "permission": null,
+          "description": "checkout.confirmation → App\\Http\\Controllers\\OrderController@confirmation",
+          "name": "checkout.confirmation"
+        },
+        {
+          "method": "GET",
+          "path": "/checkout/payment",
+          "auth": true,
+          "permission": null,
+          "description": "checkout.payment → App\\Http\\Controllers\\OrderController@payment",
+          "name": "checkout.payment"
+        },
+        {
+          "method": "POST",
+          "path": "/orders",
+          "auth": true,
+          "permission": null,
+          "description": "orders.store → App\\Http\\Controllers\\OrderController@store",
+          "name": "orders.store"
+        },
+        {
+          "method": "GET",
+          "path": "/orders",
+          "auth": true,
+          "permission": null,
+          "description": "orders.index → App\\Http\\Controllers\\OrderController@index",
+          "name": "orders.index"
+        },
+        {
+          "method": "GET",
+          "path": "/orders/{order}",
+          "auth": true,
+          "permission": null,
+          "description": "orders.show → App\\Http\\Controllers\\OrderController@show",
+          "name": "orders.show"
+        }
+      ]
+    },
+    {
+      "id": "payments",
+      "name": "Customer Payments",
+      "basePath": "/payment",
+      "description": "Stripe payment intent creation and confirmation.",
+      "color": "#635BFF",
+      "icon": "💳",
+      "files": [
+        "app/Http/Controllers/PaymentController.php",
+        "app/Services/PaymentService.php",
+        "app/Services/StripePaymentService.php"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/payment/confirm",
+          "auth": true,
+          "permission": null,
+          "description": "payment.confirm → App\\Http\\Controllers\\PaymentController@confirm",
+          "name": "payment.confirm"
+        },
+        {
+          "method": "POST",
+          "path": "/payment/intent",
+          "auth": true,
+          "permission": null,
+          "description": "payment.intent → App\\Http\\Controllers\\PaymentController@createIntent",
+          "name": "payment.intent"
+        },
+        {
+          "method": "GET",
+          "path": "/stripe/payment/{id}",
+          "auth": false,
+          "permission": null,
+          "description": "cashier.payment → Laravel\\Cashier\\Http\\Controllers\\PaymentController@show",
+          "name": "cashier.payment"
+        },
+        {
+          "method": "POST",
+          "path": "/stripe/webhook",
+          "auth": false,
+          "permission": null,
+          "description": "cashier.webhook → Laravel\\Cashier\\Http\\Controllers\\WebhookController@handleWebhook",
+          "name": "cashier.webhook"
+        }
+      ]
+    },
+    {
+      "id": "profile-account",
+      "name": "Customer Profile & Account",
+      "basePath": "/profile",
+      "description": "Profile, addresses, favourites, collections, and reviews.",
+      "color": "#2E7D32",
+      "icon": "👤",
+      "files": [
+        "app/Http/Controllers/ProfileController.php",
+        "app/Http/Controllers/AddressController.php",
+        "app/Http/Controllers/FavouriteController.php",
+        "app/Http/Controllers/CollectionController.php",
+        "app/Http/Controllers/ReviewController.php",
+        "app/Services/AddressService.php",
+        "app/Services/FavouriteService.php",
+        "app/Services/CollectionService.php",
+        "app/Services/ReviewService.php"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/addresses",
+          "auth": true,
+          "permission": null,
+          "description": "addresses.index → App\\Http\\Controllers\\AddressController@index",
+          "name": "addresses.index"
+        },
+        {
+          "method": "POST",
+          "path": "/addresses",
+          "auth": true,
+          "permission": null,
+          "description": "addresses.store → App\\Http\\Controllers\\AddressController@store",
+          "name": "addresses.store"
+        },
+        {
+          "method": "PUT",
+          "path": "/addresses/{address}",
+          "auth": true,
+          "permission": null,
+          "description": "addresses.update → App\\Http\\Controllers\\AddressController@update",
+          "name": "addresses.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/addresses/{address}",
+          "auth": true,
+          "permission": null,
+          "description": "addresses.destroy → App\\Http\\Controllers\\AddressController@destroy",
+          "name": "addresses.destroy"
+        },
+        {
+          "method": "PATCH",
+          "path": "/addresses/{address}/default",
+          "auth": true,
+          "permission": null,
+          "description": "addresses.default → App\\Http\\Controllers\\AddressController@setDefault",
+          "name": "addresses.default"
+        },
+        {
+          "method": "POST",
+          "path": "/collections",
+          "auth": true,
+          "permission": null,
+          "description": "collections.store → App\\Http\\Controllers\\CollectionController@store",
+          "name": "collections.store"
+        },
+        {
+          "method": "PATCH",
+          "path": "/collections/{collection}",
+          "auth": true,
+          "permission": null,
+          "description": "collections.update → App\\Http\\Controllers\\CollectionController@update",
+          "name": "collections.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/collections/{collection}",
+          "auth": true,
+          "permission": null,
+          "description": "collections.destroy → App\\Http\\Controllers\\CollectionController@destroy",
+          "name": "collections.destroy"
+        },
+        {
+          "method": "POST",
+          "path": "/collections/{collection}/products/{product:slug}",
+          "auth": true,
+          "permission": null,
+          "description": "collections.products.attach → App\\Http\\Controllers\\CollectionController@attachProduct",
+          "name": "collections.products.attach"
+        },
+        {
+          "method": "DELETE",
+          "path": "/collections/{collection}/products/{product:slug}",
+          "auth": true,
+          "permission": null,
+          "description": "collections.products.detach → App\\Http\\Controllers\\CollectionController@detachProduct",
+          "name": "collections.products.detach"
+        },
+        {
+          "method": "GET",
+          "path": "/favourites",
+          "auth": true,
+          "permission": null,
+          "description": "favourites.index → App\\Http\\Controllers\\FavouriteController@index",
+          "name": "favourites.index"
+        },
+        {
+          "method": "DELETE",
+          "path": "/favourites",
+          "auth": true,
+          "permission": null,
+          "description": "favourites.clear → App\\Http\\Controllers\\FavouriteController@clear",
+          "name": "favourites.clear"
+        },
+        {
+          "method": "POST",
+          "path": "/favourites/{product:slug}",
+          "auth": true,
+          "permission": null,
+          "description": "favourites.toggle → App\\Http\\Controllers\\FavouriteController@toggle",
+          "name": "favourites.toggle"
+        },
+        {
+          "method": "POST",
+          "path": "/products/{product:slug}/reviews",
+          "auth": true,
+          "permission": null,
+          "description": "reviews.store → App\\Http\\Controllers\\ReviewController@store",
+          "name": "reviews.store"
+        },
+        {
+          "method": "GET",
+          "path": "/profile",
+          "auth": true,
+          "permission": null,
+          "description": "profile.edit → App\\Http\\Controllers\\ProfileController@edit",
+          "name": "profile.edit"
+        },
+        {
+          "method": "PATCH",
+          "path": "/profile",
+          "auth": true,
+          "permission": null,
+          "description": "profile.update → App\\Http\\Controllers\\ProfileController@update",
+          "name": "profile.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/profile",
+          "auth": true,
+          "permission": null,
+          "description": "profile.destroy → App\\Http\\Controllers\\ProfileController@destroy",
+          "name": "profile.destroy"
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "basePath": "/",
+      "description": "Laravel Breeze auth (login, register, password reset, verification).",
+      "color": "#4A4641",
+      "icon": "🔐",
+      "files": [
+        "routes/auth.php",
+        "app/Http/Controllers/Auth/",
+        "resources/js/Pages/Auth/"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/confirm-password",
+          "auth": true,
+          "permission": null,
+          "description": "password.confirm → App\\Http\\Controllers\\Auth\\ConfirmablePasswordController@show",
+          "name": "password.confirm"
+        },
+        {
+          "method": "POST",
+          "path": "/confirm-password",
+          "auth": true,
+          "permission": null,
+          "description": "unnamed → App\\Http\\Controllers\\Auth\\ConfirmablePasswordController@store",
+          "name": null
+        },
+        {
+          "method": "POST",
+          "path": "/email/verification-notification",
+          "auth": true,
+          "permission": null,
+          "description": "verification.send → App\\Http\\Controllers\\Auth\\EmailVerificationNotificationController@store",
+          "name": "verification.send"
+        },
+        {
+          "method": "GET",
+          "path": "/forgot-password",
+          "auth": true,
+          "permission": null,
+          "description": "password.request → App\\Http\\Controllers\\Auth\\PasswordResetLinkController@create",
+          "name": "password.request"
+        },
+        {
+          "method": "POST",
+          "path": "/forgot-password",
+          "auth": true,
+          "permission": null,
+          "description": "password.email → App\\Http\\Controllers\\Auth\\PasswordResetLinkController@store",
+          "name": "password.email"
+        },
+        {
+          "method": "GET",
+          "path": "/login",
+          "auth": true,
+          "permission": null,
+          "description": "login → App\\Http\\Controllers\\Auth\\AuthenticatedSessionController@create",
+          "name": "login"
+        },
+        {
+          "method": "POST",
+          "path": "/login",
+          "auth": true,
+          "permission": null,
+          "description": "unnamed → App\\Http\\Controllers\\Auth\\AuthenticatedSessionController@store",
+          "name": null
+        },
+        {
+          "method": "POST",
+          "path": "/logout",
+          "auth": true,
+          "permission": null,
+          "description": "logout → App\\Http\\Controllers\\Auth\\AuthenticatedSessionController@destroy",
+          "name": "logout"
+        },
+        {
+          "method": "PUT",
+          "path": "/password",
+          "auth": true,
+          "permission": null,
+          "description": "password.update → App\\Http\\Controllers\\Auth\\PasswordController@update",
+          "name": "password.update"
+        },
+        {
+          "method": "GET",
+          "path": "/register",
+          "auth": true,
+          "permission": null,
+          "description": "register → App\\Http\\Controllers\\Auth\\RegisteredUserController@create",
+          "name": "register"
+        },
+        {
+          "method": "POST",
+          "path": "/register",
+          "auth": true,
+          "permission": null,
+          "description": "unnamed → App\\Http\\Controllers\\Auth\\RegisteredUserController@store",
+          "name": null
+        },
+        {
+          "method": "POST",
+          "path": "/reset-password",
+          "auth": true,
+          "permission": null,
+          "description": "password.store → App\\Http\\Controllers\\Auth\\NewPasswordController@store",
+          "name": "password.store"
+        },
+        {
+          "method": "GET",
+          "path": "/reset-password/{token}",
+          "auth": true,
+          "permission": null,
+          "description": "password.reset → App\\Http\\Controllers\\Auth\\NewPasswordController@create",
+          "name": "password.reset"
+        },
+        {
+          "method": "GET",
+          "path": "/verify-email",
+          "auth": true,
+          "permission": null,
+          "description": "verification.notice → App\\Http\\Controllers\\Auth\\EmailVerificationPromptController",
+          "name": "verification.notice"
+        },
+        {
+          "method": "GET",
+          "path": "/verify-email/{id}/{hash}",
+          "auth": true,
+          "permission": null,
+          "description": "verification.verify → App\\Http\\Controllers\\Auth\\VerifyEmailController",
+          "name": "verification.verify"
+        }
+      ]
+    },
+    {
+      "id": "admin-invitations",
+      "name": "Admin Invitations (Public Accept)",
+      "basePath": "/admin-invitations",
+      "description": "Guest acceptance of admin invitation tokens.",
+      "color": "#EF9F27",
+      "icon": "✉️",
+      "files": [
+        "app/Http/Controllers/AcceptInvitationController.php",
+        "app/Services/AdminInvitationService.php"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin-invitations/{token}",
+          "auth": true,
+          "permission": null,
+          "description": "admin-invitations.show → App\\Http\\Controllers\\AcceptInvitationController@show",
+          "name": "admin-invitations.show"
+        },
+        {
+          "method": "POST",
+          "path": "/admin-invitations/{token}",
+          "auth": true,
+          "permission": null,
+          "description": "admin-invitations.accept → App\\Http\\Controllers\\AcceptInvitationController@accept",
+          "name": "admin-invitations.accept"
+        }
+      ]
+    },
+    {
+      "id": "admin-dashboard",
+      "name": "Admin Dashboard",
+      "basePath": "/admin",
+      "description": "Admin home dashboard and admin profile.",
+      "color": "#3D1A0E",
+      "icon": "📊",
+      "files": [
+        "app/Http/Controllers/Admin/DashboardController.php",
+        "app/Http/Controllers/Admin/ProfileController.php",
+        "app/Services/AdminProfileService.php",
+        "resources/js/Pages/Admin/Dashboard.vue"
+      ],
+      "permissions": [],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin",
+          "auth": true,
+          "permission": null,
+          "description": "admin.dashboard → App\\Http\\Controllers\\Admin\\DashboardController@index",
+          "name": "admin.dashboard"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/profile",
+          "auth": true,
+          "permission": null,
+          "description": "admin.profile.edit → App\\Http\\Controllers\\Admin\\ProfileController@edit",
+          "name": "admin.profile.edit"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/profile",
+          "auth": true,
+          "permission": null,
+          "description": "admin.profile.update → App\\Http\\Controllers\\Admin\\ProfileController@update",
+          "name": "admin.profile.update"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/profile/password",
+          "auth": true,
+          "permission": null,
+          "description": "admin.profile.password → App\\Http\\Controllers\\Admin\\ProfileController@updatePassword",
+          "name": "admin.profile.password"
+        }
+      ]
+    },
+    {
+      "id": "admin-products",
+      "name": "Admin Products",
+      "basePath": "/admin/products",
+      "description": "Admin product CRUD.",
+      "color": "#825343",
+      "icon": "🎂",
+      "files": [
+        "app/Http/Controllers/Admin/ProductController.php",
+        "app/Services/ProductService.php",
+        "app/Policies/ProductPolicy.php",
+        "resources/js/Pages/Admin/Products/"
+      ],
+      "permissions": [
+        "products:view",
+        "products:create",
+        "products:edit",
+        "products:delete",
+        "products:manage_stock"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/products",
+          "auth": true,
+          "permission": "products:view",
+          "description": "admin.products.index → App\\Http\\Controllers\\Admin\\ProductController@index",
+          "name": "admin.products.index"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/products",
+          "auth": true,
+          "permission": "products:create",
+          "description": "admin.products.store → App\\Http\\Controllers\\Admin\\ProductController@store",
+          "name": "admin.products.store"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/products/create",
+          "auth": true,
+          "permission": "products:create",
+          "description": "admin.products.create → App\\Http\\Controllers\\Admin\\ProductController@create",
+          "name": "admin.products.create"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/products/{product}",
+          "auth": true,
+          "permission": "products:edit",
+          "description": "admin.products.update → App\\Http\\Controllers\\Admin\\ProductController@update",
+          "name": "admin.products.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/products/{product}",
+          "auth": true,
+          "permission": "products:delete",
+          "description": "admin.products.destroy → App\\Http\\Controllers\\Admin\\ProductController@destroy",
+          "name": "admin.products.destroy"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/products/{product}/edit",
+          "auth": true,
+          "permission": "products:edit",
+          "description": "admin.products.edit → App\\Http\\Controllers\\Admin\\ProductController@edit",
+          "name": "admin.products.edit"
+        }
+      ]
+    },
+    {
+      "id": "admin-categories",
+      "name": "Admin Categories",
+      "basePath": "/admin/categories",
+      "description": "Admin category CRUD + tree reorder.",
+      "color": "#663c2d",
+      "icon": "📁",
+      "files": [
+        "app/Http/Controllers/Admin/CategoryController.php",
+        "app/Services/CategoryService.php",
+        "app/Policies/CategoryPolicy.php",
+        "resources/js/Pages/Admin/Categories/"
+      ],
+      "permissions": [
+        "categories:view",
+        "categories:create",
+        "categories:edit",
+        "categories:delete"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/categories",
+          "auth": true,
+          "permission": "categories:view",
+          "description": "admin.categories.index → App\\Http\\Controllers\\Admin\\CategoryController@index",
+          "name": "admin.categories.index"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/categories",
+          "auth": true,
+          "permission": "categories:create",
+          "description": "admin.categories.store → App\\Http\\Controllers\\Admin\\CategoryController@store",
+          "name": "admin.categories.store"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/categories/create",
+          "auth": true,
+          "permission": "categories:create",
+          "description": "admin.categories.create → App\\Http\\Controllers\\Admin\\CategoryController@create",
+          "name": "admin.categories.create"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/categories/{category}",
+          "auth": true,
+          "permission": "categories:edit",
+          "description": "admin.categories.update → App\\Http\\Controllers\\Admin\\CategoryController@update",
+          "name": "admin.categories.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/categories/{category}",
+          "auth": true,
+          "permission": "categories:delete",
+          "description": "admin.categories.destroy → App\\Http\\Controllers\\Admin\\CategoryController@destroy",
+          "name": "admin.categories.destroy"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/categories/{category}/edit",
+          "auth": true,
+          "permission": "categories:edit",
+          "description": "admin.categories.edit → App\\Http\\Controllers\\Admin\\CategoryController@edit",
+          "name": "admin.categories.edit"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/categories/{category}/reorder",
+          "auth": true,
+          "permission": "categories:edit",
+          "description": "admin.categories.reorder → App\\Http\\Controllers\\Admin\\CategoryController@reorder",
+          "name": "admin.categories.reorder"
+        }
+      ]
+    },
+    {
+      "id": "admin-attributes",
+      "name": "Admin Attributes",
+      "basePath": "/admin/attributes",
+      "description": "Product attribute definitions and values.",
+      "color": "#84746f",
+      "icon": "🏷️",
+      "files": [
+        "app/Http/Controllers/Admin/AttributeController.php",
+        "app/Services/AttributeService.php",
+        "app/Policies/AttributePolicy.php",
+        "resources/js/Pages/Admin/Attributes/"
+      ],
+      "permissions": [
+        "attributes:view",
+        "attributes:create",
+        "attributes:edit",
+        "attributes:delete"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/attributes",
+          "auth": true,
+          "permission": "attributes:view",
+          "description": "admin.attributes.index → App\\Http\\Controllers\\Admin\\AttributeController@index",
+          "name": "admin.attributes.index"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/attributes",
+          "auth": true,
+          "permission": "attributes:create",
+          "description": "admin.attributes.store → App\\Http\\Controllers\\Admin\\AttributeController@store",
+          "name": "admin.attributes.store"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/attributes/reorder",
+          "auth": true,
+          "permission": "attributes:edit",
+          "description": "admin.attributes.reorder → App\\Http\\Controllers\\Admin\\AttributeController@reorder",
+          "name": "admin.attributes.reorder"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/attributes/{attribute}",
+          "auth": true,
+          "permission": "attributes:edit",
+          "description": "admin.attributes.update → App\\Http\\Controllers\\Admin\\AttributeController@update",
+          "name": "admin.attributes.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/attributes/{attribute}",
+          "auth": true,
+          "permission": "attributes:delete",
+          "description": "admin.attributes.destroy → App\\Http\\Controllers\\Admin\\AttributeController@destroy",
+          "name": "admin.attributes.destroy"
+        }
+      ]
+    },
+    {
+      "id": "admin-orders",
+      "name": "Admin Orders",
+      "basePath": "/admin/orders",
+      "description": "Order management, refunds, and invoices.",
+      "color": "#185FA5",
+      "icon": "🧾",
+      "files": [
+        "app/Http/Controllers/Admin/OrderController.php",
+        "app/Services/OrderService.php",
+        "app/Policies/OrderPolicy.php",
+        "resources/js/Pages/Admin/Orders/"
+      ],
+      "permissions": [
+        "orders:view",
+        "orders:update_status",
+        "orders:refund"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/orders",
+          "auth": true,
+          "permission": "orders:view",
+          "description": "admin.orders.index → App\\Http\\Controllers\\Admin\\OrderController@index",
+          "name": "admin.orders.index"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/orders/{order}",
+          "auth": true,
+          "permission": "orders:view",
+          "description": "admin.orders.show → App\\Http\\Controllers\\Admin\\OrderController@show",
+          "name": "admin.orders.show"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/orders/{order}",
+          "auth": true,
+          "permission": "orders:edit",
+          "description": "admin.orders.update → App\\Http\\Controllers\\Admin\\OrderController@update",
+          "name": "admin.orders.update"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/orders/{order}/invoice",
+          "auth": true,
+          "permission": "orders:view",
+          "description": "admin.orders.invoice → App\\Http\\Controllers\\Admin\\OrderController@invoice",
+          "name": "admin.orders.invoice"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/orders/{order}/invoice/pdf",
+          "auth": true,
+          "permission": "orders:view",
+          "description": "admin.orders.invoice.pdf → App\\Http\\Controllers\\Admin\\OrderController@downloadInvoice",
+          "name": "admin.orders.invoice.pdf"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/orders/{order}/refund",
+          "auth": true,
+          "permission": "orders:refund",
+          "description": "admin.orders.refund → App\\Http\\Controllers\\Admin\\OrderController@refund",
+          "name": "admin.orders.refund"
+        }
+      ]
+    },
+    {
+      "id": "admin-reviews",
+      "name": "Admin Reviews",
+      "basePath": "/admin/reviews",
+      "description": "Review moderation and admin responses.",
+      "color": "#EF9F27",
+      "icon": "⭐",
+      "files": [
+        "app/Http/Controllers/Admin/ReviewController.php",
+        "app/Services/ReviewService.php",
+        "app/Policies/ReviewPolicy.php",
+        "resources/js/Pages/Admin/Reviews/"
+      ],
+      "permissions": [
+        "reviews:view",
+        "reviews:approve",
+        "reviews:delete",
+        "reviews:respond"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/reviews",
+          "auth": true,
+          "permission": "reviews:view",
+          "description": "admin.reviews.index → App\\Http\\Controllers\\Admin\\ReviewController@index",
+          "name": "admin.reviews.index"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/reviews/{review}",
+          "auth": true,
+          "permission": "reviews:view",
+          "description": "admin.reviews.show → App\\Http\\Controllers\\Admin\\ReviewController@show",
+          "name": "admin.reviews.show"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/reviews/{review}",
+          "auth": true,
+          "permission": "reviews:edit",
+          "description": "admin.reviews.update → App\\Http\\Controllers\\Admin\\ReviewController@update",
+          "name": "admin.reviews.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/reviews/{review}",
+          "auth": true,
+          "permission": "reviews:delete",
+          "description": "admin.reviews.destroy → App\\Http\\Controllers\\Admin\\ReviewController@destroy",
+          "name": "admin.reviews.destroy"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/reviews/{review}/respond",
+          "auth": true,
+          "permission": "reviews:respond",
+          "description": "admin.reviews.respond → App\\Http\\Controllers\\Admin\\ReviewController@respond",
+          "name": "admin.reviews.respond"
+        }
+      ]
+    },
+    {
+      "id": "admin-customers",
+      "name": "Admin Customers",
+      "basePath": "/admin/customers",
+      "description": "Customer list and detail (read-focused).",
+      "color": "#2E7D32",
+      "icon": "👥",
+      "files": [
+        "app/Http/Controllers/Admin/CustomerController.php",
+        "app/Services/CustomerService.php",
+        "app/Policies/CustomerPolicy.php",
+        "resources/js/Pages/Admin/Customers/"
+      ],
+      "permissions": [
+        "customers:view",
+        "customers:edit",
+        "customers:export"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/customers",
+          "auth": true,
+          "permission": "customers:view",
+          "description": "admin.customers.index → App\\Http\\Controllers\\Admin\\CustomerController@index",
+          "name": "admin.customers.index"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/customers/{customer}",
+          "auth": true,
+          "permission": "customers:view",
+          "description": "admin.customers.show → App\\Http\\Controllers\\Admin\\CustomerController@show",
+          "name": "admin.customers.show"
+        }
+      ]
+    },
+    {
+      "id": "admin-promo-codes",
+      "name": "Admin Promo Codes",
+      "basePath": "/admin/promo-codes",
+      "description": "Admin promo code CRUD, active toggle, and usage tracking.",
+      "color": "#E8572A",
+      "icon": "🏷️",
+      "files": [
+        "app/Http/Controllers/Admin/PromoCodeController.php",
+        "app/Services/PromoCodeService.php",
+        "app/Policies/PromoCodePolicy.php",
+        "resources/js/Pages/Admin/PromoCodes/"
+      ],
+      "permissions": [
+        "promo_codes:view",
+        "promo_codes:create",
+        "promo_codes:edit",
+        "promo_codes:delete"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/promo-codes",
+          "auth": true,
+          "permission": "promo_codes:view",
+          "description": "admin.promo-codes.index → App\\Http\\Controllers\\Admin\\PromoCodeController@index",
+          "name": "admin.promo-codes.index"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/promo-codes",
+          "auth": true,
+          "permission": "promo_codes:create",
+          "description": "admin.promo-codes.store → App\\Http\\Controllers\\Admin\\PromoCodeController@store",
+          "name": "admin.promo-codes.store"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/promo-codes/create",
+          "auth": true,
+          "permission": "promo_codes:create",
+          "description": "admin.promo-codes.create → App\\Http\\Controllers\\Admin\\PromoCodeController@create",
+          "name": "admin.promo-codes.create"
+        },
+        {
+          "method": "PUT",
+          "path": "/admin/promo-codes/{promo_code}",
+          "auth": true,
+          "permission": "promo_codes:edit",
+          "description": "admin.promo-codes.update → App\\Http\\Controllers\\Admin\\PromoCodeController@update",
+          "name": "admin.promo-codes.update"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/promo-codes/{promo_code}",
+          "auth": true,
+          "permission": "promo_codes:delete",
+          "description": "admin.promo-codes.destroy → App\\Http\\Controllers\\Admin\\PromoCodeController@destroy",
+          "name": "admin.promo-codes.destroy"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/promo-codes/{promo_code}/edit",
+          "auth": true,
+          "permission": "promo_codes:edit",
+          "description": "admin.promo-codes.edit → App\\Http\\Controllers\\Admin\\PromoCodeController@edit",
+          "name": "admin.promo-codes.edit"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/promo-codes/{promo_code}/toggle",
+          "auth": true,
+          "permission": "promo_codes:edit",
+          "description": "admin.promo-codes.toggle → App\\Http\\Controllers\\Admin\\PromoCodeController@toggle",
+          "name": "admin.promo-codes.toggle"
+        }
+      ]
+    },
+    {
+      "id": "admin-settings",
+      "name": "Admin Site Settings & Payments",
+      "basePath": "/admin/settings",
+      "description": "Site settings and payment gateway configuration (super_admin scopes).",
+      "color": "#C62828",
+      "icon": "⚙️",
+      "files": [
+        "app/Http/Controllers/Admin/SettingController.php",
+        "app/Http/Controllers/Admin/PaymentGatewayController.php",
+        "app/Services/SiteSettingService.php",
+        "app/Policies/SiteSettingPolicy.php",
+        "app/Policies/PaymentGatewayModelPolicy.php",
+        "resources/js/Pages/Admin/Settings/"
+      ],
+      "permissions": [
+        "site_settings:view",
+        "site_settings:edit"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/settings",
+          "auth": true,
+          "permission": "site_settings:view",
+          "description": "admin.settings.index → App\\Http\\Controllers\\Admin\\SettingController@index",
+          "name": "admin.settings.index"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/settings",
+          "auth": true,
+          "permission": "site_settings:edit",
+          "description": "admin.settings.update → App\\Http\\Controllers\\Admin\\SettingController@update",
+          "name": "admin.settings.update"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/settings/payments",
+          "auth": true,
+          "permission": "site_settings:edit",
+          "description": "admin.settings.payments → App\\Http\\Controllers\\Admin\\PaymentGatewayController@index",
+          "name": "admin.settings.payments"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/settings/payments/{gateway}",
+          "auth": true,
+          "permission": "site_settings:edit",
+          "description": "admin.settings.payments.update → App\\Http\\Controllers\\Admin\\PaymentGatewayController@update",
+          "name": "admin.settings.payments.update"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/settings/payments/{gateway}/toggle",
+          "auth": true,
+          "permission": "site_settings:edit",
+          "description": "admin.settings.payments.toggle → App\\Http\\Controllers\\Admin\\PaymentGatewayController@toggle",
+          "name": "admin.settings.payments.toggle"
+        }
+      ]
+    },
+    {
+      "id": "admin-users",
+      "name": "Admin Users (Super Admin)",
+      "basePath": "/admin/users",
+      "description": "Invite/manage admin users and permissions matrix.",
+      "color": "#1A1A1A",
+      "icon": "🛡️",
+      "files": [
+        "app/Http/Controllers/Admin/UserController.php",
+        "app/Services/AdminUserService.php",
+        "app/Services/AdminInvitationService.php",
+        "app/Policies/AdminUserPolicy.php",
+        "resources/js/Pages/Admin/Users/"
+      ],
+      "permissions": [
+        "admin_users:view",
+        "admin_users:invite",
+        "admin_users:edit",
+        "admin_users:deactivate",
+        "admin_users:delete"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/users",
+          "auth": true,
+          "permission": "admin_users:view",
+          "description": "admin.users.index → App\\Http\\Controllers\\Admin\\UserController@index",
+          "name": "admin.users.index"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/users/invitations/{invitation}",
+          "auth": true,
+          "permission": "admin_users:delete",
+          "description": "admin.users.invitations.revoke → App\\Http\\Controllers\\Admin\\UserController@revokeInvitation",
+          "name": "admin.users.invitations.revoke"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/users/invitations/{invitation}/resend",
+          "auth": true,
+          "permission": "admin_users:invite",
+          "description": "admin.users.invitations.resend → App\\Http\\Controllers\\Admin\\UserController@resendInvitation",
+          "name": "admin.users.invitations.resend"
+        },
+        {
+          "method": "POST",
+          "path": "/admin/users/invite",
+          "auth": true,
+          "permission": "admin_users:invite",
+          "description": "admin.users.invite → App\\Http\\Controllers\\Admin\\UserController@invite",
+          "name": "admin.users.invite"
+        },
+        {
+          "method": "DELETE",
+          "path": "/admin/users/{adminUser}",
+          "auth": true,
+          "permission": "admin_users:delete",
+          "description": "admin.users.destroy → App\\Http\\Controllers\\Admin\\UserController@destroy",
+          "name": "admin.users.destroy"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/users/{adminUser}/deactivate",
+          "auth": true,
+          "permission": "admin_users:deactivate",
+          "description": "admin.users.deactivate → App\\Http\\Controllers\\Admin\\UserController@deactivate",
+          "name": "admin.users.deactivate"
+        },
+        {
+          "method": "GET",
+          "path": "/admin/users/{adminUser}/permissions",
+          "auth": true,
+          "permission": "admin_users:edit",
+          "description": "admin.users.permissions → App\\Http\\Controllers\\Admin\\UserController@permissions",
+          "name": "admin.users.permissions"
+        },
+        {
+          "method": "PATCH",
+          "path": "/admin/users/{adminUser}/permissions",
+          "auth": true,
+          "permission": "admin_users:edit",
+          "description": "admin.users.permissions.update → App\\Http\\Controllers\\Admin\\UserController@updatePermissions",
+          "name": "admin.users.permissions.update"
+        }
+      ]
+    }
+  ],
+  "systemEndpoints": [
+    {
+      "method": "GET",
+      "path": "/up",
+      "auth": false,
+      "description": "Laravel health check (bootstrap/app.php withRouting health)."
+    },
+    {
+      "method": "GET",
+      "path": "/_debugbar/assets",
+      "auth": false,
+      "description": "debugbar.assets → Fruitcake\\LaravelDebugbar\\Controllers\\AssetController@getAssets"
+    },
+    {
+      "method": "DELETE",
+      "path": "/_debugbar/cache/{key}",
+      "auth": false,
+      "description": "debugbar.cache.delete → Fruitcake\\LaravelDebugbar\\Controllers\\CacheController@delete"
+    },
+    {
+      "method": "GET",
+      "path": "/_debugbar/clockwork/{id}",
+      "auth": false,
+      "description": "debugbar.clockwork → Fruitcake\\LaravelDebugbar\\Controllers\\OpenHandlerController@clockwork"
+    },
+    {
+      "method": "GET",
+      "path": "/_debugbar/open",
+      "auth": false,
+      "description": "debugbar.openhandler → Fruitcake\\LaravelDebugbar\\Controllers\\OpenHandlerController@handle"
+    },
+    {
+      "method": "POST",
+      "path": "/_debugbar/queries/explain",
+      "auth": false,
+      "description": "debugbar.queries.explain → Fruitcake\\LaravelDebugbar\\Controllers\\QueriesController@explain"
+    },
+    {
+      "method": "PATCH",
+      "path": "/addresses/{address}",
+      "auth": true,
+      "description": "system → App\\Http\\Controllers\\AddressController@update"
+    },
+    {
+      "method": "GET",
+      "path": "/sanctum/csrf-cookie",
+      "auth": false,
+      "description": "sanctum.csrf-cookie → Laravel\\Sanctum\\Http\\Controllers\\CsrfCookieController@show"
+    },
+    {
+      "method": "GET",
+      "path": "/storage/{path}",
+      "auth": false,
+      "description": "storage.local → Closure"
+    },
+    {
+      "method": "PUT",
+      "path": "/storage/{path}",
+      "auth": false,
+      "description": "storage.local.upload → Closure"
+    }
+  ],
+  "coreLayer": {
+    "security": [
+      {
+        "name": "AdminMiddleware",
+        "file": "app/Http/Middleware/AdminMiddleware.php",
+        "description": "Ensures authenticated user is admin or super_admin."
+      },
+      {
+        "name": "SuperAdminMiddleware",
+        "file": "app/Http/Middleware/SuperAdminMiddleware.php",
+        "description": "Restricts routes to super_admin only."
+      },
+      {
+        "name": "Policies + hasPermission",
+        "file": "config/permissions.php",
+        "description": "RBAC scopes/actions; policies call User::hasPermission()."
+      }
+    ],
+    "middleware": [
+      {
+        "name": "HandleInertiaRequests",
+        "file": "app/Http/Middleware/HandleInertiaRequests.php",
+        "description": "Shares auth, cart count, flash, and site settings with Vue.",
+        "guards": [
+          "web"
+        ]
+      },
+      {
+        "name": "admin alias",
+        "file": "bootstrap/app.php",
+        "description": "Middleware alias admin → AdminMiddleware",
+        "guards": [
+          "admin"
+        ]
+      },
+      {
+        "name": "super-admin alias",
+        "file": "bootstrap/app.php",
+        "description": "Middleware alias super-admin → SuperAdminMiddleware",
+        "guards": [
+          "super-admin"
+        ]
+      }
+    ],
+    "services": [
+      {
+        "name": "CartService",
+        "file": "app/Services/CartService.php",
+        "description": "Guest/auth cart operations",
+        "exports": [
+          "getCount",
+          "add",
+          "update",
+          "remove"
+        ]
+      },
+      {
+        "name": "OrderService",
+        "file": "app/Services/OrderService.php",
+        "description": "Checkout and order lifecycle",
+        "exports": [
+          "create",
+          "updateStatus"
+        ]
+      },
+      {
+        "name": "PaymentService",
+        "file": "app/Services/PaymentService.php",
+        "description": "Payment orchestration",
+        "exports": [
+          "createIntent",
+          "confirm"
+        ]
+      },
+      {
+        "name": "StripePaymentService",
+        "file": "app/Services/StripePaymentService.php",
+        "description": "Stripe Cashier integration",
+        "exports": [
+          "createIntent",
+          "confirm"
+        ]
+      },
+      {
+        "name": "ProductService",
+        "file": "app/Services/ProductService.php",
+        "description": "Product catalogue & admin mutations",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "CategoryService",
+        "file": "app/Services/CategoryService.php",
+        "description": "Category tree, reorder, stats",
+        "exports": [
+          "tree",
+          "reorder",
+          "stats"
+        ]
+      },
+      {
+        "name": "AttributeService",
+        "file": "app/Services/AttributeService.php",
+        "description": "Attributes & values",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "ReviewService",
+        "file": "app/Services/ReviewService.php",
+        "description": "Customer reviews & moderation",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "CustomerService",
+        "file": "app/Services/CustomerService.php",
+        "description": "Admin customer views",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "SiteSettingService",
+        "file": "app/Services/SiteSettingService.php",
+        "description": "Key/value site settings helper",
+        "exports": [
+          "get",
+          "set"
+        ]
+      },
+      {
+        "name": "AdminUserService",
+        "file": "app/Services/AdminUserService.php",
+        "description": "Admin user lifecycle",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "AdminInvitationService",
+        "file": "app/Services/AdminInvitationService.php",
+        "description": "Invite tokens & acceptance",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "AdminProfileService",
+        "file": "app/Services/AdminProfileService.php",
+        "description": "Admin profile/password updates",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "FavouriteService",
+        "file": "app/Services/FavouriteService.php",
+        "description": "Favourites toggle/clear",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "CollectionService",
+        "file": "app/Services/CollectionService.php",
+        "description": "Favourite collections",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "AddressService",
+        "file": "app/Services/AddressService.php",
+        "description": "Customer addresses",
+        "exports": [
+          "*"
+        ]
+      },
+      {
+        "name": "PromoCodeService",
+        "file": "app/Services/PromoCodeService.php",
+        "description": "Promo validation at checkout + admin stats/CRUD/toggle",
+        "exports": [
+          "*"
+        ]
+      }
+    ]
+  },
+  "dataFlow": {
+    "requestPipeline": [
+      {
+        "step": "HTTP request hits public/index.php (PHP built-in / Apache / Nginx)",
+        "detail": "Laravel Application::configure bootstrap in bootstrap/app.php."
+      },
+      {
+        "step": "web middleware group runs (session, cookies, CSRF)",
+        "detail": "CSRF excepted for stripe/* webhook paths.",
+        "coreRef": "middleware"
+      },
+      {
+        "step": "HandleInertiaRequests shares auth/cart/flash/site props",
+        "detail": "Makes $page.props available to all Vue pages.",
+        "coreRef": "middleware"
+      },
+      {
+        "step": "Route matched from web.php / auth.php / admin.php",
+        "detail": "admin.php loaded via withRouting(then:). Named routes via Ziggy on frontend."
+      },
+      {
+        "step": "auth / admin / super-admin middleware gates access",
+        "detail": "AdminMiddleware checks role; SuperAdminMiddleware restricts user management.",
+        "coreRef": "security"
+      },
+      {
+        "step": "FormRequest validates input; Policy authorizes action",
+        "detail": "Controllers use $request->validated() and authorizeResource / authorize().",
+        "coreRef": "security"
+      },
+      {
+        "step": "Controller delegates to Service; Eloquent persists",
+        "detail": "Thin controllers — business logic lives in app/Services.",
+        "coreRef": "services"
+      },
+      {
+        "step": "Inertia::render or redirect()->route response",
+        "detail": "Vue page receives API Resources — never raw Eloquent models."
+      }
+    ],
+    "errorPipeline": [
+      "ValidationException → 422 / Inertia error bag (form.errors)",
+      "AuthorizationException → 403",
+      "ModelNotFoundException → 404",
+      "Unhandled exception → Laravel exception handler (JSON when request is api/*)"
+    ],
+    "tenantIsolation": "Customer data scoped by auth user_id; admin data gated by role + JSON permissions matrix. Custom route bindings: customer, adminUser."
+  },
+  "permissions": {
+    "description": "RBAC from config/permissions.php. super_admin bypasses checks. site_settings and admin_users are super_admin_only scopes.",
+    "catalog": [
+      "products:view",
+      "products:create",
+      "products:edit",
+      "products:delete",
+      "products:manage_stock",
+      "categories:view",
+      "categories:create",
+      "categories:edit",
+      "categories:delete",
+      "attributes:view",
+      "attributes:create",
+      "attributes:edit",
+      "attributes:delete",
+      "orders:view",
+      "orders:update_status",
+      "orders:refund",
+      "reviews:view",
+      "reviews:approve",
+      "reviews:delete",
+      "reviews:respond",
+      "customers:view",
+      "customers:edit",
+      "customers:export",
+      "promo_codes:view",
+      "promo_codes:create",
+      "promo_codes:edit",
+      "promo_codes:delete",
+      "site_settings:view",
+      "site_settings:edit",
+      "admin_users:view",
+      "admin_users:invite",
+      "admin_users:edit",
+      "admin_users:deactivate",
+      "admin_users:delete"
+    ],
+    "details": [
+      {
+        "slug": "products:view",
+        "module": "products",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/products"
+          }
+        ],
+        "adminPages": [
+          "Admin Products"
+        ]
+      },
+      {
+        "slug": "products:create",
+        "module": "products",
+        "action": "CREATE",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/products"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/products/create"
+          }
+        ],
+        "adminPages": [
+          "Admin Products"
+        ]
+      },
+      {
+        "slug": "products:edit",
+        "module": "products",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "PUT",
+            "path": "/admin/products/{product}"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/products/{product}/edit"
+          }
+        ],
+        "adminPages": [
+          "Admin Products"
+        ]
+      },
+      {
+        "slug": "products:delete",
+        "module": "products",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/products/{product}"
+          }
+        ],
+        "adminPages": [
+          "Admin Products"
+        ]
+      },
+      {
+        "slug": "products:manage_stock",
+        "module": "products",
+        "action": "MANAGE_STOCK",
+        "endpoints": [],
+        "adminPages": [
+          "Admin Products"
+        ]
+      },
+      {
+        "slug": "categories:view",
+        "module": "categories",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/categories"
+          }
+        ],
+        "adminPages": [
+          "Admin Categories"
+        ]
+      },
+      {
+        "slug": "categories:create",
+        "module": "categories",
+        "action": "CREATE",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/categories"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/categories/create"
+          }
+        ],
+        "adminPages": [
+          "Admin Categories"
+        ]
+      },
+      {
+        "slug": "categories:edit",
+        "module": "categories",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "PUT",
+            "path": "/admin/categories/{category}"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/categories/{category}/edit"
+          },
+          {
+            "method": "PATCH",
+            "path": "/admin/categories/{category}/reorder"
+          }
+        ],
+        "adminPages": [
+          "Admin Categories"
+        ]
+      },
+      {
+        "slug": "categories:delete",
+        "module": "categories",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/categories/{category}"
+          }
+        ],
+        "adminPages": [
+          "Admin Categories"
+        ]
+      },
+      {
+        "slug": "attributes:view",
+        "module": "attributes",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/attributes"
+          }
+        ],
+        "adminPages": [
+          "Admin Attributes"
+        ]
+      },
+      {
+        "slug": "attributes:create",
+        "module": "attributes",
+        "action": "CREATE",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/attributes"
+          }
+        ],
+        "adminPages": [
+          "Admin Attributes"
+        ]
+      },
+      {
+        "slug": "attributes:edit",
+        "module": "attributes",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "PATCH",
+            "path": "/admin/attributes/reorder"
+          },
+          {
+            "method": "PUT",
+            "path": "/admin/attributes/{attribute}"
+          }
+        ],
+        "adminPages": [
+          "Admin Attributes"
+        ]
+      },
+      {
+        "slug": "attributes:delete",
+        "module": "attributes",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/attributes/{attribute}"
+          }
+        ],
+        "adminPages": [
+          "Admin Attributes"
+        ]
+      },
+      {
+        "slug": "orders:view",
+        "module": "orders",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/orders"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/orders/{order}"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/orders/{order}/invoice"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/orders/{order}/invoice/pdf"
+          }
+        ],
+        "adminPages": [
+          "Admin Orders"
+        ]
+      },
+      {
+        "slug": "orders:update_status",
+        "module": "orders",
+        "action": "UPDATE_STATUS",
+        "endpoints": [],
+        "adminPages": [
+          "Admin Orders"
+        ]
+      },
+      {
+        "slug": "orders:refund",
+        "module": "orders",
+        "action": "REFUND",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/orders/{order}/refund"
+          }
+        ],
+        "adminPages": [
+          "Admin Orders"
+        ]
+      },
+      {
+        "slug": "reviews:view",
+        "module": "reviews",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/reviews"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/reviews/{review}"
+          }
+        ],
+        "adminPages": [
+          "Admin Reviews"
+        ]
+      },
+      {
+        "slug": "reviews:approve",
+        "module": "reviews",
+        "action": "APPROVE",
+        "endpoints": [],
+        "adminPages": [
+          "Admin Reviews"
+        ]
+      },
+      {
+        "slug": "reviews:delete",
+        "module": "reviews",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/reviews/{review}"
+          }
+        ],
+        "adminPages": [
+          "Admin Reviews"
+        ]
+      },
+      {
+        "slug": "reviews:respond",
+        "module": "reviews",
+        "action": "RESPOND",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/reviews/{review}/respond"
+          }
+        ],
+        "adminPages": [
+          "Admin Reviews"
+        ]
+      },
+      {
+        "slug": "customers:view",
+        "module": "customers",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/customers"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/customers/{customer}"
+          }
+        ],
+        "adminPages": [
+          "Admin Customers"
+        ]
+      },
+      {
+        "slug": "customers:edit",
+        "module": "customers",
+        "action": "EDIT",
+        "endpoints": [],
+        "adminPages": [
+          "Admin Customers"
+        ]
+      },
+      {
+        "slug": "customers:export",
+        "module": "customers",
+        "action": "EXPORT",
+        "endpoints": [],
+        "adminPages": [
+          "Admin Customers"
+        ]
+      },
+      {
+        "slug": "promo_codes:view",
+        "module": "promo_codes",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/promo-codes"
+          }
+        ],
+        "adminPages": [
+          "Admin Promo Codes"
+        ]
+      },
+      {
+        "slug": "promo_codes:create",
+        "module": "promo_codes",
+        "action": "CREATE",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/promo-codes"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/promo-codes/create"
+          }
+        ],
+        "adminPages": [
+          "Admin Promo Codes"
+        ]
+      },
+      {
+        "slug": "promo_codes:edit",
+        "module": "promo_codes",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "PUT",
+            "path": "/admin/promo-codes/{promo_code}"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/promo-codes/{promo_code}/edit"
+          },
+          {
+            "method": "PATCH",
+            "path": "/admin/promo-codes/{promo_code}/toggle"
+          }
+        ],
+        "adminPages": [
+          "Admin Promo Codes"
+        ]
+      },
+      {
+        "slug": "promo_codes:delete",
+        "module": "promo_codes",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/promo-codes/{promo_code}"
+          }
+        ],
+        "adminPages": [
+          "Admin Promo Codes"
+        ]
+      },
+      {
+        "slug": "site_settings:view",
+        "module": "site_settings",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/settings"
+          }
+        ],
+        "adminPages": [
+          "Admin Settings",
+          "Admin Payment Gateways"
+        ]
+      },
+      {
+        "slug": "site_settings:edit",
+        "module": "site_settings",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "PATCH",
+            "path": "/admin/settings"
+          },
+          {
+            "method": "GET",
+            "path": "/admin/settings/payments"
+          },
+          {
+            "method": "PATCH",
+            "path": "/admin/settings/payments/{gateway}"
+          },
+          {
+            "method": "PATCH",
+            "path": "/admin/settings/payments/{gateway}/toggle"
+          }
+        ],
+        "adminPages": [
+          "Admin Settings",
+          "Admin Payment Gateways"
+        ]
+      },
+      {
+        "slug": "admin_users:view",
+        "module": "admin_users",
+        "action": "VIEW",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/users"
+          }
+        ],
+        "adminPages": [
+          "Admin Users",
+          "Admin Permissions"
+        ]
+      },
+      {
+        "slug": "admin_users:invite",
+        "module": "admin_users",
+        "action": "INVITE",
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/admin/users/invitations/{invitation}/resend"
+          },
+          {
+            "method": "POST",
+            "path": "/admin/users/invite"
+          }
+        ],
+        "adminPages": [
+          "Admin Users",
+          "Admin Permissions"
+        ]
+      },
+      {
+        "slug": "admin_users:edit",
+        "module": "admin_users",
+        "action": "EDIT",
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/admin/users/{adminUser}/permissions"
+          },
+          {
+            "method": "PATCH",
+            "path": "/admin/users/{adminUser}/permissions"
+          }
+        ],
+        "adminPages": [
+          "Admin Users",
+          "Admin Permissions"
+        ]
+      },
+      {
+        "slug": "admin_users:deactivate",
+        "module": "admin_users",
+        "action": "DEACTIVATE",
+        "endpoints": [
+          {
+            "method": "PATCH",
+            "path": "/admin/users/{adminUser}/deactivate"
+          }
+        ],
+        "adminPages": [
+          "Admin Users",
+          "Admin Permissions"
+        ]
+      },
+      {
+        "slug": "admin_users:delete",
+        "module": "admin_users",
+        "action": "DELETE",
+        "endpoints": [
+          {
+            "method": "DELETE",
+            "path": "/admin/users/invitations/{invitation}"
+          },
+          {
+            "method": "DELETE",
+            "path": "/admin/users/{adminUser}"
+          }
+        ],
+        "adminPages": [
+          "Admin Users",
+          "Admin Permissions"
+        ]
+      }
+    ]
+  },
+  "sqlQueries": [
+    {
+      "id": "products-listing",
+      "label": "Public product listing with filters",
+      "module": "Public Catalogue",
+      "file": "app/Services/ProductService.php",
+      "function": "ProductService (index/search scopes)",
+      "tables": [
+        "products",
+        "category_product",
+        "categories",
+        "media"
+      ],
+      "purpose": "Paginated active products for /products with category/price/stock filters.",
+      "sql": "SELECT products.* FROM products WHERE status = 'active' AND deleted_at IS NULL /* + dynamic filters */",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/products"
+        }
+      ]
+    },
+    {
+      "id": "category-tree",
+      "label": "Admin category tree",
+      "module": "Admin Categories",
+      "file": "app/Services/CategoryService.php",
+      "function": "CategoryService::tree()",
+      "tables": [
+        "categories"
+      ],
+      "purpose": "Build nested category tree for admin Index view with optional search/status.",
+      "sql": "SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY sort_order, name",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/categories"
+        }
+      ]
+    },
+    {
+      "id": "cart-resolve",
+      "label": "Resolve guest or user cart",
+      "module": "Cart",
+      "file": "app/Services/CartService.php",
+      "function": "CartService",
+      "tables": [
+        "carts",
+        "cart_items",
+        "products"
+      ],
+      "purpose": "Load cart by user_id or session_id and compute count for Inertia shared props.",
+      "sql": "SELECT * FROM carts WHERE user_id = ? OR session_id = ? LIMIT 1",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/cart"
+        }
+      ]
+    },
+    {
+      "id": "order-create",
+      "label": "Create order from cart",
+      "module": "Checkout & Orders",
+      "file": "app/Services/OrderService.php",
+      "function": "OrderService",
+      "tables": [
+        "orders",
+        "order_items",
+        "carts",
+        "cart_items",
+        "products"
+      ],
+      "purpose": "Transactional checkout: snapshot line items, totals, delivery, payment status.",
+      "sql": "INSERT INTO orders (...) VALUES (...); INSERT INTO order_items (...); /* inside DB::transaction */",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/orders"
+        }
+      ]
+    },
+    {
+      "id": "admin-permissions",
+      "label": "Load admin permissions matrix",
+      "module": "Admin Users (Super Admin)",
+      "file": "app/Services/AdminUserService.php",
+      "function": "AdminUserService",
+      "tables": [
+        "users"
+      ],
+      "purpose": "Read/update users.permissions JSON for admin role accounts.",
+      "sql": "SELECT id, name, email, role, permissions FROM users WHERE role IN ('admin','super_admin')",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/admin/users"
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "routeCount": 119,
+    "assignedEndpoints": 109,
+    "unassignedRoutes": 10,
+    "generator": "docs/architecture/_build_manifest.py",
+    "note": "Upstream arch-wiki scanner mis-detects FastAPI on Laravel; this manifest is Laravel-adapted. Re-run _build_manifest.py after major route changes, then python build_html.py."
+  }
+}

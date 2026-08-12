@@ -12,6 +12,7 @@ class PromoCodeSeeder extends Seeder
         $codes = [
             [
                 'code' => 'WELCOME15',
+                'title' => '15% off your first order',
                 'type' => 'percentage',
                 'value' => 15,
                 'min_order_amount' => 25,
@@ -20,6 +21,7 @@ class PromoCodeSeeder extends Seeder
             ],
             [
                 'code' => 'COFFEE10',
+                'title' => '10% off coffee pairings',
                 'type' => 'percentage',
                 'value' => 10,
                 'min_order_amount' => 20,
@@ -28,6 +30,7 @@ class PromoCodeSeeder extends Seeder
             ],
             [
                 'code' => 'FREESHIP',
+                'title' => 'Delivery fee on us',
                 'type' => 'fixed',
                 'value' => 5.99,
                 'min_order_amount' => 40,
@@ -36,6 +39,7 @@ class PromoCodeSeeder extends Seeder
             ],
             [
                 'code' => 'ESPRESSO5',
+                'title' => '$5 off espresso treats',
                 'type' => 'fixed',
                 'value' => 5,
                 'min_order_amount' => 30,
@@ -44,6 +48,7 @@ class PromoCodeSeeder extends Seeder
             ],
             [
                 'code' => 'BREW20',
+                'title' => '20% off weekend bakery box',
                 'type' => 'percentage',
                 'value' => 20,
                 'min_order_amount' => 60,
@@ -56,6 +61,7 @@ class PromoCodeSeeder extends Seeder
             PromoCode::query()->updateOrCreate(
                 ['code' => $code['code']],
                 [
+                    'title' => $code['title'],
                     'type' => $code['type'],
                     'value' => $code['value'],
                     'min_order_amount' => $code['min_order_amount'],

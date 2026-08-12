@@ -13,6 +13,10 @@ use Illuminate\Validation\ValidationException;
 
 class CartService
 {
+    public function __construct(
+        private readonly PromoCodeService $promoCodeService,
+    ) {}
+
     public function resolveCart(Request $request): ?Cart
     {
         if ($request->user()) {
@@ -62,37 +66,82 @@ class CartService
     }
 
     /**
-     * @return array{items: Collection<int, CartItem>, item_count: int, subtotal: float}
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float
+     * }
      */
     public function getCartPayload(Request $request): array
     {
-        // dd($request->all());
         $cart = $this->resolveCart($request);
-       
 
         if (! $cart) {
-            return [
-                'items' => collect(),
-                'item_count' => 0,
-                'subtotal' => 0.0,
-            ];
+            return $this->emptyPayload();
         }
 
-        $items = $cart->items()
-            ->with('product.categories')
-            ->latest('id')
-            ->get();
+        return $this->buildPayload($cart, user: $request->user());
+    }
 
-        $itemCount = (int) $items->sum('quantity');
-        $subtotal = round($items->sum(function (CartItem $item) {
-            return $this->unitPrice($item) * $item->quantity;
-        }), 2);
+    /**
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float
+     * }
+     */
+    public function applyPromo(Request $request, string $code): array
+    {
+        $cart = $this->getOrCreateCart($request);
+        $payload = $this->buildPayload($cart, ignoreStoredPromo: true, user: $request->user());
+        $subtotal = (float) $payload['subtotal'];
 
-        return [
-            'items' => $items,
-            'item_count' => $itemCount,
-            'subtotal' => $subtotal,
-        ];
+        $promo = $this->promoCodeService->findValid($code, $subtotal, $request->user());
+
+        $cart->update([
+            'promo_code' => mb_strtoupper(trim($promo->code)),
+        ]);
+
+        return $this->buildPayload($cart->fresh(), user: $request->user());
+    }
+
+    /**
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float
+     * }
+     */
+    public function removePromo(Request $request): array
+    {
+        $cart = $this->resolveCart($request);
+
+        if ($cart) {
+            $cart->update(['promo_code' => null]);
+        }
+
+        if (! $cart) {
+            return $this->emptyPayload();
+        }
+
+        return $this->buildPayload($cart->fresh(), user: $request->user());
+    }
+
+    public function getStoredPromoCode(Request $request): ?string
+    {
+        $cart = $this->resolveCart($request);
+        $code = $cart?->promo_code;
+
+        return filled($code) ? (string) $code : null;
     }
 
     /**
@@ -194,6 +243,12 @@ class CartService
             );
 
             $userCart->load('items');
+
+            if (blank($userCart->promo_code) && filled($guestCart->promo_code)) {
+                $userCart->update([
+                    'promo_code' => $guestCart->promo_code,
+                ]);
+            }
 
             foreach ($guestCart->items as $guestItem) {
                 $product = $guestItem->product;
@@ -307,7 +362,15 @@ class CartService
     }
 
     /**
-     * @return array{items: Collection<int, CartItem>, item_count: int, subtotal: float}
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float,
+     *     cart: Cart|null
+     * }
      */
     public function getCartPayloadForUser(User $user): array
     {
@@ -317,13 +380,57 @@ class CartService
 
         if (! $cart) {
             return [
-                'items' => collect(),
-                'item_count' => 0,
-                'subtotal' => 0.0,
+                ...$this->emptyPayload(),
                 'cart' => null,
             ];
         }
 
+        return [
+            ...$this->buildPayload($cart, user: $user),
+            'cart' => $cart,
+        ];
+    }
+
+    public function clearCart(Cart $cart): void
+    {
+        $cart->items()->delete();
+        $cart->update(['promo_code' => null]);
+    }
+
+    /**
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float
+     * }
+     */
+    private function emptyPayload(): array
+    {
+        return [
+            'items' => collect(),
+            'item_count' => 0,
+            'subtotal' => 0.0,
+            'promo_code' => null,
+            'discount_amount' => 0.0,
+            'total_after_discount' => 0.0,
+        ];
+    }
+
+    /**
+     * @return array{
+     *     items: Collection<int, CartItem>,
+     *     item_count: int,
+     *     subtotal: float,
+     *     promo_code: string|null,
+     *     discount_amount: float,
+     *     total_after_discount: float
+     * }
+     */
+    private function buildPayload(Cart $cart, bool $ignoreStoredPromo = false, ?User $user = null): array
+    {
         $items = $cart->items()
             ->with('product.categories')
             ->latest('id')
@@ -334,17 +441,27 @@ class CartService
             return $this->unitPrice($item) * $item->quantity;
         }), 2);
 
+        $promoCode = null;
+        $discountAmount = 0.0;
+
+        if (! $ignoreStoredPromo && filled($cart->promo_code)) {
+            try {
+                $promo = $this->promoCodeService->findValid((string) $cart->promo_code, $subtotal, $user);
+                $promoCode = $promo->code;
+                $discountAmount = $this->promoCodeService->discountAmount($promo, $subtotal);
+            } catch (ValidationException) {
+                $cart->update(['promo_code' => null]);
+            }
+        }
+
         return [
             'items' => $items,
             'item_count' => $itemCount,
             'subtotal' => $subtotal,
-            'cart' => $cart,
+            'promo_code' => $promoCode,
+            'discount_amount' => $discountAmount,
+            'total_after_discount' => round(max(0, $subtotal - $discountAmount), 2),
         ];
-    }
-
-    public function clearCart(Cart $cart): void
-    {
-        $cart->items()->delete();
     }
 
     public function isProductPurchasable(Product $product, int $quantity): bool

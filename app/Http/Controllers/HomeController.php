@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\PromoCodeResource;
 use App\Models\Product;
+use App\Services\PromoCodeService;
 use App\Services\SiteSettingService;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -11,6 +13,10 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
+    public function __construct(
+        private readonly PromoCodeService $promoCodeService,
+    ) {}
+
     public function index(): Response
     {
         $featuredProducts = Product::query()
@@ -62,6 +68,9 @@ class HomeController extends Controller
             'featuredProducts' => ProductResource::collection($featuredProducts)->resolve(),
             'latestProducts' => ProductResource::collection($latestProducts)->resolve(),
             'recommendedProducts' => ProductResource::collection($recommendedProducts)->resolve(),
+            'promoCodes' => PromoCodeResource::collection(
+                $this->promoCodeService->forHomepage(8, auth()->user()),
+            )->resolve(),
         ])->withViewData([
             'seo' => app(SiteSettingService::class)->documentSeo(),
         ]);

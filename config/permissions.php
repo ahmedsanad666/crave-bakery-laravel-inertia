@@ -88,6 +88,7 @@ return [
             'actions' => [
                 'view'   => 'View promo codes',
                 'create' => 'Create promo codes',
+                'edit'   => 'Edit promo codes',
                 'delete' => 'Delete promo codes',
             ],
         ],
@@ -135,7 +136,7 @@ return [
             'orders'      => ['view', 'update_status', 'refund'],
             'reviews'     => ['view', 'approve', 'delete', 'respond'],
             'customers'   => ['view', 'edit', 'export'],
-            'promo_codes' => ['view', 'create', 'delete'],
+            'promo_codes' => ['view', 'create', 'edit', 'delete'],
         ],
 
         // Read-only admin — view only, no mutations

@@ -1,14 +1,17 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import {
     IconArrowLeft,
+    IconArrowRight,
     IconCircleCheck,
     IconShoppingCartOff,
+    IconX,
 } from '@tabler/icons-vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CartItemRow from '@/Components/Public/CartItemRow.vue';
 import CartOrderSummary from '@/Components/Public/CartOrderSummary.vue';
+import PromoCodeCard from '@/Components/Public/PromoCodeCard.vue';
 
 const props = defineProps({
     cart: {
@@ -17,17 +20,49 @@ const props = defineProps({
             items: [],
             item_count: 0,
             subtotal: 0,
+            promo_code: null,
+            discount_amount: 0,
+            total_after_discount: 0,
         }),
+    },
+    promoCodes: {
+        type: Array,
+        default: () => [],
     },
 });
 
-const promoCode = ref('');
-const promoNotice = ref('');
+const page = usePage();
+const brandName = computed(
+    () =>
+        page.props.siteSettings?.site_name?.trim()
+        || page.props.siteSettings?.name?.trim()
+        || 'Crave Bakery',
+);
+
+const promoForm = useForm({
+    promo_code: props.cart.promo_code ?? '',
+});
+
+watch(
+    () => props.cart.promo_code,
+    (code) => {
+        promoForm.promo_code = code ?? '';
+        promoForm.clearErrors();
+    },
+);
 
 const items = computed(() => props.cart.items ?? []);
 const itemCount = computed(() => Number(props.cart.item_count ?? 0));
 const subtotal = computed(() => Number(props.cart.subtotal ?? 0));
+const discountAmount = computed(() => Number(props.cart.discount_amount ?? 0));
+const totalAfterDiscount = computed(() =>
+    Number(props.cart.total_after_discount ?? subtotal.value),
+);
+const appliedPromo = computed(() => props.cart.promo_code ?? null);
 const isEmpty = computed(() => items.value.length === 0);
+const hasPromoList = computed(() => (props.promoCodes?.length ?? 0) > 0);
+
+const promoTrack = ref(null);
 
 const itemCountLabel = computed(() => {
     const count = itemCount.value;
@@ -39,8 +74,30 @@ const itemCountLabel = computed(() => {
     return `${count} items in your basket`;
 });
 
-const handleApplyPromo = () => {
-    promoNotice.value = 'Promo codes coming soon.';
+const handleApplyPromo = (code = null) => {
+    if (typeof code === 'string' && code.trim() !== '') {
+        promoForm.promo_code = code.trim().toUpperCase();
+    }
+
+    promoForm.post(route('cart.promo.apply'), {
+        preserveScroll: true,
+    });
+};
+
+const handleRemovePromo = () => {
+    router.delete(route('cart.promo.remove'), {
+        preserveScroll: true,
+    });
+};
+
+const scrollPromos = (direction) => {
+    const el = promoTrack.value;
+    if (!el) {
+        return;
+    }
+
+    const amount = Math.min(el.clientWidth * 0.85, 420);
+    el.scrollBy({ left: direction * amount, behavior: 'smooth' });
 };
 </script>
 
@@ -95,29 +152,100 @@ const handleApplyPromo = () => {
                             </label>
                             <div class="flex gap-sm">
                                 <input
-                                    v-model="promoCode"
+                                    v-model="promoForm.promo_code"
                                     type="text"
                                     placeholder="Enter code"
-                                    class="h-12 flex-grow rounded-lg border border-outline-variant px-md font-sans focus:border-primary focus:outline-none md:w-48"
+                                    class="h-12 flex-grow rounded-lg border border-outline-variant px-md font-sans uppercase focus:border-primary focus:outline-none md:w-48"
+                                    :class="{
+                                        'border-error': Boolean(
+                                            promoForm.errors.promo_code,
+                                        ),
+                                    }"
+                                    :disabled="promoForm.processing"
+                                    @keyup.enter="handleApplyPromo()"
                                 />
                                 <button
                                     type="button"
-                                    class="h-12 rounded-full bg-primary px-lg font-sans font-bold text-white transition-all hover:opacity-90"
-                                    @click="handleApplyPromo"
+                                    class="h-12 rounded-full bg-primary px-lg font-sans font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+                                    :disabled="promoForm.processing"
+                                    @click="handleApplyPromo()"
                                 >
                                     Apply
                                 </button>
                             </div>
                             <p
-                                v-if="promoNotice"
-                                class="mt-xs flex items-center gap-1 font-sans text-body-sm font-bold text-secondary"
+                                v-if="promoForm.errors.promo_code"
+                                class="mt-xs font-sans text-body-sm font-bold text-error"
+                            >
+                                {{ promoForm.errors.promo_code }}
+                            </p>
+                            <div
+                                v-else-if="appliedPromo"
+                                class="mt-xs flex flex-wrap items-center gap-2 font-sans text-body-sm font-bold text-secondary"
                                 role="status"
                             >
                                 <IconCircleCheck :size="16" stroke-width="1.5" />
-                                {{ promoNotice }}
-                            </p>
+                                <span>{{ appliedPromo }} applied</span>
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-0.5 text-error hover:underline"
+                                    @click="handleRemovePromo"
+                                >
+                                    <IconX :size="14" stroke-width="1.5" />
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Available promo codes -->
+                    <section
+                        v-if="!isEmpty && hasPromoList"
+                        class="space-y-md"
+                    >
+                        <div class="flex items-end justify-between gap-md">
+                            <div>
+                                <h2 class="font-serif text-headline-sm text-primary">
+                                    Available promo codes
+                                </h2>
+                                <div class="mt-xs h-1 w-16 rounded-full bg-accent" />
+                            </div>
+                            <div class="flex items-center gap-sm">
+                                <button
+                                    type="button"
+                                    class="flex h-10 w-10 items-center justify-center rounded-full border border-outline text-primary transition-all hover:bg-primary hover:text-white"
+                                    aria-label="Previous promo codes"
+                                    @click="scrollPromos(-1)"
+                                >
+                                    <IconArrowLeft :size="18" stroke-width="1.5" />
+                                </button>
+                                <button
+                                    type="button"
+                                    class="flex h-10 w-10 items-center justify-center rounded-full border border-outline text-primary transition-all hover:bg-primary hover:text-white"
+                                    aria-label="Next promo codes"
+                                    @click="scrollPromos(1)"
+                                >
+                                    <IconArrowRight :size="18" stroke-width="1.5" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            ref="promoTrack"
+                            class="no-scrollbar flex snap-x snap-mandatory gap-md overflow-x-auto scroll-smooth pb-sm"
+                            style="touch-action: pan-x"
+                        >
+                            <PromoCodeCard
+                                v-for="promo in promoCodes"
+                                :key="promo.id"
+                                :promo="promo"
+                                :brand="brandName"
+                                notch-class="bg-surface"
+                                show-apply
+                                @apply="handleApplyPromo"
+                            />
+                        </div>
+                    </section>
 
                     <!-- Empty / upsell -->
                     <div
@@ -159,6 +287,9 @@ const handleApplyPromo = () => {
                     <CartOrderSummary
                         :subtotal="subtotal"
                         :item-count="itemCount"
+                        :discount-amount="discountAmount"
+                        :promo-code="appliedPromo"
+                        :total-after-discount="totalAfterDiscount"
                     />
                 </div>
             </div>

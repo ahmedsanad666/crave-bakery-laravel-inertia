@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PaymentGatewayController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\PromoCodeController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -51,6 +52,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::resource('customers', CustomerController::class)
         ->only(['index', 'show']);
+
+    Route::patch('promo-codes/{promo_code}/toggle', [PromoCodeController::class, 'toggle'])
+        ->name('promo-codes.toggle');
+    Route::resource('promo-codes', PromoCodeController::class)->except(['show']);
 
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');
